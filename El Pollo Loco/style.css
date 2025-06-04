@@ -3,8 +3,66 @@ body{
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    background: linear-gradient(to bottom, #87ceeb 40%, #bfa16b 70%, #994409 100%);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    padding: 0;
+    margin: 0;
+    height: 100vh;
+}
+.mexican-section {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: auto;
+
 }
 
 canvas{
     background-color: black;
 }
+
+    .mexican-title {
+        font-size: 4rem;
+        color: #e63946;
+        text-shadow:
+            2px 2px 0 #fff700,
+            4px 4px 0 #43aa8b,
+            6px 6px 0 #f3722c;
+        font-family: 'Comic Sans MS', 'Comic Sans', cursive, sans-serif;
+        letter-spacing: 4px;
+        border: 4px solid #43aa8b;
+        border-radius: 18px;
+        padding: 20px 40px;
+        background: linear-gradient(90deg, #fff700 0%, #e63946 50%, #43aa8b 100%);
+        display: inline-block;
+        margin: 30px auto 20px auto;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        text-align: center;
+        animation: shake 1.2s infinite alternate;
+    }
+
+    @keyframes shake {
+        0% {
+            transform: rotate(-2deg) scale(1.03);
+        }
+
+        100% {
+            transform: rotate(2deg) scale(1);
+        }
+    }
+/* 
+    #brownGround {
+
+        background-color: #994409;
+        
+        width: 100%;
+        height: 100vh;
+
+    } */

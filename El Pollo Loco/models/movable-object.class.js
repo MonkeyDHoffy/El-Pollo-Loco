@@ -6,6 +6,7 @@ class MovableObject {
     width = 100;
     imageCache = {}; // Cache for loaded images
     speed = 0.9; // Default speed for movement
+    otherDirection = false; // Flag to indicate if the object is moving in the opposite direction
 
     // loadImage(./img/test.png) {
     loadImage(path) {
