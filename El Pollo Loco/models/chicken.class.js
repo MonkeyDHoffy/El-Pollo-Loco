@@ -18,7 +18,7 @@ class Chicken extends MovableObject{
 
     
     animate() {
-        console.log("Starting chicken animation, initial x:", this.x);
+      
         this.moveLeft();
         setInterval(() => {
             let path = this.CHICKEN_IMAGES_IDLE[this.currentChicken];	

@@ -2,43 +2,25 @@
 class World{
 
     // Variablen für das Canvas-Element und den Zeichenkontext
-canvas;
-ctx;
-camera_x = 0; // X-Position der Kamera, die die Ansicht verschiebt
+
 
 // Erstellt eine neue Instanz des Charakters
 character = new Character();
 
+level = level1; // Hier wird angenommen, dass level1 eine Instanz der Klasse level ist, die die Level-Daten enthält;
 // Erstellt ein Array mit drei Gegnern (Hühner)
-enemies = [
-    new Chicken(),
-    new Chicken(),
-    new Chicken()
-];
+enemies = level1.enemies; // Hier wird angenommen, dass level1 eine Instanz der Klasse level ist, die die Gegner enthält;
 
 // Erstellt ein Array mit drei Wolken
-clouds = [
-    new Cloud(),
-    new Cloud(),
-    new Cloud()
-];
+clouds = level1.clouds; // Hier wird angenommen, dass level1 eine Instanz der Klasse level ist, die die Wolken enthält;
 
 // Erstellt ein Array mit Hintergrundobjekten (verschiedene Ebenen)
-backgroundObjects = [
-    new BackgroundObject("img/img_pollo_locco/img/5_background/layers/air.png", 0),
-    new BackgroundObject("img/img_pollo_locco/img/5_background/layers/3_third_layer/1.png", 0),
-    new BackgroundObject("img/img_pollo_locco/img/5_background/layers/2_second_layer/1.png", 0),
-    new BackgroundObject("img/img_pollo_locco/img/5_background/layers/1_first_layer/1.png", 0),
-      new BackgroundObject("img/img_pollo_locco/img/5_background/layers/air.png", 719),
-    new BackgroundObject("img/img_pollo_locco/img/5_background/layers/3_third_layer/2.png", 719),
-    new BackgroundObject("img/img_pollo_locco/img/5_background/layers/2_second_layer/2.png", 719),
-    new BackgroundObject("img/img_pollo_locco/img/5_background/layers/1_first_layer/2.png", 719),
-    new BackgroundObject("img/img_pollo_locco/img/5_background/layers/air.png", 1438),
-    new BackgroundObject("img/img_pollo_locco/img/5_background/layers/3_third_layer/1.png", 1438),
-    new BackgroundObject("img/img_pollo_locco/img/5_background/layers/2_second_layer/1.png", 1438),
-    new BackgroundObject("img/img_pollo_locco/img/5_background/layers/1_first_layer/1.png", 1438)
-   
-];
+backgroundObjects = level1.backgroundObjects; // Hier wird angenommen, dass level
+
+canvas;
+ctx;
+keyboard; // Tastatursteuerung, die extern definiert sein muss
+camera_x = 0; // X-Position der Kamera, die die Ansicht verschiebt
 
 
 // Konstruktor, der beim Erstellen einer neuen World-Instanz aufgerufen wird
@@ -64,13 +46,13 @@ draw(){
 
     this.ctx.translate(this.camera_x, 0); // Verschiebt den Ursprung des Koordinatensystems, um die Kamera-Position zu berücksichtigen. die 0 ist die y-Position, da wir nur horizontal scrollen
     // Fügt die Hintergrundobjekte zur Karte hinzu
-    this.addObjectsToMap(this.backgroundObjects); 
+    this.addObjectsToMap(this.level.backgroundObjects); 
     // Fügt den Charakter zur Karte hinzu
     this.addToMap(this.character); 
     // Fügt die Wolken zur Karte hinzu
-    this.addObjectsToMap(this.clouds); 
+    this.addObjectsToMap(this.level.clouds); 
     // Fügt die Gegner zur Karte hinzu
-    this.addObjectsToMap(this.enemies); 
+    this.addObjectsToMap(this.level.enemies); 
 
     this.ctx.translate(-this.camera_x, 0); // Setzt den Ursprung des Koordinatensystems zurück, um die Kamera-Position zu berücksichtigen
 

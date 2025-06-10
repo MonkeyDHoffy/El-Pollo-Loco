@@ -39,4 +39,12 @@ moveLeft() {
             this.x -= this.speed; // Move the cloud to the left
         }, 1000 / 60);
 }
+
+playWalkingAnimation(images) {
+      let i = this.currentImageWalking % this.IMAGES_WALKING.length; // Use modulo to cycle through images
+                let walkingPath = this.IMAGES_WALKING[i];
+                this.img = this.imageCache[walkingPath];
+                this.currentImageWalking++;
+
+}
 }

@@ -38,10 +38,10 @@ world; // Reference to the world instance
         // Walking animation - faster (10 frames per second)
 
         setInterval(() => {
-            if (this.world.keyboard.RIGHT) {
+            if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) { // Ensure character doesn't move right if at the right edge
                 this.otherDirection = false; // Set direction to right
                 this.x += this.speed;}
-            if (this.world.keyboard.LEFT) {
+            if (this.world.keyboard.LEFT && this.x > 0 ) { // Ensure character doesn't move left if at the left edge
                 this.otherDirection = true; // Set direction to left
                 this.x -= this.speed; // Move character left (negative movement)
             }
@@ -52,10 +52,7 @@ world; // Reference to the world instance
 
         setInterval(() => {
             if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
-                let i = this.currentImageWalking % this.IMAGES_WALKING.length; // Use modulo to cycle through images
-                let walkingPath = this.IMAGES_WALKING[i];
-                this.img = this.imageCache[walkingPath];
-                this.currentImageWalking++;
+              this.playWalkingAnimation(this.IMAGES_WALKING);
             }
         }, 1000 / 15); // 15 frames per second for walking
 
