@@ -54,6 +54,8 @@ draw(){
     // Fügt die Gegner zur Karte hinzu
     this.addObjectsToMap(this.level.enemies); 
 
+    this.addToMap(this.level.endboss); // Fügt den Endboss zur Karte hinzu
+
     this.ctx.translate(-this.camera_x, 0); // Setzt den Ursprung des Koordinatensystems zurück, um die Kamera-Position zu berücksichtigen
 
     // Speichert den Kontext von 'this', um ihn in der Callback-Funktion zu verwenden

@@ -1,5 +1,8 @@
 class Endboss extends MovableObject {
-
+currentImageWalking = 0;
+height = 300;
+width = 200;
+y = 165;
     IMAGES_WALKING = [
         'img/img_pollo_locco/img/4_enemie_boss_chicken/1_walk/G1.png',
         'img/img_pollo_locco/img/4_enemie_boss_chicken/1_walk/G2.png',
@@ -25,4 +28,11 @@ constructor() {
     this.x = 700;
     this.animate();
 }
-}
+
+animate() {
+this.moveLeft(); // Start moving left
+
+    setInterval(() => {
+        this.playWalkingAnimation(this.IMAGES_WALKING);
+    }, 1000 / 10); // 10 frames per second for walking
+}}

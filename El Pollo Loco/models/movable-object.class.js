@@ -42,7 +42,7 @@ moveLeft() {
 
 playWalkingAnimation(images) {
       let i = this.currentImageWalking % this.IMAGES_WALKING.length; // Use modulo to cycle through images
-                let walkingPath = this.IMAGES_WALKING[i];
+                let walkingPath = images[i];
                 this.img = this.imageCache[walkingPath];
                 this.currentImageWalking++;
 
