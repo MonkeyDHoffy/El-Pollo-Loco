@@ -37,14 +37,12 @@ class MovableObject {
 
     drawFrame(ctx) {
         if (this instanceof Character || this instanceof Chicken || this instanceof Endboss) {
-            this.drawBoundingBox(ctx); // Zeichnet die Begrenzungsbox, wenn das Objekt ein MovableObject ist
-        }
 ctx.beginPath(); // Beginnt einen neuen Pfad für die Zeichnung
 ctx.lineWidth = "4"; // Setzt die Linienbreite für den Pfad
 ctx.strokeStyle = "red"; // Setzt die Linienfarbe für den Pfad       
 ctx.rect(this.x, this.y, this.width, this.height); // Fügt ein Rechteck zum Pfad hinzu, das die Position und Größe des Objekts repräsentiert
 ctx.stroke(); // Zeichnet den Pfad auf das Canvas
-    }
+    }}
 
     /**
      * Lädt eine Reihe von Bildern anhand der angegebenen Pfade und speichert sie im Image-Cache.
@@ -74,4 +72,26 @@ ctx.stroke(); // Zeichnet den Pfad auf das Canvas
         this.otherDirection = direction;
         this.x -= this.speed;
     }
+
+    
+flipImage(mobject) {
+    this.ctx.save(); // Speichert den aktuellen Zustand des Kontextes
+        this.ctx.translate(mobject.width, 0); // Verschiebt den Ursprung des Koordinatensystems nach rechts um die Breite des Objekts
+        this.ctx.scale(-1, 1); // Spiegelt das Koordinatensystem horizontal
+        mobject.x = -mobject.x;// Passt die x-Position an, um die Spiegelung zu berücksichtigen
+
+}
+
+flipImageBack(mobject) {
+      mobject.x = -mobject.x;// Stellt die x-Position nach der Spiegelung wieder her
+        this.ctx.restore(); // Stellt den vorherigen Zustand des Kontextes wieder her
+}
+
+isColliding(mobject) {
+    return this.x + this.width > mobject.x &&
+           this.x < mobject.x + mobject.width &&
+           this.y + this.height > mobject.y &&
+           this.y < mobject.y + mobject.height;
+
+}
 }

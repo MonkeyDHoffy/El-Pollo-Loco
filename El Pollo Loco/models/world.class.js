@@ -86,17 +86,4 @@ addToMap(mobject){
   this.flipImageBack(mobject); // Spiegelt das Bild zurück, um den ursprünglichen Zustand wiederherzustellen
     }
 }
-
-flipImage(mobject) {
-    this.ctx.save(); // Speichert den aktuellen Zustand des Kontextes
-        this.ctx.translate(mobject.width, 0); // Verschiebt den Ursprung des Koordinatensystems nach rechts um die Breite des Objekts
-        this.ctx.scale(-1, 1); // Spiegelt das Koordinatensystem horizontal
-        mobject.x = -mobject.x;// Passt die x-Position an, um die Spiegelung zu berücksichtigen
-
-}
-
-flipImageBack(mobject) {
-      mobject.x = -mobject.x;// Stellt die x-Position nach der Spiegelung wieder her
-        this.ctx.restore(); // Stellt den vorherigen Zustand des Kontextes wieder her
-}
 }

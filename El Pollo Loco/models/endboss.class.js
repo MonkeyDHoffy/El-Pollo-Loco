@@ -30,7 +30,12 @@ constructor() {
 }
 
 animate() {
-this.moveLeft(); // Start moving left
+
+ setInterval(() => {
+            this.moveLeft(false);
+        }, 1000 / 60);
+        
+
 
     setInterval(() => {
         this.playAnimation(this.IMAGES_WALKING);
