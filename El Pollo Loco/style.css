@@ -25,7 +25,10 @@ body{
 }
 
 canvas{
-    background-color: black;
+    background: linear-gradient(to bottom, #87ceeb 40%, #bfa16b 70%, #994409 100%);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    border-radius: 20px;
 }
 
     .mexican-title {

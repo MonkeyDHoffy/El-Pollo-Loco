@@ -1,7 +1,20 @@
 class Character extends MovableObject {
      height = 200;
-        y = 250;
+        // y = 250;
+       
         speed = 8; // Default speed for movement
+
+        IMAGES_JUMPING = [
+        'img/img_pollo_locco/img/2_character_pepe/3_jump/J-31.png',
+        'img/img_pollo_locco/img/2_character_pepe/3_jump/J-32.png',
+        'img/img_pollo_locco/img/2_character_pepe/3_jump/J-33.png',
+        'img/img_pollo_locco/img/2_character_pepe/3_jump/J-34.png',
+        'img/img_pollo_locco/img/2_character_pepe/3_jump/J-35.png', 
+        'img/img_pollo_locco/img/2_character_pepe/3_jump/J-36.png',
+        'img/img_pollo_locco/img/2_character_pepe/3_jump/J-37.png',
+        'img/img_pollo_locco/img/2_character_pepe/3_jump/J-38.png',
+        'img/img_pollo_locco/img/2_character_pepe/3_jump/J-39.png'       
+        ];
 
     IMAGES_IDLE = [  
           'img/img_pollo_locco/img/2_character_pepe/1_idle/idle/I-1.png',
@@ -31,6 +44,8 @@ world; // Reference to the world instance
        
         this.loadImages(this.IMAGES_IDLE);
         this.loadImages(this.IMAGES_WALKING);
+        this.loadImages(this.IMAGES_JUMPING);
+        this.applyGravity(); // Apply gravity to the character
         this.animate();
     }
 
@@ -39,21 +54,35 @@ world; // Reference to the world instance
 
         setInterval(() => {
             if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) { // Ensure character doesn't move right if at the right edge
-                this.otherDirection = false; // Set direction to right
-                this.x += this.speed;}
-            if (this.world.keyboard.LEFT && this.x > 0 ) { // Ensure character doesn't move left if at the left edge
-                this.otherDirection = true; // Set direction to left
-                this.x -= this.speed; // Move character left (negative movement)
+             
+                this.moveRight(); // Call the moveRight method
+              
             }
+            if (this.world.keyboard.LEFT && this.x > 0 ) { // Ensure character doesn't move left if at the left edge
+               this.moveLeft(); // Call the moveLeft method
+            
+            }
+
+            if (this.world.keyboard.UP && !this.isAboveGround()) { // Check if UP key is pressed and character is above ground
+                // Nur springen erlauben, wenn wir auf dem Boden sind
+                this.jump(20); // Call the jump method
+            }
+
+
         // Set camera so character stays centered in the canvas
         this.world.camera_x = -this.x + this.world.canvas.width / 2 - this.width / 2;
         }, 1000 / 32); // 60 frames per second for movement
 
+        setInterval(() => {
+        if(this.isAboveGround() || this.speedY > 0) {
+        this.playAnimation(this.IMAGES_JUMPING);
+        }}, 1000 / 20); // 60 frames per second for movement
 
         setInterval(() => {
+            {
             if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
-              this.playWalkingAnimation(this.IMAGES_WALKING);
-            }
+              this.playAnimation(this.IMAGES_WALKING);
+            }}
         }, 1000 / 15); // 15 frames per second for walking
 
         // Idle animation - slower (5 frames per second)
@@ -73,8 +102,24 @@ world; // Reference to the world instance
         }, 1000 / 5); // 5 frames per second for idle animation
     }
 
-jump() {
+jump(howhigh) {
+    this.speedY = howhigh; // Set the vertical speed for jumping
     console.log("character is jumping");
+}
+
+
+
+moveRight() {
+    
+           this.otherDirection = false; // Set direction to right
+        this.x += this.speed; // Move the object to the right
+ 
+}
+
+moveLeft() {
+  
+           this.otherDirection = false; // Set direction to right
+            this.x -= this.speed; // Move the cloud to the left
 }
 
 

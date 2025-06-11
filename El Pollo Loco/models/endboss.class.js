@@ -33,6 +33,6 @@ animate() {
 this.moveLeft(); // Start moving left
 
     setInterval(() => {
-        this.playWalkingAnimation(this.IMAGES_WALKING);
+        this.playAnimation(this.IMAGES_WALKING);
     }, 1000 / 10); // 10 frames per second for walking
 }}
