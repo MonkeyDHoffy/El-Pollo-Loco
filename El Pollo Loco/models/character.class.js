@@ -59,7 +59,7 @@ world; // Reference to the world instance
               
             }
             if (this.world.keyboard.LEFT && this.x > 0 ) { // Ensure character doesn't move left if at the left edge
-               this.moveLeft(); // Call the moveLeft method
+               this.moveLeft(true); // Call the moveLeft method
             
             }
 
@@ -109,18 +109,6 @@ jump(howhigh) {
 
 
 
-moveRight() {
-    
-           this.otherDirection = false; // Set direction to right
-        this.x += this.speed; // Move the object to the right
- 
-}
-
-moveLeft() {
-  
-           this.otherDirection = false; // Set direction to right
-            this.x -= this.speed; // Move the cloud to the left
-}
 
 
 

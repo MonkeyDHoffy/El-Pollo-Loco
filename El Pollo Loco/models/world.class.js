@@ -78,7 +78,10 @@ addToMap(mobject){
     if(mobject.otherDirection) {
         this.flipImage(mobject); // Spiegelt das Bild, wenn otherDirection wahr ist
     }
-    this.ctx.drawImage(mobject.img, mobject.x, mobject.y, mobject.width, mobject.height);
+
+    mobject.draw(this.ctx); // Zeichnet das Objekt auf den Kontext des Canvas
+    mobject.drawFrame(this.ctx); // Zeichnet den Frame des Objekts, falls vorhanden
+  
     if(mobject.otherDirection) {
   this.flipImageBack(mobject); // Spiegelt das Bild zurück, um den ursprünglichen Zustand wiederherzustellen
     }
