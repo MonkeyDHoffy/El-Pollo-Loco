@@ -57,10 +57,10 @@ ctx.stroke(); // Zeichnet den Pfad auf das Canvas
     }
 
     playAnimation(images) {
-        let i = this.currentImageWalking % this.IMAGES_WALKING.length;
+        let i = this.currentImage % this.IMAGES_WALKING.length;
         let walkingPath = images[i];
         this.img = this.imageCache[walkingPath];
-        this.currentImageWalking++;
+        this.currentImage++;
     }
 
     moveRight() {
@@ -92,6 +92,19 @@ isColliding(mobject) {
            this.x < mobject.x + mobject.width &&
            this.y + this.height > mobject.y &&
            this.y < mobject.y + mobject.height;
-
 }
+
+     hit(damage) {
+    this.energy -= damage; // Decrease energy by 1 when hit
+        console.log("Character was hit! Energy:", this.energy);
+        if(this.isDead()) {
+            this.energy = 0; // Ensure energy doesn't go below 0
+            console.log("Character is dead!");
+        }
+    }
+
+    isDead() {
+        return this.energy <= 0; // Check if energy is 0 or less
+    }
+
 }

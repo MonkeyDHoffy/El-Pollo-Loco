@@ -30,6 +30,7 @@ constructor(canvas){
     this.keyboard = keyboard; // Speichert die Tastatursteuerung (muss extern definiert sein)
     this.draw(); // Startet die Zeichenroutine
     this.setWorld(); // Setzt die Referenz auf die Welt in allen Objekten
+    this.checkCollisions(); // Überprüft Kollisionen zwischen Charakter und Gegnern
 }
 
 // Setzt die Referenz auf die aktuelle Welt in allen relevanten Objekten
@@ -38,6 +39,22 @@ setWorld(){
     this.enemies.forEach(enemy => enemy.world = this); // Setzt die Welt für jeden Gegner
     this.clouds.forEach(cloud => cloud.world = this); // Setzt die Welt für jede Wolke
     this.backgroundObjects.forEach(bgo => bgo.world = this); // Setzt die Welt für jedes Hintergrundobjekt
+}
+
+checkCollisions(){
+    setInterval(() => {
+        // Hier können Kollisionsprüfungen zwischen Charakter und Gegnern erfolgen
+this.level.enemies.forEach(enemy => {
+            if (this.character.isColliding(enemy)) {
+                this.character.hit(5); // Ruft die hit-Methode des Charakters auf, wenn eine Kollision erkannt wird
+    this.character.speedY = 8; // gibt dem Charakter einen leichten "Sprung" nach oben
+    this.character.x -= 70;    // wirft den Charakter nach links
+                console.log("collision with", enemy); // Gibt eine Nachricht in der Konsole aus
+            }
+            
+        });
+      
+    }, 100); // Überprüft alle 100 Millisekunden auf Kollisionen
 }
 
 // Zeichnet alle Objekte auf das Canvas
@@ -76,14 +93,29 @@ addObjectsToMap(objects){
 // Zeichnet ein einzelnes Objekt auf das Canvas
 addToMap(mobject){
     if(mobject.otherDirection) {
-        this.flipImage(mobject); // Spiegelt das Bild, wenn otherDirection wahr ist
+      this.flipImage(mobject); // Spiegelt das Bild, wenn otherDirection wahr ist
     }
 
     mobject.draw(this.ctx); // Zeichnet das Objekt auf den Kontext des Canvas
     mobject.drawFrame(this.ctx); // Zeichnet den Frame des Objekts, falls vorhanden
   
     if(mobject.otherDirection) {
-  this.flipImageBack(mobject); // Spiegelt das Bild zurück, um den ursprünglichen Zustand wiederherzustellen
+ this.flipImageBack(mobject); // Spiegelt das Bild zurück, um den ursprünglichen Zustand wiederherzustellen
     }
 }
+
+flipImage(mobject) {
+    this.ctx.save(); // Speichert den aktuellen Zustand des Kontextes
+        this.ctx.translate(mobject.width, 0); // Verschiebt den Ursprung des Koordinatensystems nach rechts um die Breite des Objekts
+        this.ctx.scale(-1, 1); // Spiegelt das Koordinatensystem horizontal
+        mobject.x = -mobject.x;// Passt die x-Position an, um die Spiegelung zu berücksichtigen
+
+}
+
+flipImageBack(mobject) {
+      mobject.x = -mobject.x;// Stellt die x-Position nach der Spiegelung wieder her
+        this.ctx.restore(); // Stellt den vorherigen Zustand des Kontextes wieder her
+}
+
+
 }

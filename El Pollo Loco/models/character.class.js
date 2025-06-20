@@ -1,7 +1,7 @@
 class Character extends MovableObject {
      height = 200;
         // y = 250;
-       
+       energy = 20; // Default energy for the character
         speed = 8; // Default speed for movement
 
         IMAGES_JUMPING = [
@@ -34,9 +34,21 @@ class Character extends MovableObject {
             'img/img_pollo_locco/img/2_character_pepe/2_walk/W-24.png',
             'img/img_pollo_locco/img/2_character_pepe/2_walk/W-25.png',
             'img/img_pollo_locco/img/2_character_pepe/2_walk/W-26.png',];
+
+
+            IMAGES_DEAD = [
+                'img/img_pollo_locco/img/2_character_pepe/5_dead/D-51.png',
+                'img/img_pollo_locco/img/2_character_pepe/5_dead/D-52.png',
+                'img/img_pollo_locco/img/2_character_pepe/5_dead/D-53.png',
+                'img/img_pollo_locco/img/2_character_pepe/5_dead/D-54.png',
+                'img/img_pollo_locco/img/2_character_pepe/5_dead/D-55.png',
+                'img/img_pollo_locco/img/2_character_pepe/5_dead/D-56.png',
+                'img/img_pollo_locco/img/2_character_pepe/5_dead/D-57.png'
+            ];
    
-currentImageWalking = 0;
-currentImageIdle = 0;
+// currentImageWalking = 0;
+// currentImageIdle = 0;
+currentImage = 0;
 world; // Reference to the world instance
 
     constructor(){
@@ -48,6 +60,8 @@ world; // Reference to the world instance
         this.applyGravity(); // Apply gravity to the character
         this.animate();
     }
+
+   
 
     animate() {
         // Walking animation - faster (10 frames per second)
@@ -74,9 +88,16 @@ world; // Reference to the world instance
         }, 1000 / 32); // 60 frames per second for movement
 
         setInterval(() => {
+if(this.isDead()) {
+    this.playAnimation(this.IMAGES_DEAD);
+}
+}, 1000 / 60); // 60 frames per second for movement
+
+        setInterval(() => {
+
         if(this.isAboveGround() || this.speedY > 0) {
         this.playAnimation(this.IMAGES_JUMPING);
-        }}, 1000 / 20); // 60 frames per second for movement
+        }}, 1000 / 20); 
 
         setInterval(() => {
             {
@@ -92,11 +113,11 @@ world; // Reference to the world instance
                 !this.world.keyboard.UP && !this.world.keyboard.DOWN && 
                 !this.world.keyboard.SPACE) {
                 
-                let idlePath = this.IMAGES_IDLE[this.currentImageIdle];
+                let idlePath = this.IMAGES_IDLE[this.currentImage];
                 this.img = this.imageCache[idlePath];
-                this.currentImageIdle++;
-                if (this.currentImageIdle >= this.IMAGES_IDLE.length) {
-                    this.currentImageIdle = 0;
+                this.currentImage++;
+                if (this.currentImage >= this.IMAGES_IDLE.length) {
+                    this.currentImage = 0;
                 }
             }
         }, 1000 / 5); // 5 frames per second for idle animation
