@@ -1,7 +1,7 @@
 class Character extends MovableObject {
      height = 200;
         // y = 250;
-       
+       energy = 100; // Default energy for the character
         speed = 8; // Default speed for movement
 
         IMAGES_JUMPING = [

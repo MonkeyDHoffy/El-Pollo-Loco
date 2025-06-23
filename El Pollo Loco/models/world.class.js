@@ -30,6 +30,7 @@ constructor(canvas){
     this.keyboard = keyboard; // Speichert die Tastatursteuerung (muss extern definiert sein)
     this.draw(); // Startet die Zeichenroutine
     this.setWorld(); // Setzt die Referenz auf die Welt in allen Objekten
+    this.checkCollisions(); // Überprüft Kollisionen zwischen dem Charakter und Gegnern
 }
 
 // Setzt die Referenz auf die aktuelle Welt in allen relevanten Objekten
@@ -39,6 +40,24 @@ setWorld(){
     this.clouds.forEach(cloud => cloud.world = this); // Setzt die Welt für jede Wolke
     this.backgroundObjects.forEach(bgo => bgo.world = this); // Setzt die Welt für jedes Hintergrundobjekt
 }
+
+checkCollisions() {
+    setInterval(() => {
+        // Überprüft Kollisionen mit normalen Gegnern
+        this.level.enemies.forEach(enemy => {
+            if (this.character.isColliding(enemy)) {
+                this.character.hit(5);
+                console.log("Kollision mit Gegner! Energie:", this.character.energy);
+            }
+        });
+        // Überprüft Kollision mit Endboss (falls vorhanden)
+        if (this.level.endboss && this.character.isColliding(this.level.endboss)) {
+            this.character.hit(10); // z.B. mehr Schaden beim Endboss
+            console.log("Kollision mit Endboss! Energie:", this.character.energy);
+        }
+    }, 1000);
+}
+
 
 // Zeichnet alle Objekte auf das Canvas
 draw(){
@@ -86,4 +105,5 @@ addToMap(mobject){
   this.flipImageBack(mobject); // Spiegelt das Bild zurück, um den ursprünglichen Zustand wiederherzustellen
     }
 }
+
 }

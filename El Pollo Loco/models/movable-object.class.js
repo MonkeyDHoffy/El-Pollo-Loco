@@ -94,4 +94,9 @@ isColliding(mobject) {
            this.y < mobject.y + mobject.height;
 
 }
+
+hit(damage) {
+    this.energy -= damage; // Verringert die Energie des Charakters um den angegebenen Schaden
+}
+
 }
