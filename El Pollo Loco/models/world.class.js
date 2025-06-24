@@ -35,10 +35,13 @@ constructor(canvas){
 
 // Setzt die Referenz auf die aktuelle Welt in allen relevanten Objekten
 setWorld(){
-    this.character.world = this; // Setzt die Welt für den Charakter
-    this.enemies.forEach(enemy => enemy.world = this); // Setzt die Welt für jeden Gegner
-    this.clouds.forEach(cloud => cloud.world = this); // Setzt die Welt für jede Wolke
-    this.backgroundObjects.forEach(bgo => bgo.world = this); // Setzt die Welt für jedes Hintergrundobjekt
+    this.character.world = this;
+    this.enemies.forEach(enemy => enemy.world = this);
+    this.clouds.forEach(cloud => cloud.world = this);
+    this.backgroundObjects.forEach(bgo => bgo.world = this);
+    
+    // Hinzufügen für Endbosse:
+    this.level.endboss.forEach(boss => boss.world = this);
 }
 
 checkCollisions() {
@@ -79,7 +82,7 @@ draw(){
     // Fügt die Gegner zur Karte hinzu
     this.addObjectsToMap(this.level.enemies); 
 
-    this.addToMap(this.level.endboss); // Fügt den Endboss zur Karte hinzu
+    this.addObjectsToMap(this.level.endboss); // Fügt den Endboss zur Karte hinzu
 
     this.ctx.translate(-this.camera_x, 0); // Setzt den Ursprung des Koordinatensystems zurück, um die Kamera-Position zu berücksichtigen
 

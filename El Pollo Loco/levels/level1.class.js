@@ -1,15 +1,19 @@
 const level1 = new Level(
-    [
+    [  // Enemies Array
         new Chicken(),
         new Chicken(),
         new Chicken()
     ],
-    new Endboss(),	
-    [
+    [  // Endbosse als Array (bisher ein einzelnes Objekt)
+        new Endboss(0),  // Erster Boss, weit rechts
+        new Endboss(1)   // Zweiter Boss, etwas weiter links
+    ],
+    [  // Clouds Array
         new Cloud(),
         new Cloud(),
         new Cloud()
     ],
+    // Backgroundobjects bleiben unverändert
     [
         // Links (negativ)
         new BackgroundObject("img/img_pollo_locco/img/5_background/layers/air.png", -719),

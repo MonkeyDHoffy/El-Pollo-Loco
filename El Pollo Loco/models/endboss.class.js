@@ -22,10 +22,14 @@ y = 165;
 //     this.hitSound.volume = 0.2;
 //   }
 
-constructor() {
+constructor(index = 0) {
     super().loadImage(this.IMAGES_WALKING[0]);
     this.loadImages(this.IMAGES_WALKING);
-    this.x = 700;
+    
+    // Platziere den Endboss basierend auf seinem Index
+    // Der erste Boss erscheint weiter rechts als der zweite Boss usw.
+    this.x = 2000 - (index * 500);
+    
     this.animate();
 }
 
