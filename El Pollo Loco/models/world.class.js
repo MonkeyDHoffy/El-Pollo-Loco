@@ -24,13 +24,17 @@ camera_x = 0; // X-Position der Kamera, die die Ansicht verschiebt
 
 
 // Konstruktor, der beim Erstellen einer neuen World-Instanz aufgerufen wird
-constructor(canvas){
-    this.ctx = canvas.getContext("2d"); // Holt sich den 2D-Kontext des Canvas
-    this.canvas = canvas; // Speichert das Canvas-Element
-    this.keyboard = keyboard; // Speichert die Tastatursteuerung (muss extern definiert sein)
-    this.draw(); // Startet die Zeichenroutine
-    this.setWorld(); // Setzt die Referenz auf die Welt in allen Objekten
-    this.checkCollisions(); // Überprüft Kollisionen zwischen dem Charakter und Gegnern
+constructor(canvas) {
+    this.ctx = canvas.getContext("2d");
+    this.canvas = canvas;
+    this.keyboard = keyboard;
+    
+    // Füge einen Münzzähler hinzu
+    this.coinScore = 0;
+    
+    this.draw();
+    this.setWorld();
+    this.checkCollisions();
 }
 
 // Setzt die Referenz auf die aktuelle Welt in allen relevanten Objekten
@@ -64,7 +68,31 @@ checkCollisions() {
                 console.log("Kollision mit Endboss! Energie:", this.character.energy);
             }
         });
-    }, 333);
+        // Kollisionsprüfung für Münzen
+        this.level.coins.forEach((coin, index) => {
+            if (this.character.isColliding(coin)) {
+                // Münze einsammeln
+                this.collectCoin(coin, index);
+            }
+        });
+    }, 100);  // Häufigere Überprüfung für Münzen (besseres Spielgefühl)
+}
+
+/**
+ * Sammelt eine Münze ein und entfernt sie aus dem Spiel
+ * @param {Coin} coin - Die eingesammelte Münze
+ * @param {number} index - Der Index der Münze im coins-Array
+ */
+collectCoin(coin, index) {
+    // Münze aus dem Array entfernen
+    this.level.coins.splice(index, 1);
+    
+    // Score erhöhen (muss noch implementiert werden)
+    this.coinScore += 1;
+    console.log('Münze gesammelt! Score:', this.coinScore);
+    
+    // Optional: Sound abspielen
+    // this.playCoinSound();
 }
 
 
@@ -83,6 +111,8 @@ draw(){
     this.addObjectsToMap(this.level.enemies); 
 
     this.addObjectsToMap(this.level.endboss); // Fügt den Endboss zur Karte hinzu
+
+    this.addObjectsToMap(this.level.coins); 
 
     this.ctx.translate(-this.camera_x, 0); // Setzt den Ursprung des Koordinatensystems zurück, um die Kamera-Position zu berücksichtigen
 
