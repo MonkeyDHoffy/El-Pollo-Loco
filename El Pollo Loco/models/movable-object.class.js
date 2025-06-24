@@ -102,7 +102,7 @@ hit(damage) {
 }
 }
 
-isDEAD() {
+isDead() {
     return this.energy == 0; // Gibt true zurück, wenn die Energie des Charakters 0 oder weniger ist    
 
 }
