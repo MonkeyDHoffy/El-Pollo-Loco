@@ -64,7 +64,7 @@ checkCollisions() {
                 console.log("Kollision mit Endboss! Energie:", this.character.energy);
             }
         });
-    }, 1000);
+    }, 333);
 }
 
 

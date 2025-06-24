@@ -97,6 +97,13 @@ isColliding(mobject) {
 
 hit(damage) {
     this.energy -= damage; // Verringert die Energie des Charakters um den angegebenen Schaden
+    if (this.energy < 0) {
+        this.energy = 0; // Stellt sicher, dass die Energie
+}
 }
 
+isDEAD() {
+    return this.energy == 0; // Gibt true zurück, wenn die Energie des Charakters 0 oder weniger ist    
+
+}
 }

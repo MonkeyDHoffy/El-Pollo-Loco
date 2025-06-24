@@ -34,8 +34,18 @@ class Character extends MovableObject {
             'img/img_pollo_locco/img/2_character_pepe/2_walk/W-24.png',
             'img/img_pollo_locco/img/2_character_pepe/2_walk/W-25.png',
             'img/img_pollo_locco/img/2_character_pepe/2_walk/W-26.png',];
-   
-currentImageWalking = 0;
+
+            IMAGES_DEAD = [
+                'img/img_pollo_locco/img/2_character_pepe/5_dead/D-51.png',
+                'img/img_pollo_locco/img/2_character_pepe/5_dead/D-52.png',
+                'img/img_pollo_locco/img/2_character_pepe/5_dead/D-53.png',
+                'img/img_pollo_locco/img/2_character_pepe/5_dead/D-54.png',
+                'img/img_pollo_locco/img/2_character_pepe/5_dead/D-55.png',
+                'img/img_pollo_locco/img/2_character_pepe/5_dead/D-56.png',
+                'img/img_pollo_locco/img/2_character_pepe/5_dead/D-57.png'
+            ];
+
+            currentImageWalking = 0;
 currentImageIdle = 0;
 world; // Reference to the world instance
 
@@ -45,6 +55,7 @@ world; // Reference to the world instance
         this.loadImages(this.IMAGES_IDLE);
         this.loadImages(this.IMAGES_WALKING);
         this.loadImages(this.IMAGES_JUMPING);
+        this.loadImages(this.IMAGES_DEAD);
         this.applyGravity(); // Apply gravity to the character
         this.animate();
     }
@@ -72,6 +83,12 @@ world; // Reference to the world instance
         // Set camera so character stays centered in the canvas
         this.world.camera_x = -this.x + this.world.canvas.width / 2 - this.width / 2;
         }, 1000 / 32); // 60 frames per second for movement
+
+        setInterval(() => {
+            if (this.isDead()) {
+                this.playAnimation(this.IMAGES_DEAD);
+            }
+        }, 50);
 
         setInterval(() => {
         if(this.isAboveGround() || this.speedY > 0) {
