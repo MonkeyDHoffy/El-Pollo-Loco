@@ -51,10 +51,16 @@ checkCollisions() {
             }
         });
         // Überprüft Kollision mit Endboss (falls vorhanden)
-        if (this.level.endboss && this.character.isColliding(this.level.endboss)) {
-            this.character.hit(10); // z.B. mehr Schaden beim Endboss
-            console.log("Kollision mit Endboss! Energie:", this.character.energy);
-        }
+        // if (this.level.endboss && this.character.isColliding(this.level.endboss)) {
+        //     this.character.hit(10); // z.B. mehr Schaden beim Endboss
+        //     console.log("Kollision mit Endboss! Energie:", this.character.energy);
+        // }
+        this.level.endboss.forEach(endboss => {
+            if (this.character.isColliding(endboss)) {
+                this.character.hit(10); // z.B. mehr Schaden beim Endboss
+                console.log("Kollision mit Endboss! Energie:", this.character.energy);
+            }
+        });
     }, 1000);
 }
 
@@ -91,6 +97,21 @@ addObjectsToMap(objects){
         this.addToMap(object);
     });
 }
+
+    
+flipImage(mobject) {
+    this.ctx.save(); // Speichert den aktuellen Zustand des Kontextes
+        this.ctx.translate(mobject.width, 0); // Verschiebt den Ursprung des Koordinatensystems nach rechts um die Breite des Objekts
+        this.ctx.scale(-1, 1); // Spiegelt das Koordinatensystem horizontal
+        mobject.x = -mobject.x;// Passt die x-Position an, um die Spiegelung zu berücksichtigen
+
+}
+
+flipImageBack(mobject) {
+      mobject.x = -mobject.x;// Stellt die x-Position nach der Spiegelung wieder her
+        this.ctx.restore(); // Stellt den vorherigen Zustand des Kontextes wieder her
+}
+
 
 // Zeichnet ein einzelnes Objekt auf das Canvas
 addToMap(mobject){
