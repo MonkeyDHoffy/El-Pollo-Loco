@@ -1,4 +1,5 @@
 class MovableObject {
+    currentImage = 0; // Aktuelles Bild für die Animation
     x = 120;
     y = 250;
     img;
@@ -27,13 +28,40 @@ class MovableObject {
     }
 
     loadImage(path) {
-        this.img = new Image();
-        this.img.src = path;
+        try {
+            this.img = new Image();
+            this.img.onload = () => {
+                // Das Bild wurde erfolgreich geladen
+            };
+            this.img.onerror = () => {
+                console.error('Failed to load image:', path);
+            };
+            this.img.src = path;
+        } catch (e) {
+            console.error('Error loading image:', e);
+        }
     }
 
     draw(ctx) {
-         ctx.drawImage(this.img, this.x, this.y, this.width, this.height); // Zeichnet das Bild des Objekts auf das Canva
-
+        try {
+            // Überprüfe, ob this.img gültig ist, bevor wir versuchen es zu zeichnen
+            if (this.img && this.img.complete && this.img.naturalWidth > 0) {
+                ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+            } else {
+                // Zeige in der Entwicklungsphase ein Platzhalter-Rechteck
+                this.playAnimation(this.IMAGES_IDLE); // Sicherstellen, dass ein Bild gesetzt ist
+                ctx.fillRect(this.x, this.y, this.width, this.height);
+                console.warn('Image not fully loaded for', this.constructor.name);
+            }
+        } catch (e) {
+            console.error('Error drawing image:', e);
+            console.info('Object info:', {
+                type: this.constructor.name,
+                image: this.img,
+                position: { x: this.x, y: this.y },
+                size: { width: this.width, height: this.height }
+            });
+        }
     }
 
     drawFrame(ctx) {
@@ -50,18 +78,44 @@ ctx.stroke(); // Zeichnet den Pfad auf das Canvas
      * @param {string[]} arr - Ein Array von Bildpfaden, die geladen werden sollen.
      */
     loadImages(arr) {
+        if (!arr || !Array.isArray(arr)) {
+            console.error('Invalid images array provided');
+            return;
+        }
+        
         arr.forEach((path) => {
-            let img = new Image();
-            img.src = path;
-            this.imageCache[path] = img;
+            try {
+                let img = new Image();
+                img.onload = () => {
+                    // Das Bild wurde erfolgreich in den Cache geladen
+                };
+                img.onerror = () => {
+                    console.error('Failed to load image for cache:', path);
+                };
+                img.src = path;
+                this.imageCache[path] = img;
+            } catch (e) {
+                console.error('Error caching image:', e, 'Path:', path);
+            }
         });
     }
 
     playAnimation(images) {
-        let i = this.currentImageWalking % this.images.length;
-        let walkingPath = images[i];
-        this.img = this.imageCache[walkingPath];
-        this.currentImageWalking++;
+        if (!images || images.length === 0) {
+            console.error('No images provided for animation');
+            return;
+        }
+        
+        // Verwende die Länge des übergebenen images-Arrays statt this.images
+        let i = this.currentImage % images.length;
+        let path = images[i];
+        
+        if (this.imageCache[path]) {
+            this.img = this.imageCache[path];
+            this.currentImage++;
+        } else {
+            console.error('Image not found in cache:', path);
+        }
     }
 
     moveRight() {
@@ -109,7 +163,7 @@ hit(damage) {
 isHurt() {
 let timepassed = new Date().getTime() - this.lastHit; // Berechnet die Zeit seit dem letzten Treffer
 timepassed = timepassed / 1000; // Konvertiert die Zeit in Sekunden
-return timepassed < 2; // Gibt true zurück, wenn weniger als 1 Sekunde
+return timepassed < 0.3; // Gibt true zurück, wenn weniger als 1 Sekunde
 }
 
 isDead() {

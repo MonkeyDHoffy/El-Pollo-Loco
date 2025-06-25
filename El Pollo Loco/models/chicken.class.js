@@ -1,7 +1,7 @@
 class Chicken extends MovableObject{
 
     speed = 0.9; // Default speed for movement
-            currentImageWalking = 0;
+        
             IMAGES_WALKING = [
                 'img/img_pollo_locco/img/3_enemies_chicken/chicken_normal/1_walk/1_w.png',
                 'img/img_pollo_locco/img/3_enemies_chicken/chicken_normal/1_walk/2_w.png',

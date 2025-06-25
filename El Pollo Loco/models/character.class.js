@@ -52,18 +52,20 @@ class Character extends MovableObject {
                 'img/img_pollo_locco/img/2_character_pepe/5_dead/D-57.png'
             ];
 
-            currentImageWalking = 0;
-currentImageIdle = 0;
 world; // Reference to the world instance
 
-    constructor(){
+    constructor() {
+        // Erst das Bild laden
         super().loadImage('img/img_pollo_locco/img/2_character_pepe/1_idle/idle/I-1.png');
-       
+        
+        console.log('Verifying image loading...');
+        // Dann die Bilder cachen
         this.loadImages(this.IMAGES_IDLE);
         this.loadImages(this.IMAGES_WALKING);
         this.loadImages(this.IMAGES_JUMPING);
         this.loadImages(this.IMAGES_DEAD);
         this.loadImages(this.IMAGES_HURT);
+        
         this.applyGravity(); // Apply gravity to the character
         this.animate();
     }
@@ -111,11 +113,11 @@ world; // Reference to the world instance
                 !this.world.keyboard.UP && !this.world.keyboard.DOWN && 
                 !this.world.keyboard.SPACE) {
                 
-                let idlePath = this.IMAGES_IDLE[this.currentImageIdle];
+                let idlePath = this.IMAGES_IDLE[this.currentImage];
                 this.img = this.imageCache[idlePath];
-                this.currentImageIdle++;
-                if (this.currentImageIdle >= this.IMAGES_IDLE.length) {
-                    this.currentImageIdle = 0;
+                this.currentImage++;
+                if (this.currentImage >= this.IMAGES_IDLE.length) {
+                    this.currentImage = 0;
                 }
             }
         }, 1000 / 5); // 5 frames per second for idle animation
