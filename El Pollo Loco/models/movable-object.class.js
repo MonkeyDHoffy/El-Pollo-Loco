@@ -9,6 +9,7 @@ class MovableObject {
     otherDirection = false;
     speedY = 0;
     acceleration = 1;
+    lastHit = 0;
 
     applyGravity() {
         setInterval(() => {
@@ -57,7 +58,7 @@ ctx.stroke(); // Zeichnet den Pfad auf das Canvas
     }
 
     playAnimation(images) {
-        let i = this.currentImageWalking % this.IMAGES_WALKING.length;
+        let i = this.currentImageWalking % this.images.length;
         let walkingPath = images[i];
         this.img = this.imageCache[walkingPath];
         this.currentImageWalking++;
@@ -99,7 +100,16 @@ hit(damage) {
     this.energy -= damage; // Verringert die Energie des Charakters um den angegebenen Schaden
     if (this.energy < 0) {
         this.energy = 0; // Stellt sicher, dass die Energie
+} else{
+        this.lastHit = new Date().getTime(); // Speichert den Zeitpunkt des letzten Treffers
+    }
 }
+
+
+isHurt() {
+let timepassed = new Date().getTime() - this.lastHit; // Berechnet die Zeit seit dem letzten Treffer
+timepassed = timepassed / 1000; // Konvertiert die Zeit in Sekunden
+return timepassed < 2; // Gibt true zurück, wenn weniger als 1 Sekunde
 }
 
 isDead() {

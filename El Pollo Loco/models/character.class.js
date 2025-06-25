@@ -27,6 +27,7 @@ class Character extends MovableObject {
             'img/img_pollo_locco/img/2_character_pepe/1_idle/idle/I-8.png',
             'img/img_pollo_locco/img/2_character_pepe/1_idle/idle/I-9.png',
             'img/img_pollo_locco/img/2_character_pepe/1_idle/idle/I-10.png'];
+
     IMAGES_WALKING = [
         'img/img_pollo_locco/img/2_character_pepe/2_walk/W-21.png',
             'img/img_pollo_locco/img/2_character_pepe/2_walk/W-22.png',
@@ -34,6 +35,12 @@ class Character extends MovableObject {
             'img/img_pollo_locco/img/2_character_pepe/2_walk/W-24.png',
             'img/img_pollo_locco/img/2_character_pepe/2_walk/W-25.png',
             'img/img_pollo_locco/img/2_character_pepe/2_walk/W-26.png',];
+
+            IMAGES_HURT = [
+                'img/img_pollo_locco/img/2_character_pepe/4_hurt/H-41.png',
+                'img/img_pollo_locco/img/2_character_pepe/4_hurt/H-42.png',
+                'img/img_pollo_locco/img/2_character_pepe/4_hurt/H-43.png',
+            ];
 
             IMAGES_DEAD = [
                 'img/img_pollo_locco/img/2_character_pepe/5_dead/D-51.png',
@@ -56,6 +63,7 @@ world; // Reference to the world instance
         this.loadImages(this.IMAGES_WALKING);
         this.loadImages(this.IMAGES_JUMPING);
         this.loadImages(this.IMAGES_DEAD);
+        this.loadImages(this.IMAGES_HURT);
         this.applyGravity(); // Apply gravity to the character
         this.animate();
     }
@@ -86,21 +94,15 @@ world; // Reference to the world instance
 
         setInterval(() => {
             if (this.isDead()) {
-                this.playAnimation(this.IMAGES_DEAD);
+            this.playAnimation(this.IMAGES_DEAD);
+            } else if (this.isHurt()) {
+            this.playAnimation(this.IMAGES_HURT);
+            } else if (this.isAboveGround() || this.speedY > 0) {
+            this.playAnimation(this.IMAGES_JUMPING);
+            } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
+            this.playAnimation(this.IMAGES_WALKING);
             }
         }, 50);
-
-        setInterval(() => {
-        if(this.isAboveGround() || this.speedY > 0) {
-        this.playAnimation(this.IMAGES_JUMPING);
-        }}, 1000 / 20); // 60 frames per second for movement
-
-        setInterval(() => {
-            {
-            if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
-              this.playAnimation(this.IMAGES_WALKING);
-            }}
-        }, 1000 / 15); // 15 frames per second for walking
 
         // Idle animation - slower (5 frames per second)
         setInterval(() => {
