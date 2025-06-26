@@ -1,10 +1,9 @@
 class Character extends MovableObject {
-     height = 200;
-        // y = 250;
-       energy = 100; // Default energy for the character
-        speed = 8; // Default speed for movement
+    height = 200;
+    energy = 100;
+    speed = 8;
 
-        IMAGES_JUMPING = [
+    IMAGES_JUMPING = [
         'img/img_pollo_locco/img/2_character_pepe/3_jump/J-31.png',
         'img/img_pollo_locco/img/2_character_pepe/3_jump/J-32.png',
         'img/img_pollo_locco/img/2_character_pepe/3_jump/J-33.png',
@@ -14,101 +13,94 @@ class Character extends MovableObject {
         'img/img_pollo_locco/img/2_character_pepe/3_jump/J-37.png',
         'img/img_pollo_locco/img/2_character_pepe/3_jump/J-38.png',
         'img/img_pollo_locco/img/2_character_pepe/3_jump/J-39.png'       
-        ];
+    ];
 
     IMAGES_IDLE = [  
-          'img/img_pollo_locco/img/2_character_pepe/1_idle/idle/I-1.png',
-            'img/img_pollo_locco/img/2_character_pepe/1_idle/idle/I-2.png',
-            'img/img_pollo_locco/img/2_character_pepe/1_idle/idle/I-3.png',
-            'img/img_pollo_locco/img/2_character_pepe/1_idle/idle/I-4.png',
-            'img/img_pollo_locco/img/2_character_pepe/1_idle/idle/I-5.png',
-            'img/img_pollo_locco/img/2_character_pepe/1_idle/idle/I-6.png',
-            'img/img_pollo_locco/img/2_character_pepe/1_idle/idle/I-7.png',
-            'img/img_pollo_locco/img/2_character_pepe/1_idle/idle/I-8.png',
-            'img/img_pollo_locco/img/2_character_pepe/1_idle/idle/I-9.png',
-            'img/img_pollo_locco/img/2_character_pepe/1_idle/idle/I-10.png'];
+        'img/img_pollo_locco/img/2_character_pepe/1_idle/idle/I-1.png',
+        'img/img_pollo_locco/img/2_character_pepe/1_idle/idle/I-2.png',
+        'img/img_pollo_locco/img/2_character_pepe/1_idle/idle/I-3.png',
+        'img/img_pollo_locco/img/2_character_pepe/1_idle/idle/I-4.png',
+        'img/img_pollo_locco/img/2_character_pepe/1_idle/idle/I-5.png',
+        'img/img_pollo_locco/img/2_character_pepe/1_idle/idle/I-6.png',
+        'img/img_pollo_locco/img/2_character_pepe/1_idle/idle/I-7.png',
+        'img/img_pollo_locco/img/2_character_pepe/1_idle/idle/I-8.png',
+        'img/img_pollo_locco/img/2_character_pepe/1_idle/idle/I-9.png',
+        'img/img_pollo_locco/img/2_character_pepe/1_idle/idle/I-10.png'
+    ];
 
     IMAGES_WALKING = [
         'img/img_pollo_locco/img/2_character_pepe/2_walk/W-21.png',
-            'img/img_pollo_locco/img/2_character_pepe/2_walk/W-22.png',
-            'img/img_pollo_locco/img/2_character_pepe/2_walk/W-23.png',
-            'img/img_pollo_locco/img/2_character_pepe/2_walk/W-24.png',
-            'img/img_pollo_locco/img/2_character_pepe/2_walk/W-25.png',
-            'img/img_pollo_locco/img/2_character_pepe/2_walk/W-26.png',];
+        'img/img_pollo_locco/img/2_character_pepe/2_walk/W-22.png',
+        'img/img_pollo_locco/img/2_character_pepe/2_walk/W-23.png',
+        'img/img_pollo_locco/img/2_character_pepe/2_walk/W-24.png',
+        'img/img_pollo_locco/img/2_character_pepe/2_walk/W-25.png',
+        'img/img_pollo_locco/img/2_character_pepe/2_walk/W-26.png'
+    ];
 
-            IMAGES_HURT = [
-                'img/img_pollo_locco/img/2_character_pepe/4_hurt/H-41.png',
-                'img/img_pollo_locco/img/2_character_pepe/4_hurt/H-42.png',
-                'img/img_pollo_locco/img/2_character_pepe/4_hurt/H-43.png',
-            ];
+    IMAGES_HURT = [
+        'img/img_pollo_locco/img/2_character_pepe/4_hurt/H-41.png',
+        'img/img_pollo_locco/img/2_character_pepe/4_hurt/H-42.png',
+        'img/img_pollo_locco/img/2_character_pepe/4_hurt/H-43.png'
+    ];
 
-            IMAGES_DEAD = [
-                'img/img_pollo_locco/img/2_character_pepe/5_dead/D-51.png',
-                'img/img_pollo_locco/img/2_character_pepe/5_dead/D-52.png',
-                'img/img_pollo_locco/img/2_character_pepe/5_dead/D-53.png',
-                'img/img_pollo_locco/img/2_character_pepe/5_dead/D-54.png',
-                'img/img_pollo_locco/img/2_character_pepe/5_dead/D-55.png',
-                'img/img_pollo_locco/img/2_character_pepe/5_dead/D-56.png',
-                'img/img_pollo_locco/img/2_character_pepe/5_dead/D-57.png'
-            ];
+    IMAGES_DEAD = [
+        'img/img_pollo_locco/img/2_character_pepe/5_dead/D-51.png',
+        'img/img_pollo_locco/img/2_character_pepe/5_dead/D-52.png',
+        'img/img_pollo_locco/img/2_character_pepe/5_dead/D-53.png',
+        'img/img_pollo_locco/img/2_character_pepe/5_dead/D-54.png',
+        'img/img_pollo_locco/img/2_character_pepe/5_dead/D-55.png',
+        'img/img_pollo_locco/img/2_character_pepe/5_dead/D-56.png',
+        'img/img_pollo_locco/img/2_character_pepe/5_dead/D-57.png'
+    ];
 
-world; // Reference to the world instance
+    world;
 
     constructor() {
-        // Erst das Bild laden
         super().loadImage('img/img_pollo_locco/img/2_character_pepe/1_idle/idle/I-1.png');
         
         console.log('Verifying image loading...');
-        // Dann die Bilder cachen
         this.loadImages(this.IMAGES_IDLE);
         this.loadImages(this.IMAGES_WALKING);
         this.loadImages(this.IMAGES_JUMPING);
         this.loadImages(this.IMAGES_DEAD);
         this.loadImages(this.IMAGES_HURT);
         
-        this.applyGravity(); // Apply gravity to the character
+        this.applyGravity();
         this.animate();
     }
 
+    // Controls character movement, animation and camera position
     animate() {
-        // Walking animation - faster (10 frames per second)
-
         setInterval(() => {
-            if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) { // Ensure character doesn't move right if at the right edge
-             
-                this.moveRight(); // Call the moveRight method
-              
+            if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
+                this.moveRight();
             }
-            if (this.world.keyboard.LEFT && this.x > 0 ) { // Ensure character doesn't move left if at the left edge
-               this.moveLeft(true); // Call the moveLeft method
-            
+            if (this.world.keyboard.LEFT && this.x > 0) {
+                this.moveLeft(true);
             }
-
-            if (this.world.keyboard.UP && !this.isAboveGround()) { // Check if UP key is pressed and character is above ground
-                // Nur springen erlauben, wenn wir auf dem Boden sind
-                this.jump(20); // Call the jump method
+            if (this.world.keyboard.UP && !this.isAboveGround()) {
+                this.jump(20);
             }
 
+            // Update camera position
+            this.world.camera_x = -this.x + this.world.canvas.width / 2 - this.width / 2;
+        }, 1000 / 32);
 
-        // Set camera so character stays centered in the canvas
-        this.world.camera_x = -this.x + this.world.canvas.width / 2 - this.width / 2;
-        }, 1000 / 32); // 60 frames per second for movement
-
+        // Animation state management
         setInterval(() => {
             if (this.isDead()) {
-            this.playAnimation(this.IMAGES_DEAD);
+                this.playAnimation(this.IMAGES_DEAD);
             } else if (this.isHurt()) {
-            this.playAnimation(this.IMAGES_HURT);
+                this.playAnimation(this.IMAGES_HURT);
             } else if (this.isAboveGround() || this.speedY > 0) {
-            this.playAnimation(this.IMAGES_JUMPING);
+                this.playAnimation(this.IMAGES_JUMPING);
             } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
-            this.playAnimation(this.IMAGES_WALKING);
+                this.playAnimation(this.IMAGES_WALKING);
             }
         }, 50);
 
-        // Idle animation - slower (5 frames per second)
+        // Idle animation when not moving
         setInterval(() => {
-            // Check if NO keys are pressed
             if (!this.world.keyboard.RIGHT && !this.world.keyboard.LEFT && 
                 !this.world.keyboard.UP && !this.world.keyboard.DOWN && 
                 !this.world.keyboard.SPACE) {
@@ -120,17 +112,12 @@ world; // Reference to the world instance
                     this.currentImage = 0;
                 }
             }
-        }, 1000 / 5); // 5 frames per second for idle animation
+        }, 1000 / 5);
     }
 
-jump(howhigh) {
-    this.speedY = howhigh; // Set the vertical speed for jumping
-    console.log("character is jumping");
-}
-
-
-
-
-
-
+    // Makes character jump
+    jump(howhigh) {
+        this.speedY = howhigh;
+        console.log("character is jumping");
+    }
 }

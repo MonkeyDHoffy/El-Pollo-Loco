@@ -9,9 +9,7 @@ class Keyboard {
         this.bindKeyPressEvents();
     }
 
-    /**
-     * Binds the key press events to update the keyboard state
-     */
+    // Sets up event listeners for keyboard input
     bindKeyPressEvents() {
         document.addEventListener('keydown', (event) => {
             if (event.code === 'ArrowRight') {
