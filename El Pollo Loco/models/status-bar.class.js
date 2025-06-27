@@ -23,8 +23,8 @@ class StatusBar extends DrawableObject {
 
   setPercentage(percentage) {
     this.percentage = percentage;
-    let imagePath = this.IMAGES_LIFEPOINTS[this.resolveImageIndex()];
-    this.img = this.imageCache[imagePath];
+    let path = this.IMAGES_LIFEPOINTS[this.resolveImageIndex()];
+    this.img = this.imageCache[path];
   }
 
   resolveImageIndex() {
@@ -41,6 +41,5 @@ class StatusBar extends DrawableObject {
     } else {
       return 0; // 0% Lebenspunkte
     }
- }
-
+  }
 }
