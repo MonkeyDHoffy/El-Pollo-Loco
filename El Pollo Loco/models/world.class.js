@@ -39,7 +39,10 @@ class World {
     setWorld() {
         this.character.world = this;
         this.enemies.forEach(enemy => enemy.world = this);
-        this.clouds.forEach(cloud => cloud.world = this);
+        this.clouds.forEach(cloud => {
+            cloud.world = this;
+            cloud.animate(); // Make sure cloud animation starts
+        });
         this.backgroundObjects.forEach(bgo => bgo.world = this);
         this.level.endboss.forEach(boss => boss.world = this);
     }
