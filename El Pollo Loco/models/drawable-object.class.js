@@ -89,7 +89,18 @@ class DrawableObject {
             ctx.beginPath();
             ctx.lineWidth = "4";
             ctx.strokeStyle = "red";
-            ctx.rect(this.x, this.y, this.width, this.height);
+            
+            if (this instanceof Character) {
+                // Adjusted collision box for Character - smaller and lower
+                ctx.rect(this.x + 20, this.y + 90, this.width - 40, this.height - 100);
+            } else if (this instanceof Endboss) {
+                // Adjusted collision box for Endboss - slightly lower
+                ctx.rect(this.x + 10, this.y + 60, this.width - 20, this.height - 80);
+            } else {
+                // Normal collision box for Chicken
+                ctx.rect(this.x, this.y, this.width, this.height);
+            }
+            
             ctx.stroke();
         }
     }
