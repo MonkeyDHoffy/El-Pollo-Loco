@@ -12,7 +12,8 @@ class World {
     statusbar;
     coinstatusbar;
     bottlestatusbar;
-    totalCoinsInLevel; // Neue Eigenschaft
+    totalCoinsInLevel; 
+    throwableObjects = [new ThrowableObject()]; // Beispiel für ein Wurfobjekt
 
     // Konstruktor, der beim Erstellen einer neuen World-Instanz aufgerufen wird
     constructor(canvas) {
@@ -39,10 +40,7 @@ class World {
     setWorld() {
         this.character.world = this;
         this.enemies.forEach(enemy => enemy.world = this);
-        this.clouds.forEach(cloud => {
-            cloud.world = this;
-            cloud.animate(); // Make sure cloud animation starts
-        });
+        this.clouds.forEach(cloud => cloud.world = this);
         this.backgroundObjects.forEach(bgo => bgo.world = this);
         this.level.endboss.forEach(boss => boss.world = this);
     }
@@ -117,6 +115,8 @@ class World {
 
         this.ctx.translate(this.camera_x, 0);
         this.ctx.translate(-this.camera_x, 0);
+
+        this.addObjectsToMap(this.throwableObjects);
 
         // Speichert den Kontext von 'this', um ihn in der Callback-Funktion zu verwenden
         let self = this;
