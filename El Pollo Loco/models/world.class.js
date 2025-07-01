@@ -1,18 +1,17 @@
 // Definiert die Klasse World (Welt)
 class World {
-    // Hauptspielcharakter
-    character = new Character();
-    
+    character;
     level = level1;
     enemies = level1.enemies;
     clouds = level1.clouds;
     backgroundObjects = level1.backgroundObjects;
-    
     canvas;
     ctx;
     keyboard;
     camera_x = 0;
-    statusBar = new StatusBar(); // Statusleiste für Lebenspunkte und Münzen
+    statusbar;
+    coinstatusbar;
+    bottlestatusbar;
 
     // Konstruktor, der beim Erstellen einer neuen World-Instanz aufgerufen wird
     constructor(canvas) {
@@ -20,6 +19,12 @@ class World {
         this.canvas = canvas;
         this.keyboard = keyboard;
         this.coinScore = 0;
+        
+        this.statusbar = new StatusBar();
+        this.coinstatusbar = new CoinStatusBar();
+        this.bottlestatusbar = new BottleStatusBar();
+        
+        this.character = new Character();
         
         this.draw();
         this.setWorld();
@@ -43,7 +48,7 @@ class World {
                 if (this.character.isColliding(enemy)) {
                     this.character.hit(5);
                     console.log("Kollision mit Gegner! Energie:", this.character.energy);
-                    this.statusBar.setPercentage(this.character.energy);
+                    this.statusbar.setPercentage(this.character.energy);
                 }
             });
             
@@ -83,16 +88,22 @@ class World {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
         this.ctx.translate(this.camera_x, 0);
+
         this.addObjectsToMap(this.level.backgroundObjects);
-     
-        this.addToMap(this.character);
         this.addObjectsToMap(this.level.clouds);
+        this.addToMap(this.character);
         this.addObjectsToMap(this.level.enemies);
-        this.addObjectsToMap(this.level.endboss);
         this.addObjectsToMap(this.level.coins);
-            this.ctx.translate(-this.camera_x, 0);
-        this.addToMap(this.statusBar);
-         this.ctx.translate(this.camera_x, 0);
+        this.addObjectsToMap(this.level.endboss);
+
+        this.ctx.translate(-this.camera_x, 0);
+
+        // Alle drei StatusBars zeichnen
+        this.addToMap(this.statusbar);
+        this.addToMap(this.coinstatusbar);
+        this.addToMap(this.bottlestatusbar);
+
+        this.ctx.translate(this.camera_x, 0);
         this.ctx.translate(-this.camera_x, 0);
 
         // Speichert den Kontext von 'this', um ihn in der Callback-Funktion zu verwenden
