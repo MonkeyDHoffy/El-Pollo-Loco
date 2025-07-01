@@ -83,8 +83,14 @@ class DrawableObject {
         // Wenn das Bild noch nicht geladen ist, wird einfach das vorherige Bild beibehalten
     }
 
-    // Leere drawFrame Methode als Standard
+      // Draws collision frame for debugging
     drawFrame(ctx) {
-        // Keine Implementierung - wird in MovableObject überschrieben
+        if (this instanceof Character || this instanceof Chicken || this instanceof Endboss) {
+            ctx.beginPath();
+            ctx.lineWidth = "4";
+            ctx.strokeStyle = "red";
+            ctx.rect(this.x, this.y, this.width, this.height);
+            ctx.stroke();
+        }
     }
 }
