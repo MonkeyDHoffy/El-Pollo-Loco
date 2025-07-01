@@ -45,7 +45,7 @@ class DrawableObject {
       // Loads multiple images and stores them in cache
     loadImages(arr) {
         if (!arr || !Array.isArray(arr)) {
-            console.error('Invalid images array provided');
+            // console.error('Invalid images array provided');
             return;
         }
         
@@ -56,12 +56,12 @@ class DrawableObject {
                     // Bild erfolgreich geladen
                 };
                 img.onerror = () => {
-                    console.error('Failed to load image for cache:', path);
+                    // console.error('Failed to load image for cache:', path);
                 };
                 img.src = path;
                 this.imageCache[path] = img;
             } catch (e) {
-                console.error('Error caching image:', e, 'Path:', path);
+                // console.error('Error caching image:', e, 'Path:', path);
             }
         });
     }
@@ -69,7 +69,7 @@ class DrawableObject {
     // Plays animation by cycling through image array
     playAnimation(images) {
         if (!images || images.length === 0) {
-            console.error('No images provided for animation');
+            // console.error('No images provided for animation');
             return;
         }
         
@@ -81,5 +81,10 @@ class DrawableObject {
             this.currentImage++;
         }
         // Wenn das Bild noch nicht geladen ist, wird einfach das vorherige Bild beibehalten
+    }
+
+    // Leere drawFrame Methode als Standard
+    drawFrame(ctx) {
+        // Keine Implementierung - wird in MovableObject überschrieben
     }
 }
