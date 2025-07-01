@@ -12,6 +12,7 @@ class World {
     statusbar;
     coinstatusbar;
     bottlestatusbar;
+    totalCoinsInLevel; // Neue Eigenschaft
 
     // Konstruktor, der beim Erstellen einer neuen World-Instanz aufgerufen wird
     constructor(canvas) {
@@ -19,6 +20,9 @@ class World {
         this.canvas = canvas;
         this.keyboard = keyboard;
         this.coinScore = 0;
+        
+        // Speichere die ursprüngliche Anzahl der Coins im Level
+        this.totalCoinsInLevel = this.level.coins.length;
         
         this.statusbar = new StatusBar();
         this.coinstatusbar = new CoinStatusBar();
@@ -77,10 +81,15 @@ class World {
     collectCoin(coin, index) {
         // Münze aus dem Array entfernen
         this.level.coins.splice(index, 1);
-        
         // Score erhöhen
         this.coinScore += 1;
+        // Coins in der Character-Klasse erhöhen
+        this.character.coins += 1; 
+        // Berechne Prozentsatz basierend auf ursprünglicher Anzahl
+        let collectedPercentage = (this.character.coins / this.totalCoinsInLevel) * 100;    
+        this.coinstatusbar.setPercentage(collectedPercentage);  
         console.log('Münze gesammelt! Score:', this.coinScore);
+        console.log(`Coins gesammelt: ${this.character.coins}/${this.totalCoinsInLevel} (${Math.round(collectedPercentage)}%)`);
     }
 
     // Zeichnet alle Objekte auf das Canvas

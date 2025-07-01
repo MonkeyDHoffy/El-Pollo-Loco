@@ -1,6 +1,8 @@
 class Character extends MovableObject {
     height = 200;
     energy = 100;
+    coins = 0;
+    bottles = 0;
     speed = 8;
 
     IMAGES_JUMPING = [
