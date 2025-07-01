@@ -28,26 +28,23 @@ class ThrowableObject extends MovableObject {
         this.y = y;
         this.height = 60;
         this.width = 50;
-        this.throw(50, 50); // Beispielkoordinaten, anpassen nach Bedarf
+        this.throw(10, 130); // Beispielkoordinaten, anpassen nach Bedarf
     }
 
     throw(x, y) {
        this.x = x;
        this.y = y;
        this.speedY = 30;
-       this.speedX = 10;
        this.applyGravity();
-    this.throwInterval = setInterval(() => {
-        this.x += this.speedX;
-        this.y -= this.speedY;
-        this.speedY -= this.gravity;
+    setInterval(() => {
+        this.x += 10;
         this.playAnimation(this.IMAGES_ROTATION);
 
-        // Stop the interval if the object hits the ground (example: y >= ground level)
-        if (this.y >= 360) { // Adjust 360 to your ground level
-            clearInterval(this.throwInterval);
-            this.splash();
-        }
+        
+        // if (this.y >= 360) {
+        //     clearInterval(this.throwInterval);
+        //     this.splash();
+        // }
     }, 25);
     }
 
