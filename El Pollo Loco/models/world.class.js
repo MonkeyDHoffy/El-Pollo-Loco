@@ -13,7 +13,7 @@ class World {
     coinstatusbar;
     bottlestatusbar;
     totalCoinsInLevel; 
-    throwableObjects = [new ThrowableObject()]; // Beispiel für ein Wurfobjekt
+    throwableObjects = []; // Beispiel für ein Wurfobjekt
 
     // Konstruktor, der beim Erstellen einer neuen World-Instanz aufgerufen wird
     constructor(canvas) {
@@ -33,7 +33,7 @@ class World {
         
         this.draw();
         this.setWorld();
-        this.checkCollisions();
+        this.runWorld();
     }
 
     // Setzt die Referenz auf die aktuelle Welt in allen relevanten Objekten
@@ -46,32 +46,44 @@ class World {
     }
 
     // Überprüft regelmäßig Kollisionen zwischen dem Charakter und anderen Objekten
-    checkCollisions() {
+    runWorld() {
         setInterval(() => {
-            // Überprüft Kollisionen mit Gegnern
-            this.level.enemies.forEach(enemy => {
-                if (this.character.isColliding(enemy)) {
-                    this.character.hit(5);
-                    console.log("Kollision mit Gegner! Energie:", this.character.energy);
-                    this.statusbar.setPercentage(this.character.energy);
-                }
-            });
-            
-            // Überprüft Kollision mit Endboss
-            this.level.endboss.forEach(endboss => {
-                if (this.character.isColliding(endboss)) {
-                    this.character.hit(10);
-                    console.log("Kollision mit Endboss! Energie:", this.character.energy);
-                }
-            });
-            
-            // Überprüft Kollisionen mit Münzen
-            this.level.coins.forEach((coin, index) => {
-                if (this.character.isColliding(coin)) {
-                    this.collectCoin(coin, index);
-                }
-            });
+            this.checkCollisions();
+            this.checkThrowObjects();
         }, 100);
+    }
+
+    checkThrowObjects() { // Überprüft Kollisionen mit Wurfobjekten
+        if(this.keyboard.SPACE) {
+            let bottle = new ThrowableObject(this.character.x + 100, this.character.y + 50); // Wirft von der aktuellen Position des Charakters);
+            this.throwableObjects.push(bottle);
+        }
+    }
+
+    checkCollisions() { // Überprüft Kollisionen mit Gegnern
+        this.level.enemies.forEach(enemy => {
+            if (this.character.isColliding(enemy)) {
+                this.character.hit(5);
+                console.log("Kollision mit Gegner! Energie:", this.character.energy);
+                this.statusbar.setPercentage(this.character.energy);
+            }
+        });
+
+        // Überprüft Kollision mit Endboss
+        this.level.endboss.forEach(endboss => {
+            if (this.character.isColliding(endboss)) {
+                this.character.hit(10);
+                console.log("Kollision mit Endboss! Energie:", this.character.energy);
+                this.statusbar.setPercentage(this.character.energy);
+            }
+        });
+
+        // Überprüft Kollisionen mit Münzen
+        this.level.coins.forEach((coin, index) => {
+            if (this.character.isColliding(coin)) {
+                this.collectCoin(coin, index);
+            }
+        });
     }
 
     /**

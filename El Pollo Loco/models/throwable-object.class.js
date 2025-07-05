@@ -1,5 +1,5 @@
 class ThrowableObject extends MovableObject {
-    speedY = 30;
+    speedY = 10;
     speedX = 10;
     gravity = 2.5;
     
@@ -28,16 +28,14 @@ class ThrowableObject extends MovableObject {
         this.y = y;
         this.height = 60;
         this.width = 50;
-        this.throw(10, 130); // Beispielkoordinaten, anpassen nach Bedarf
+        this.throw(); // Beispielkoordinaten, anpassen nach Bedarf
     }
 
-    throw(x, y) {
-       this.x = x;
-       this.y = y;
-       this.speedY = 30;
+    throw() {
+       this.speedY = 10; // Reduced from 30 to 15 for lower throw
        this.applyGravity();
     setInterval(() => {
-        this.x += 10;
+        this.x += 15;
         this.playAnimation(this.IMAGES_ROTATION);
 
         
@@ -45,7 +43,7 @@ class ThrowableObject extends MovableObject {
         //     clearInterval(this.throwInterval);
         //     this.splash();
         // }
-    }, 25);
+    }, 28);
     }
 
     splash() {
