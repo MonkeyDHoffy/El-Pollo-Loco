@@ -13,6 +13,7 @@ class World {
     coinstatusbar;
     bottlestatusbar;
     totalCoinsInLevel; 
+    totalBottlesInLevel;
     throwableObjects = []; // Beispiel für ein Wurfobjekt
 
     // Konstruktor, der beim Erstellen einer neuen World-Instanz aufgerufen wird
@@ -24,6 +25,7 @@ class World {
         
         // Speichere die ursprüngliche Anzahl der Coins im Level
         this.totalCoinsInLevel = this.level.coins.length;
+        this.totalBottlesInLevel = this.level.bottles.length;
         
         this.statusbar = new StatusBar();
         this.coinstatusbar = new CoinStatusBar();
@@ -84,6 +86,13 @@ class World {
                 this.collectCoin(coin, index);
             }
         });
+
+        // Überprüft Kollisionen mit Flaschen
+        this.level.bottles.forEach((bottle, index) => {
+            if (this.character.isColliding(bottle)) {
+                this.collectBottle(bottle, index);
+            }
+        });
     }
 
     /**
@@ -105,6 +114,23 @@ class World {
         console.log(`Coins gesammelt: ${this.character.coins}/${this.totalCoinsInLevel} (${Math.round(collectedPercentage)}%)`);
     }
 
+    /**
+     * Sammelt eine Flasche ein und entfernt sie aus dem Spiel
+     * @param {Bottle} bottle - Die eingesammelte Flasche
+     * @param {number} index - Der Index der Flasche im bottles-Array
+     */
+    collectBottle(bottle, index) {
+        // Flasche aus dem Array entfernen
+        this.level.bottles.splice(index, 1);
+        // Bottles in der Character-Klasse erhöhen
+        this.character.bottles += 1; 
+        // Berechne Prozentsatz basierend auf ursprünglicher Anzahl
+        let collectedPercentage = (this.character.bottles / this.totalBottlesInLevel) * 100;    
+        this.bottlestatusbar.setPercentage(collectedPercentage);  
+        console.log('Flasche gesammelt! Bottles:', this.character.bottles);
+        console.log(`Bottles gesammelt: ${this.character.bottles}/${this.totalBottlesInLevel} (${Math.round(collectedPercentage)}%)`);
+    }
+
     // Zeichnet alle Objekte auf das Canvas
     draw() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -116,6 +142,7 @@ class World {
         this.addToMap(this.character);
         this.addObjectsToMap(this.level.enemies);
         this.addObjectsToMap(this.level.coins);
+        this.addObjectsToMap(this.level.bottles);
         this.addObjectsToMap(this.level.endboss);
 
         this.ctx.translate(-this.camera_x, 0);

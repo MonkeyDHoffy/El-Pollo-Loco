@@ -51,5 +51,12 @@ const level1 = new Level(
         new Coin(),
         new Coin(),
         new Coin()
+    ],
+    [  // Bottles - randomly placed
+        new Bottle(),
+        new Bottle(),
+        new Bottle(),
+        new Bottle(),
+        new Bottle()
     ]
 );
