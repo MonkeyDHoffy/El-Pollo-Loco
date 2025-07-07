@@ -54,8 +54,9 @@ class World {
             if (!this.isPaused) {
                 this.checkCollisions();
                 this.checkThrowObjects();
+                this.character.updateWarning();
             }
-        }, 100);
+        }, 10);
     }
 
     // Pausiert oder setzt das Spiel fort
@@ -72,18 +73,37 @@ class World {
     }
 
     checkCollisions() { // Überprüft Kollisionen mit Gegnern
-        this.level.enemies.forEach(enemy => {
+        this.level.enemies.forEach((enemy, index) => {
             if (this.character.isColliding(enemy)) {
-                this.character.hit(5);
-                console.log("Kollision mit Gegner! Energie:", this.character.energy);
-                this.statusbar.setPercentage(this.character.energy);
+                // Check if character is jumping on chicken
+                // Character must be falling AND above the chicken
+                if (this.character.speedY < 0 && 
+                    this.character.y + this.character.height - 30 < enemy.y + 20) {
+                    console.log("huhn besiegt");
+                    // Kill the chicken and show death animation
+                    enemy.die();
+                    // Make character bounce slightly
+                    this.character.speedY = 15;
+                    // Remove chicken after death animation
+                    setTimeout(() => {
+                        const chickenIndex = this.level.enemies.indexOf(enemy);
+                        if (chickenIndex > -1) {
+                            this.level.enemies.splice(chickenIndex, 1);
+                        }
+                    }, 500); // Show death animation for 500ms
+                } else {
+                    // Normal collision - character takes damage
+                    this.character.hit(1);
+                    console.log("Kollision mit Gegner! Energie:", this.character.energy);
+                    this.statusbar.setPercentage(this.character.energy);
+                }
             }
         });
 
         // Überprüft Kollision mit Endboss
         this.level.endboss.forEach(endboss => {
             if (this.character.isColliding(endboss)) {
-                this.character.hit(10);
+                this.character.hit(3);
                 console.log("Kollision mit Endboss! Energie:", this.character.energy);
                 this.statusbar.setPercentage(this.character.energy);
             }
@@ -153,6 +173,11 @@ class World {
         this.addObjectsToMap(this.level.coins);
         this.addObjectsToMap(this.level.bottles);
         this.addObjectsToMap(this.level.endboss);
+        
+        // Draw level marker
+        if (this.level.levelMarker) {
+            this.addToMap(this.level.levelMarker);
+        }
 
         this.ctx.translate(-this.camera_x, 0);
 
@@ -169,6 +194,11 @@ class World {
         // Pause-Overlay anzeigen
         if (this.isPaused) {
             this.drawPauseOverlay();
+        }
+
+        // Wrong direction warning anzeigen
+        if (this.character.showWrongDirectionWarning) {
+            this.drawWrongDirectionWarning();
         }
 
         // Speichert den Kontext von 'this', um ihn in der Callback-Funktion zu verwenden
@@ -189,6 +219,26 @@ class World {
         this.ctx.font = Math.min(this.canvas.width / 15, 48) + 'px Comic Sans MS';
         this.ctx.textAlign = 'center';
         this.ctx.fillText('PAUSED', this.canvas.width / 2, this.canvas.height / 2);
+        
+        this.ctx.restore();
+    }
+
+    // Zeichnet die "Wrong Direction" Warnung
+    drawWrongDirectionWarning() {
+        this.ctx.save();
+        this.ctx.fillStyle = 'rgba(255, 0, 0, 0.8)';
+        this.ctx.font = '32px Comic Sans MS';
+        this.ctx.textAlign = 'center';
+        this.ctx.fillStyle = '#fff';
+        this.ctx.strokeStyle = '#ff0000';
+        this.ctx.lineWidth = 3;
+        
+        let warningText = 'WRONG DIRECTION!';
+        let textX = this.canvas.width / 2;
+        let textY = this.canvas.height / 2 - 100;
+        
+        this.ctx.strokeText(warningText, textX, textY);
+        this.ctx.fillText(warningText, textX, textY);
         
         this.ctx.restore();
     }

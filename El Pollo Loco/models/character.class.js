@@ -56,6 +56,8 @@ class Character extends MovableObject {
     ];
 
     world;
+    showWrongDirectionWarning = false;
+    warningStartTime = 0;
 
     constructor() {
         super().loadImage('img/img_pollo_locco/img/2_character_pepe/1_idle/idle/I-1.png');
@@ -80,6 +82,10 @@ class Character extends MovableObject {
                 }
                 if (this.world.keyboard.LEFT && this.x > 0) {
                     this.moveLeft(true);
+                } else if (this.world.keyboard.LEFT && this.x <= 0) {
+                    // Character is at level start and trying to move left
+                    this.showWrongDirectionWarning = true;
+                    this.warningStartTime = Date.now();
                 }
                 if (this.world.keyboard.UP && !this.isAboveGround()) {
                     this.jump(20);
@@ -119,6 +125,13 @@ class Character extends MovableObject {
                 }
             }
         }, 1000 / 5);
+    }
+
+    // Check if warning should be hidden
+    updateWarning() {
+        if (this.showWrongDirectionWarning && Date.now() - this.warningStartTime > 2000) {
+            this.showWrongDirectionWarning = false;
+        }
     }
 
     // Makes character jump

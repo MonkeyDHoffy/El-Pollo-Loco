@@ -61,6 +61,18 @@ class MovableObject extends DrawableObject {
                this.y < mobject.y + mobject.height;
     }
 
+    // Checks if this object is above another object (for jump attacks)
+    isAboveObject(mobject) {
+        return this.y + this.height <= mobject.y + 50; // 50px tolerance
+    }
+
+    // Enhanced collision detection for jump attacks
+    isJumpingOn(mobject) {
+        return this.isColliding(mobject) && 
+               this.speedY < 0 && 
+               this.isAboveObject(mobject);
+    }
+
     // Reduces energy when hit
     hit(damage) {
         this.energy -= damage;
