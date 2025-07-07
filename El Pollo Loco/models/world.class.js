@@ -14,7 +14,8 @@ class World {
     bottlestatusbar;
     totalCoinsInLevel; 
     totalBottlesInLevel;
-    throwableObjects = []; // Beispiel für ein Wurfobjekt
+    throwableObjects = [];
+    isPaused = false;
 
     // Konstruktor, der beim Erstellen einer neuen World-Instanz aufgerufen wird
     constructor(canvas) {
@@ -50,9 +51,17 @@ class World {
     // Überprüft regelmäßig Kollisionen zwischen dem Charakter und anderen Objekten
     runWorld() {
         setInterval(() => {
-            this.checkCollisions();
-            this.checkThrowObjects();
+            if (!this.isPaused) {
+                this.checkCollisions();
+                this.checkThrowObjects();
+            }
         }, 100);
+    }
+
+    // Pausiert oder setzt das Spiel fort
+    togglePause() {
+        this.isPaused = !this.isPaused;
+        console.log('Game paused:', this.isPaused);
     }
 
     checkThrowObjects() { // Überprüft Kollisionen mit Wurfobjekten
@@ -157,12 +166,31 @@ class World {
 
         this.addObjectsToMap(this.throwableObjects);
 
+        // Pause-Overlay anzeigen
+        if (this.isPaused) {
+            this.drawPauseOverlay();
+        }
+
         // Speichert den Kontext von 'this', um ihn in der Callback-Funktion zu verwenden
         let self = this;
         // Ruft die draw-Methode erneut auf, um eine Animationsschleife zu erzeugen
         requestAnimationFrame(function() {
             self.draw();
         });
+    }
+
+    // Zeichnet das Pause-Overlay
+    drawPauseOverlay() {
+        this.ctx.save();
+        this.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        
+        this.ctx.fillStyle = '#fff';
+        this.ctx.font = Math.min(this.canvas.width / 15, 48) + 'px Comic Sans MS';
+        this.ctx.textAlign = 'center';
+        this.ctx.fillText('PAUSED', this.canvas.width / 2, this.canvas.height / 2);
+        
+        this.ctx.restore();
     }
 
     // Fügt mehrere Objekte zur Karte hinzu, indem für jedes Objekt addToMap aufgerufen wird

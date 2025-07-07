@@ -74,36 +74,40 @@ class Character extends MovableObject {
     // Controls character movement, animation and camera position
     animate() {
         setInterval(() => {
-            if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
-                this.moveRight();
-            }
-            if (this.world.keyboard.LEFT && this.x > 0) {
-                this.moveLeft(true);
-            }
-            if (this.world.keyboard.UP && !this.isAboveGround()) {
-                this.jump(20);
-            }
+            if (!this.world.isPaused) {
+                if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
+                    this.moveRight();
+                }
+                if (this.world.keyboard.LEFT && this.x > 0) {
+                    this.moveLeft(true);
+                }
+                if (this.world.keyboard.UP && !this.isAboveGround()) {
+                    this.jump(20);
+                }
 
-            // Update camera position
-            this.world.camera_x = -this.x + this.world.canvas.width / 2 - this.width / 2;
+                // Update camera position
+                this.world.camera_x = -this.x + this.world.canvas.width / 2 - this.width / 2;
+            }
         }, 1000 / 32);
 
         // Animation state management
         setInterval(() => {
-            if (this.isDead()) {
-                this.playAnimation(this.IMAGES_DEAD);
-            } else if (this.isHurt()) {
-                this.playAnimation(this.IMAGES_HURT);
-            } else if (this.isAboveGround() || this.speedY > 0) {
-                this.playAnimation(this.IMAGES_JUMPING);
-            } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
-                this.playAnimation(this.IMAGES_WALKING);
+            if (!this.world.isPaused) {
+                if (this.isDead()) {
+                    this.playAnimation(this.IMAGES_DEAD);
+                } else if (this.isHurt()) {
+                    this.playAnimation(this.IMAGES_HURT);
+                } else if (this.isAboveGround() || this.speedY > 0) {
+                    this.playAnimation(this.IMAGES_JUMPING);
+                } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
+                    this.playAnimation(this.IMAGES_WALKING);
+                }
             }
         }, 50);
 
         // Idle animation when not moving
         setInterval(() => {
-            if (!this.world.keyboard.RIGHT && !this.world.keyboard.LEFT && 
+            if (!this.world.isPaused && !this.world.keyboard.RIGHT && !this.world.keyboard.LEFT && 
                 !this.world.keyboard.UP && !this.world.keyboard.DOWN && 
                 !this.world.keyboard.SPACE) {
                 

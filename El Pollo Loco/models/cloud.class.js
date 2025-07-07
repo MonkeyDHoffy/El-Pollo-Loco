@@ -12,6 +12,10 @@ class Cloud extends MovableObject {
 
     // Moves cloud continuously left
     animate() {
-        this.moveLeft();
+        setInterval(() => {
+            if (!this.world || !this.world.isPaused) {
+                this.moveLeft();
+            }
+        }, 1000 / 60);
     }
 }

@@ -20,11 +20,15 @@ class Chicken extends MovableObject {
     // Controls chicken movement and animation
     animate() {
         setInterval(() => {
-            this.moveLeft(false);
+            if (!this.world || !this.world.isPaused) {
+                this.moveLeft(false);
+            }
         }, 1000 / 60);
         
         setInterval(() => {
-            this.playAnimation(this.IMAGES_WALKING);
+            if (!this.world || !this.world.isPaused) {
+                this.playAnimation(this.IMAGES_WALKING);
+            }
         }, 333);
     }
 
