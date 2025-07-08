@@ -59,6 +59,17 @@ class Character extends MovableObject {
     showWrongDirectionWarning = false;
     warningStartTime = 0;
 
+    jumpSounds = [
+        'audio/sounds/jump1.wav',
+        'audio/sounds/jump1.wav',
+        'audio/sounds/jump1.wav',
+        'audio/sounds/jump1.wav',
+        'audio/sounds/jump1.wav',
+        'audio/sounds/jumpfart1.wav',
+        'audio/sounds/jumpfart2.wav',
+        'audio/sounds/jumpfart3.mp3'
+    ];
+
     constructor() {
         super().loadImage('img/img_pollo_locco/img/2_character_pepe/1_idle/idle/I-1.png');
         
@@ -134,9 +145,19 @@ class Character extends MovableObject {
         }
     }
 
+    // Play random jump sound
+    playRandomJumpSound() {
+        let randomIndex = Math.floor(Math.random() * this.jumpSounds.length);
+        let randomSound = new Audio(this.jumpSounds[randomIndex]);
+        randomSound.play().catch(error => {
+            console.log('Audio playback failed:', error);
+        });
+    }
+
     // Makes character jump
     jump(howhigh) {
         this.speedY = howhigh;
+        this.playRandomJumpSound();
         console.log("character is jumping");
     }
 }
