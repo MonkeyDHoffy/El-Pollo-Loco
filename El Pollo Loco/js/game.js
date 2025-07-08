@@ -7,6 +7,17 @@ function init() {
     canvas = document.getElementById("canvas");
     world = new World(canvas);
     world.draw();
+    
+    // Add click listener to enable audio on first user interaction
+    document.addEventListener('click', enableAudio, { once: true });
+    document.addEventListener('keydown', enableAudio, { once: true });
+}
+
+// Enable audio on first user interaction
+function enableAudio() {
+    if (world && world.backgroundMusic) {
+        world.startBackgroundMusic();
+    }
 }
 
 // Toggle pause function

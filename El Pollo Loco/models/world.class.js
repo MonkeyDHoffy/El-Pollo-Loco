@@ -16,7 +16,8 @@ class World {
     totalBottlesInLevel;
     throwableObjects = [];
     isPaused = false;
-    lastThrowTime = 0; // Füge diese Eigenschaft zur World-Klasse hinzu
+    lastThrowTime = 0;
+    backgroundMusic;
 
     // Konstruktor, der beim Erstellen einer neuen World-Instanz aufgerufen wird
     constructor(canvas) {
@@ -35,9 +36,41 @@ class World {
         
         this.character = new Character();
         
+        // Initialize background music
+        this.initBackgroundMusic();
+        
         this.draw();
         this.setWorld();
         this.runWorld();
+    }
+
+    // Initialize and start background music
+    initBackgroundMusic() {
+        this.backgroundMusic = new Audio('audio/sounds/music/chicken_background.wav');
+        this.backgroundMusic.loop = true;
+        this.backgroundMusic.volume = 0.3;
+        
+        // Start music automatically
+        setTimeout(() => {
+            this.startBackgroundMusic();
+        }, 1000); // Small delay to ensure page is fully loaded
+    }
+
+    startBackgroundMusic() {
+        this.backgroundMusic.play().catch(e => console.log('Audio play failed:', e));
+    }
+
+    pauseBackgroundMusic() {
+        this.backgroundMusic.pause();
+    }
+
+    resumeBackgroundMusic() {
+        this.backgroundMusic.play().catch(e => console.log('Audio play failed:', e));
+    }
+
+    stopBackgroundMusic() {
+        this.backgroundMusic.pause();
+        this.backgroundMusic.currentTime = 0;
     }
 
     // Setzt die Referenz auf die aktuelle Welt in allen relevanten Objekten
@@ -63,6 +96,14 @@ class World {
     // Pausiert oder setzt das Spiel fort
     togglePause() {
         this.isPaused = !this.isPaused;
+        
+        // Control background music based on pause state
+        if (this.isPaused) {
+            this.pauseBackgroundMusic();
+        } else {
+            this.resumeBackgroundMusic();
+        }
+        
         console.log('Game paused:', this.isPaused);
     }
 
