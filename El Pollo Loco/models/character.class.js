@@ -70,6 +70,17 @@ class Character extends MovableObject {
         'audio/sounds/jumpfart3.mp3'
     ];
 
+     chickenAttackSounds = [
+        'audio/sounds/chickenattack/chicken1.wav',
+        'audio/sounds/chickenattack/chicken2.wav',
+        'audio/sounds/chickenattack/chicken3.wav',
+        'audio/sounds/chickenattack/pop.flac',
+        'audio/sounds/chickenattack/popp.mp3',
+        'audio/sounds/chickenattack/poppp.flac',
+        'audio/sounds/chickenattack/poppp.wav'
+    ];
+
+
     constructor() {
         super().loadImage('img/img_pollo_locco/img/2_character_pepe/1_idle/idle/I-1.png');
         
@@ -151,6 +162,15 @@ class Character extends MovableObject {
         let randomSound = new Audio(this.jumpSounds[randomIndex]);
         randomSound.play().catch(error => {
             console.log('Audio playback failed:', error);
+        });
+    }
+
+    // Play random chicken attack sound
+    playRandomChickenAttackSound() {
+        let randomIndex = Math.floor(Math.random() * this.chickenAttackSounds.length);
+        let randomSound = new Audio(this.chickenAttackSounds[randomIndex]);
+        randomSound.play().catch(error => {
+            console.log('Chicken attack audio playback failed:', error);
         });
     }
 

@@ -99,6 +99,7 @@ class World {
                 if (this.character.speedY < 0 && 
                     this.character.y + this.character.height - 30 < enemy.y + 20) {
                     console.log("huhn besiegt");
+                    this.character.playRandomChickenAttackSound();
                     // Kill the chicken and show death animation
                     enemy.die();
                     // Make character bounce slightly
