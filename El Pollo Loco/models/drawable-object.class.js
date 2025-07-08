@@ -11,10 +11,6 @@ class DrawableObject {
     loadImage(path) {
         try {
             this.img = new Image();
-            this.img.onload = () => {};
-            this.img.onerror = () => {
-                console.error('Failed to load image:', path);
-            };
             this.img.src = path;
         } catch (e) {
             console.error('Error loading image:', e);

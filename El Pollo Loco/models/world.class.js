@@ -16,6 +16,7 @@ class World {
     totalBottlesInLevel;
     throwableObjects = [];
     isPaused = false;
+    lastThrowTime = 0; // Füge diese Eigenschaft zur World-Klasse hinzu
 
     // Konstruktor, der beim Erstellen einer neuen World-Instanz aufgerufen wird
     constructor(canvas) {
@@ -65,9 +66,27 @@ class World {
         console.log('Game paused:', this.isPaused);
     }
 
-    checkThrowObjects() { // Überprüft Kollisionen mit Wurfobjekten
+    checkThrowObjects() { 
         if(this.keyboard.SPACE) {
-            let bottle = new ThrowableObject(this.character.x + 100, this.character.y + 50); // Wirft von der aktuellen Position des Charakters);
+            // Verhindere Spam-Werfen (nur alle 300ms)
+            let currentTime = Date.now();
+            if (currentTime - this.lastThrowTime < 300) {
+                return;
+            }
+            this.lastThrowTime = currentTime;
+            
+            // Einfache, präzise Berechnung
+            let throwX = this.character.x + (this.character.width / 2);
+            let throwY = this.character.y + (this.character.height / 2);
+            
+            // Anpassung für Wurfrichtung
+            if (this.character.otherDirection) {
+                throwX -= 30; // Links vom Charakter
+            } else {
+                throwX += 30; // Rechts vom Charakter
+            }
+            
+            let bottle = new ThrowableObject(throwX, throwY);
             this.throwableObjects.push(bottle);
         }
     }
