@@ -227,6 +227,9 @@ class World {
 
         this.ctx.translate(this.camera_x, 0);
 
+        // Update parallax for background objects before drawing
+        this.updateBackgroundPosition();
+
         this.addObjectsToMap(this.level.backgroundObjects);
         this.addObjectsToMap(this.level.clouds);
         this.addToMap(this.character);
@@ -267,6 +270,15 @@ class World {
         // Ruft die draw-Methode erneut auf, um eine Animationsschleife zu erzeugen
         requestAnimationFrame(function() {
             self.draw();
+        });
+    }
+
+    // Update parallax effect for background objects
+    updateBackgroundPosition() {
+        this.level.backgroundObjects.forEach(bgObject => {
+            if (bgObject.updatePosition) {
+                bgObject.updatePosition(this.character.x);
+            }
         });
     }
 
