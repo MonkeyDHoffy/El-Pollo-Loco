@@ -116,16 +116,9 @@ class World {
             }
             this.lastThrowTime = currentTime;
             
-            // Einfache, präzise Berechnung
-            let throwX = this.character.x + (this.character.width / 2);
-            let throwY = this.character.y + (this.character.height / 2);
-            
-            // Anpassung für Wurfrichtung
-            if (this.character.otherDirection) {
-                throwX -= 30; // Links vom Charakter
-            } else {
-                throwX += 30; // Rechts vom Charakter
-            }
+            // Feste Position relativ zum Character - unabhängig von der Bewegungsrichtung
+            let throwX = this.character.x + 50; // Immer 50px rechts vom Character
+            let throwY = this.character.y + 100; // Mittlere Höhe des Characters
             
             let bottle = new ThrowableObject(throwX, throwY);
             this.throwableObjects.push(bottle);
@@ -238,6 +231,9 @@ class World {
         this.addObjectsToMap(this.level.bottles);
         this.addObjectsToMap(this.level.endboss);
         
+        // Geworfene Flaschen VOR der Kamera-Rücktransformation zeichnen
+        this.addObjectsToMap(this.throwableObjects);
+        
         // Draw level marker
         if (this.level.levelMarker) {
             this.addToMap(this.level.levelMarker);
@@ -249,11 +245,6 @@ class World {
         this.addToMap(this.statusbar);
         this.addToMap(this.coinstatusbar);
         this.addToMap(this.bottlestatusbar);
-
-        this.ctx.translate(this.camera_x, 0);
-        this.ctx.translate(-this.camera_x, 0);
-
-        this.addObjectsToMap(this.throwableObjects);
 
         // Pause-Overlay anzeigen
         if (this.isPaused) {

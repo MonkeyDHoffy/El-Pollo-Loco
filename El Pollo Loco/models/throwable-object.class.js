@@ -17,7 +17,6 @@ class ThrowableObject extends MovableObject {
         'img/img_pollo_locco/img/6_salsa_bottle/bottle_rotation/bottle_splash/4_bottle_splash.png',
         'img/img_pollo_locco/img/6_salsa_bottle/bottle_rotation/bottle_splash/5_bottle_splash.png',
         'img/img_pollo_locco/img/6_salsa_bottle/bottle_rotation/bottle_splash/6_bottle_splash.png'
-       
     ];
 
     constructor(x, y) {
@@ -28,22 +27,16 @@ class ThrowableObject extends MovableObject {
         this.y = y;
         this.height = 60;
         this.width = 50;
-        this.throw(); // Beispielkoordinaten, anpassen nach Bedarf
+        this.throw();
     }
 
     throw() {
-       this.speedY = 10; // Reduced from 30 to 15 for lower throw
-       this.applyGravity();
-    setInterval(() => {
-        this.x += 15;
-        this.playAnimation(this.IMAGES_ROTATION);
-
-        
-        // if (this.y >= 360) {
-        //     clearInterval(this.throwInterval);
-        //     this.splash();
-        // }
-    }, 28);
+        this.speedY = 10;
+        this.applyGravity();
+        setInterval(() => {
+            this.x += 15;
+            this.playAnimation(this.IMAGES_ROTATION);
+        }, 28);
     }
 
     splash() {
