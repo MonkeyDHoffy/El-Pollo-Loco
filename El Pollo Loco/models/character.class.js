@@ -133,11 +133,10 @@ class Character extends MovableObject {
             }
         }, 80); // Increased from 50ms to 80ms for smoother jump animation
 
-        // Idle animation when not moving - kept at original speed
+        // Idle animation when not moving - removed SPACE key check
         setInterval(() => {
             if (!this.world.isPaused && !this.world.keyboard.RIGHT && !this.world.keyboard.LEFT && 
-                !this.world.keyboard.UP && !this.world.keyboard.DOWN && 
-                !this.world.keyboard.SPACE) {
+                !this.world.keyboard.UP && !this.world.keyboard.DOWN) {
                 
                 let idlePath = this.IMAGES_IDLE[this.currentImage];
                 this.img = this.imageCache[idlePath];
