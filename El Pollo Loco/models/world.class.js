@@ -116,9 +116,9 @@ class World {
             }
             this.lastThrowTime = currentTime;
             
-            // Angepasste Position für weitere und höhere Würfe
-            let throwX = this.character.x + 70; // Etwas weiter vom Character (war 50)
-            let throwY = this.character.y + 80; // Etwas höher (war 100)
+            // Feste Position relativ zum Character - unabhängig von der Bewegungsrichtung
+            let throwX = this.character.x + 50; // Immer 50px rechts vom Character
+            let throwY = this.character.y + 100; // Mittlere Höhe des Characters
             
             let bottle = new ThrowableObject(throwX, throwY);
             this.throwableObjects.push(bottle);
@@ -231,9 +231,6 @@ class World {
         this.addObjectsToMap(this.level.bottles);
         this.addObjectsToMap(this.level.endboss);
         
-        // Geworfene Flaschen VOR der Kamera-Rücktransformation zeichnen
-        this.addObjectsToMap(this.throwableObjects);
-        
         // Draw level marker
         if (this.level.levelMarker) {
             this.addToMap(this.level.levelMarker);
@@ -245,6 +242,11 @@ class World {
         this.addToMap(this.statusbar);
         this.addToMap(this.coinstatusbar);
         this.addToMap(this.bottlestatusbar);
+
+        this.ctx.translate(this.camera_x, 0);
+        this.ctx.translate(-this.camera_x, 0);
+
+        this.addObjectsToMap(this.throwableObjects);
 
         // Pause-Overlay anzeigen
         if (this.isPaused) {
