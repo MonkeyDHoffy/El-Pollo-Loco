@@ -230,6 +230,7 @@ class World {
         this.addObjectsToMap(this.level.coins);
         this.addObjectsToMap(this.level.bottles);
         this.addObjectsToMap(this.level.endboss);
+        this.addObjectsToMap(this.throwableObjects);
         
         // Draw level marker
         if (this.level.levelMarker) {
@@ -242,11 +243,6 @@ class World {
         this.addToMap(this.statusbar);
         this.addToMap(this.coinstatusbar);
         this.addToMap(this.bottlestatusbar);
-
-        this.ctx.translate(this.camera_x, 0);
-        this.ctx.translate(-this.camera_x, 0);
-
-        this.addObjectsToMap(this.throwableObjects);
 
         // Pause-Overlay anzeigen
         if (this.isPaused) {
