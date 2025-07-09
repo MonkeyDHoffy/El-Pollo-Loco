@@ -1,6 +1,6 @@
 class Character extends MovableObject {
     height = 200;
-    energy = 300;
+    energy = 100; // Changed from 900 to 100
     coins = 0;
     bottles = 0;
     speed = 8;
@@ -118,7 +118,7 @@ class Character extends MovableObject {
             }
         }, 1000 / 32);
 
-        // Animation state management
+        // Animation state management - optimized timing for jump animation
         setInterval(() => {
             if (!this.world.isPaused) {
                 if (this.isDead()) {
@@ -131,9 +131,9 @@ class Character extends MovableObject {
                     this.playAnimation(this.IMAGES_WALKING);
                 }
             }
-        }, 50);
+        }, 80); // Increased from 50ms to 80ms for smoother jump animation
 
-        // Idle animation when not moving
+        // Idle animation when not moving - kept at original speed
         setInterval(() => {
             if (!this.world.isPaused && !this.world.keyboard.RIGHT && !this.world.keyboard.LEFT && 
                 !this.world.keyboard.UP && !this.world.keyboard.DOWN && 

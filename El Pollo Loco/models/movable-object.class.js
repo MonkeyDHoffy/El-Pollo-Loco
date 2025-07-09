@@ -83,11 +83,11 @@ class MovableObject extends DrawableObject {
         }
     }
 
-    // Returns true if object was recently hit
+    // Returns true if object was recently hit (1 second invincibility)
     isHurt() {
         let timepassed = new Date().getTime() - this.lastHit;
         timepassed = timepassed / 1000;
-        return timepassed < 0.3;
+        return timepassed < 1.0; // Changed from 0.3 to 1.0 for 1 second invincibility
     }
 
     // Returns true if object has no energy left

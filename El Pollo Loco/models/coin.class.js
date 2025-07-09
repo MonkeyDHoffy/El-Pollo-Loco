@@ -11,8 +11,8 @@ class Coin extends MovableObject {
         super().loadImage(this.IMAGES_COIN[0]);
         this.loadImages(this.IMAGES_COIN);
         
-        // Zufällige Position innerhalb des Spielbereichs
-        this.x = 240 + Math.random() * 2000;
+        // Zufällige Position innerhalb des erweiterten Spielbereichs
+        this.x = 300 + Math.random() * 3800; // Expanded from 240 + Math.random() * 2000
         this.y = 50 + Math.random() * 200;
         
         this.animate();

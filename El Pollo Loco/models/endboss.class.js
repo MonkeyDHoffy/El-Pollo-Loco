@@ -14,8 +14,8 @@ class Endboss extends MovableObject {
         super().loadImage(this.IMAGES_WALKING[0]);
         this.loadImages(this.IMAGES_WALKING);
         
-        // Position depends on index
-        this.x = 2000 - (index * 500);
+        // Position depends on index - moved further back for longer level
+        this.x = 3800 - (index * 600); // Was 2000 - (index * 500)
         this.animate();
     }
 

@@ -17,7 +17,7 @@ class Chicken extends MovableObject {
 
     constructor() {
         super().loadImage('img/img_pollo_locco/img/3_enemies_chicken/chicken_normal/1_walk/1_w.png');
-        this.x = 260 + Math.random() * 800;
+        this.x = 400 + Math.random() * 3600; // Spread across wider area (was 260 + Math.random() * 800)
         this.y = 365; // Chicken weiter unten positioniert (war 335)
         this.originalHeight = this.height; // Store original height
         this.loadImages(this.IMAGES_WALKING);

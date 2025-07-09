@@ -62,10 +62,9 @@ class DrawableObject {
         });
     }
 
-    // Plays animation by cycling through image array
+    // Plays animation by cycling through image array - optimized for smoother playback
     playAnimation(images) {
         if (!images || images.length === 0) {
-            // console.error('No images provided for animation');
             return;
         }
         
@@ -75,8 +74,12 @@ class DrawableObject {
         if (this.imageCache[path] && this.imageCache[path].complete && this.imageCache[path].naturalWidth > 0) {
             this.img = this.imageCache[path];
             this.currentImage++;
+            
+            // Reset currentImage when reaching end to prevent endless counting
+            if (this.currentImage >= images.length * 10) {
+                this.currentImage = 0;
+            }
         }
-        // Wenn das Bild noch nicht geladen ist, wird einfach das vorherige Bild beibehalten
     }
 
       // Draws collision frame for debugging

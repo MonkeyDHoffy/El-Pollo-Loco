@@ -11,8 +11,8 @@ class Bottle extends MovableObject {
         super().loadImage('img/img_pollo_locco/img/6_salsa_bottle/1_salsa_bottle_on_ground.png');
         this.loadImages(this.IMAGES_BOTTLE);
         
-        // Random position within the game area
-        this.x = 300 + Math.random() * 1800;
+        // Random position within the expanded game area
+        this.x = 400 + Math.random() * 3600; // Expanded from 300 + Math.random() * 1800
         this.y = 350;
         
         this.animate();

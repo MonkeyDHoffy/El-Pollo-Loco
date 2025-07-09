@@ -134,7 +134,7 @@ class World {
 
     checkCollisions() { // Überprüft Kollisionen mit Gegnern
         this.level.enemies.forEach((enemy, index) => {
-            if (this.character.isColliding(enemy)) {
+            if (this.character.isColliding(enemy) && !this.character.isHurt()) { // Added invincibility check
                 // Check if character is jumping on chicken
                 // Character must be falling AND above the chicken
                 if (this.character.speedY < 0 && 
@@ -153,8 +153,8 @@ class World {
                         }
                     }, 500); // Show death animation for 500ms
                 } else {
-                    // Normal collision - character takes damage
-                    this.character.hit(1);
+                    // Normal collision - character takes damage (10 instead of 1)
+                    this.character.hit(10);
                     console.log("Kollision mit Gegner! Energie:", this.character.energy);
                     this.statusbar.setPercentage(this.character.energy);
                 }
@@ -163,8 +163,8 @@ class World {
 
         // Überprüft Kollision mit Endboss
         this.level.endboss.forEach(endboss => {
-            if (this.character.isColliding(endboss)) {
-                this.character.hit(3);
+            if (this.character.isColliding(endboss) && !this.character.isHurt()) { // Added invincibility check
+                this.character.hit(20); // Changed from 3 to 20
                 console.log("Kollision mit Endboss! Energie:", this.character.energy);
                 this.statusbar.setPercentage(this.character.energy);
             }
