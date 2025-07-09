@@ -18,7 +18,7 @@ class MiniChicken extends Chicken {
         super();
         this.loadImage('img/img_pollo_locco/img/3_enemies_chicken/chicken_small/1_walk/1_w.png');
         this.x = 500 + Math.random() * 3400; // Spread across wider area (was 260 + Math.random() * 800)
-        this.y = 380; // Slightly lower position for mini chicken
+        this.y = 385; // Slightly lower position for mini chicken
         this.originalHeight = this.height;
         this.loadImages(this.IMAGES_WALKING);
         this.loadImages(this.IMAGES_DEAD);

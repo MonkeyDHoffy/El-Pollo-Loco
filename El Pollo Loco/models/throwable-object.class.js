@@ -31,10 +31,10 @@ class ThrowableObject extends MovableObject {
     }
 
     throw() {
-        this.speedY = 10;
+        this.speedY = 15; // Erhöht von 10 auf 15 für höheren Wurf
         this.applyGravity();
         setInterval(() => {
-            this.x += 15;
+            this.x += 12; // Reduziert von 20 auf 12 für kürzere Distanz
             this.playAnimation(this.IMAGES_ROTATION);
         }, 28);
     }

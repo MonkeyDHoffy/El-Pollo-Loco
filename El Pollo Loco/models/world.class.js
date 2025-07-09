@@ -116,9 +116,9 @@ class World {
             }
             this.lastThrowTime = currentTime;
             
-            // Feste Position relativ zum Character - unabhängig von der Bewegungsrichtung
-            let throwX = this.character.x + 50; // Immer 50px rechts vom Character
-            let throwY = this.character.y + 100; // Mittlere Höhe des Characters
+            // Angepasste Position für weitere und höhere Würfe
+            let throwX = this.character.x + 70; // Etwas weiter vom Character (war 50)
+            let throwY = this.character.y + 80; // Etwas höher (war 100)
             
             let bottle = new ThrowableObject(throwX, throwY);
             this.throwableObjects.push(bottle);
