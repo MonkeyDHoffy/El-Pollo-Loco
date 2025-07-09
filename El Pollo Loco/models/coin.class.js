@@ -24,4 +24,12 @@ class Coin extends MovableObject {
             this.playAnimation(this.IMAGES_COIN);
         }, 200);
     }
+    
+    // Override collision detection with much smaller collision box
+    isColliding(mobject) {
+        return (this.x + 60) + (this.width - 120) > mobject.x &&
+               (this.x + 60) < mobject.x + mobject.width &&
+               (this.y + 60) + (this.height - 120) > mobject.y &&
+               (this.y + 60) < mobject.y + mobject.height;
+    }
 }

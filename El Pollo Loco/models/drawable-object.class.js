@@ -84,7 +84,8 @@ class DrawableObject {
 
       // Draws collision frame for debugging
     drawFrame(ctx) {
-        if (this instanceof Character || this instanceof Chicken || this instanceof MiniChicken || this instanceof Endboss) {
+        if (this instanceof Character || this instanceof Chicken || this instanceof MiniChicken || this instanceof Endboss || 
+            this instanceof Coin || this instanceof Bottle) {
             ctx.beginPath();
             ctx.lineWidth = "4";
             ctx.strokeStyle = "red";
@@ -98,6 +99,12 @@ class DrawableObject {
             } else if (this instanceof MiniChicken) {
                 // Smaller collision box for MiniChicken
                 ctx.rect(this.x, this.y, this.width - 10, this.height - 5);
+            } else if (this instanceof Coin) {
+                // Much smaller collision box for Coin - centered and greatly reduced
+                ctx.rect(this.x + 60, this.y + 60, this.width - 120, this.height - 120);
+            } else if (this instanceof Bottle) {
+                // Smaller collision box for Bottle - centered and reduced
+                ctx.rect(this.x + 15, this.y + 15, this.width - 30, this.height - 30);
             } else {
                 // Normal collision box for Chicken
                 ctx.rect(this.x, this.y, this.width - 15, this.height - 10);

@@ -180,4 +180,35 @@ class Character extends MovableObject {
         this.playRandomJumpSound();
         console.log("character is jumping");
     }
+
+    // Override collision detection to use adjusted collision box
+    isColliding(mobject) {
+        // Character's collision box (adjusted)
+        let charLeft = this.x + 20;
+        let charRight = this.x + this.width - 30; // 20 + 50 = 70 offset from right
+        let charTop = this.y + 90;
+        let charBottom = this.y + this.height - 10; // 90 + 100 = 190 offset from bottom
+
+        // Check if the other object has custom collision detection
+        if (mobject instanceof Coin || mobject instanceof Bottle) {
+            // Use the object's own collision method but check against character's adjusted box
+            if (mobject instanceof Coin) {
+                return (mobject.x + 60) + (mobject.width - 120) > charLeft &&
+                       (mobject.x + 60) < charRight &&
+                       (mobject.y + 60) + (mobject.height - 120) > charTop &&
+                       (mobject.y + 60) < charBottom;
+            } else if (mobject instanceof Bottle) {
+                return (mobject.x + 15) + (mobject.width - 30) > charLeft &&
+                       (mobject.x + 15) < charRight &&
+                       (mobject.y + 15) + (mobject.height - 30) > charTop &&
+                       (mobject.y + 15) < charBottom;
+            }
+        }
+
+        // Default collision for other objects (enemies, etc.)
+        return charLeft + (charRight - charLeft) > mobject.x &&
+               charLeft < mobject.x + mobject.width &&
+               charTop + (charBottom - charTop) > mobject.y &&
+               charTop < mobject.y + mobject.height;
+    }
 }

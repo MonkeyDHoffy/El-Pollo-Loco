@@ -18,6 +18,14 @@ class Bottle extends MovableObject {
         this.animate();
     }
 
+    // Override collision detection with smaller collision box
+    isColliding(mobject) {
+        return (this.x + 15) + (this.width - 30) > mobject.x &&
+               (this.x + 15) < mobject.x + mobject.width &&
+               (this.y + 15) + (this.height - 30) > mobject.y &&
+               (this.y + 15) < mobject.y + mobject.height;
+    }
+
     animate() {
         setInterval(() => {
             // this.playAnimation(this.IMAGES_BOTTLE);
