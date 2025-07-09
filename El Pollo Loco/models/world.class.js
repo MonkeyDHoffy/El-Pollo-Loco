@@ -116,11 +116,20 @@ class World {
             }
             this.lastThrowTime = currentTime;
             
-            // Feste Position relativ zum Character - unabhängig von der Bewegungsrichtung
-            let throwX = this.character.x + 50; // Immer 50px rechts vom Character
+            // Position und Richtung basierend auf Character-Richtung
+            let throwX, throwDirection;
+            if (this.character.otherDirection) {
+                // Character schaut nach links - werfe nach links
+                throwX = this.character.x - 10; // Links vom Character
+                throwDirection = -1;
+            } else {
+                // Character schaut nach rechts - werfe nach rechts
+                throwX = this.character.x + 50; // Rechts vom Character
+                throwDirection = 1;
+            }
             let throwY = this.character.y + 100; // Mittlere Höhe des Characters
             
-            let bottle = new ThrowableObject(throwX, throwY);
+            let bottle = new ThrowableObject(throwX, throwY, throwDirection);
             this.throwableObjects.push(bottle);
         }
     }
