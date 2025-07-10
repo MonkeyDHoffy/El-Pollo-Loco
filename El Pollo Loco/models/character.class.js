@@ -7,14 +7,23 @@ class Character extends MovableObject {
 
     IMAGES_JUMPING = [
         'img/img_pollo_locco/img/2_character_pepe/3_jump/J-31.png',
+        'img/img_pollo_locco/img/2_character_pepe/3_jump/J-31.png',
+        'img/img_pollo_locco/img/2_character_pepe/3_jump/J-32.png',
         'img/img_pollo_locco/img/2_character_pepe/3_jump/J-32.png',
         'img/img_pollo_locco/img/2_character_pepe/3_jump/J-33.png',
+        'img/img_pollo_locco/img/2_character_pepe/3_jump/J-33.png',
         'img/img_pollo_locco/img/2_character_pepe/3_jump/J-34.png',
-        'img/img_pollo_locco/img/2_character_pepe/3_jump/J-35.png', 
+        'img/img_pollo_locco/img/2_character_pepe/3_jump/J-34.png',
+        'img/img_pollo_locco/img/2_character_pepe/3_jump/J-35.png',
+        'img/img_pollo_locco/img/2_character_pepe/3_jump/J-35.png',
+        'img/img_pollo_locco/img/2_character_pepe/3_jump/J-36.png',
         'img/img_pollo_locco/img/2_character_pepe/3_jump/J-36.png',
         'img/img_pollo_locco/img/2_character_pepe/3_jump/J-37.png',
+        'img/img_pollo_locco/img/2_character_pepe/3_jump/J-37.png',
         'img/img_pollo_locco/img/2_character_pepe/3_jump/J-38.png',
-        'img/img_pollo_locco/img/2_character_pepe/3_jump/J-39.png'       
+        'img/img_pollo_locco/img/2_character_pepe/3_jump/J-38.png',
+        'img/img_pollo_locco/img/2_character_pepe/3_jump/J-39.png',
+        'img/img_pollo_locco/img/2_character_pepe/3_jump/J-39.png'
     ];
 
     IMAGES_IDLE = [  
@@ -125,13 +134,13 @@ class Character extends MovableObject {
                     this.playAnimation(this.IMAGES_DEAD);
                 } else if (this.isHurt()) {
                     this.playAnimation(this.IMAGES_HURT);
-                } else if (this.isAboveGround() || this.speedY > 0) {
+                } else if (this.isAboveGround()) { // Changed: removed speedY > 0 condition
                     this.playAnimation(this.IMAGES_JUMPING);
                 } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
                     this.playAnimation(this.IMAGES_WALKING);
                 }
             }
-        }, 80); // Increased from 50ms to 80ms for smoother jump animation
+        }, 100); // Increased from 50ms to 80ms for smoother jump animation
 
         // Idle animation when not moving - removed SPACE key check
         setInterval(() => {
