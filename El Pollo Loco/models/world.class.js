@@ -150,88 +150,132 @@ class World {
     }
 
     checkCollisions() {
+        this.checkCharacterEnemyCollisions();
+        this.checkCharacterEndbossCollisions();
+        this.checkCharacterCoinCollisions();
+        this.checkCharacterBottleCollisions();
+        this.checkBottleProjectileCollisions();
+    }
+
+    checkCharacterEnemyCollisions() {
         this.level.enemies.forEach((enemy, index) => {
             if (this.character.isColliding(enemy) && !this.character.isHurt()) {
-                if (this.character.speedY < 0 && 
-                    this.character.y + this.character.height - 30 < enemy.y + 20) {
-                    console.log("huhn besiegt");
-                    this.character.playRandomChickenAttackSound();
-                    enemy.die();
-                    this.character.speedY = 15;
-                    setTimeout(() => {
-                        const chickenIndex = this.level.enemies.indexOf(enemy);
-                        if (chickenIndex > -1) {
-                            this.level.enemies.splice(chickenIndex, 1);
-                        }
-                    }, 500);
+                if (this.isCharacterJumpingOnEnemy(enemy)) {
+                    this.handleCharacterKillsEnemy(enemy);
                 } else {
-                    this.character.hit(10);
-                    console.log("Kollision mit Gegner! Energie:", this.character.energy);
-                    this.statusbar.setPercentage(this.character.energy);
+                    this.handleCharacterHitByEnemy(10);
                 }
             }
         });
+    }
 
+    checkCharacterEndbossCollisions() {
         this.level.endboss.forEach(endboss => {
             if (this.character.isColliding(endboss) && !this.character.isHurt()) {
-                this.character.hit(20);
-                console.log("Kollision mit Endboss! Energie:", this.character.energy);
-                this.statusbar.setPercentage(this.character.energy);
+                this.handleCharacterHitByEnemy(20);
             }
         });
+    }
 
+    checkCharacterCoinCollisions() {
         this.level.coins.forEach((coin, index) => {
             if (this.character.isColliding(coin)) {
                 this.collectCoin(coin, index);
             }
         });
+    }
 
+    checkCharacterBottleCollisions() {
         this.level.bottles.forEach((bottle, index) => {
             if (this.character.isColliding(bottle)) {
                 this.collectBottle(bottle, index);
             }
         });
+    }
 
+    checkBottleProjectileCollisions() {
         this.throwableObjects.forEach((throwableObject, throwableIndex) => {
             if (throwableObject.hasHit) return;
             
-            this.level.enemies.forEach((enemy, enemyIndex) => {
-                if (throwableObject.isColliding(enemy) && !throwableObject.hasHit) {
-                    throwableObject.hasHit = true;
-                    throwableObject.splash();
-                    enemy.die();
-                    let glassBreakSound = new Audio('audio/sounds/glas_breaks.wav');
-                    glassBreakSound.play().catch(e => console.log('Glass break sound failed:', e));
-                    setTimeout(() => {
-                        const enemyIdx = this.level.enemies.indexOf(enemy);
-                        if (enemyIdx > -1) {
-                            this.level.enemies.splice(enemyIdx, 1);
-                        }
-                    }, 500);
-                    console.log("Gegner von Flasche getroffen!");
-                }
-            });
-
-            this.level.endboss.forEach((endboss, endbossIndex) => {
-                if (throwableObject.isColliding(endboss) && !endboss.isDead && !throwableObject.hasHit) {
-                    throwableObject.hasHit = true;
-                    throwableObject.splash();
-                    endboss.hit(10);
-                    let glassBreakSound = new Audio('audio/sounds/glas_breaks.wav');
-                    glassBreakSound.play().catch(e => console.log('Glass break sound failed:', e));
-                    console.log("Endboss von Flasche getroffen!");
-                    
-                    if (endboss.isDead) {
-                        setTimeout(() => {
-                            const bossIdx = this.level.endboss.indexOf(endboss);
-                            if (bossIdx > -1) {
-                                this.level.endboss.splice(bossIdx, 1);
-                            }
-                        }, 1000);
-                    }
-                }
-            });
+            this.checkBottleHitsEnemies(throwableObject);
+            this.checkBottleHitsEndboss(throwableObject);
         });
+    }
+
+    isCharacterJumpingOnEnemy(enemy) {
+        return this.character.speedY < 0 && 
+               this.character.y + this.character.height - 30 < enemy.y + 20;
+    }
+
+    handleCharacterKillsEnemy(enemy) {
+        console.log("huhn besiegt");
+        this.character.playRandomChickenAttackSound();
+        enemy.die();
+        this.character.speedY = 15;
+        setTimeout(() => {
+            const chickenIndex = this.level.enemies.indexOf(enemy);
+            if (chickenIndex > -1) {
+                this.level.enemies.splice(chickenIndex, 1);
+            }
+        }, 500);
+    }
+
+    handleCharacterHitByEnemy(damage) {
+        this.character.hit(damage);
+        console.log("Kollision mit Gegner! Energie:", this.character.energy);
+        this.statusbar.setPercentage(this.character.energy);
+    }
+
+    checkBottleHitsEnemies(throwableObject) {
+        this.level.enemies.forEach((enemy, enemyIndex) => {
+            if (throwableObject.isColliding(enemy) && !throwableObject.hasHit) {
+                this.handleBottleHitsEnemy(throwableObject, enemy);
+            }
+        });
+    }
+
+    checkBottleHitsEndboss(throwableObject) {
+        this.level.endboss.forEach((endboss, endbossIndex) => {
+            if (throwableObject.isColliding(endboss) && !endboss.isDead && !throwableObject.hasHit) {
+                this.handleBottleHitsEndboss(throwableObject, endboss);
+            }
+        });
+    }
+
+    handleBottleHitsEnemy(throwableObject, enemy) {
+        throwableObject.hasHit = true;
+        throwableObject.splash();
+        enemy.die();
+        this.playGlassBreakSound();
+        setTimeout(() => {
+            const enemyIdx = this.level.enemies.indexOf(enemy);
+            if (enemyIdx > -1) {
+                this.level.enemies.splice(enemyIdx, 1);
+            }
+        }, 500);
+        console.log("Gegner von Flasche getroffen!");
+    }
+
+    handleBottleHitsEndboss(throwableObject, endboss) {
+        throwableObject.hasHit = true;
+        throwableObject.splash();
+        endboss.hit(10);
+        this.playGlassBreakSound();
+        console.log("Endboss von Flasche getroffen!");
+        
+        if (endboss.isDead) {
+            setTimeout(() => {
+                const bossIdx = this.level.endboss.indexOf(endboss);
+                if (bossIdx > -1) {
+                    this.level.endboss.splice(bossIdx, 1);
+                }
+            }, 1000);
+        }
+    }
+
+    playGlassBreakSound() {
+        let glassBreakSound = new Audio('audio/sounds/glas_breaks.wav');
+        glassBreakSound.play().catch(e => console.log('Glass break sound failed:', e));
     }
 
     collectCoin(coin, index) {
