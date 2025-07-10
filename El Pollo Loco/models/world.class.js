@@ -19,6 +19,20 @@ class World {
     lastThrowTime = 0;
     backgroundMusic;
 
+    coinCollectingSounds = [
+        'audio/sounds/coincollecting(1).mp3',
+        'audio/sounds/coincollecting(1).wav',
+        'audio/sounds/coincollecting(2).wav',
+        'audio/sounds/coincollecting(3).wav'
+        // Removed coincollecting(4).wav as it's not found
+    ];
+
+    bottleCollectingSounds = [
+        'audio/sounds/collect1.wav',
+        'audio/sounds/collect2.mp3',
+        'audio/sounds/collectbottle.wav'
+    ];
+
     // Konstruktor, der beim Erstellen einer neuen World-Instanz aufgerufen wird
     constructor(canvas) {
         this.ctx = canvas.getContext("2d");
@@ -271,6 +285,10 @@ class World {
         // Berechne Prozentsatz basierend auf ursprünglicher Anzahl
         let collectedPercentage = (this.character.coins / this.totalCoinsInLevel) * 100;    
         this.coinstatusbar.setPercentage(collectedPercentage);  
+        
+        // Play random coin collecting sound
+        this.playRandomCoinCollectingSound();
+        
         console.log('Münze gesammelt! Score:', this.coinScore);
         console.log(`Coins gesammelt: ${this.character.coins}/${this.totalCoinsInLevel} (${Math.round(collectedPercentage)}%)`);
         
@@ -303,8 +321,29 @@ class World {
         // Update bottle status bar and count display (now based on max 10 bottles)
         this.bottlestatusbar.setBottleCount(this.character.bottles);
         
+        // Play random bottle collecting sound
+        this.playRandomBottleCollectingSound();
+        
         console.log('Flasche gesammelt! Bottles:', this.character.bottles);
         console.log(`Bottles gesammelt: ${this.character.bottles}/10`);
+    }
+
+    // Play random coin collecting sound
+    playRandomCoinCollectingSound() {
+        let randomIndex = Math.floor(Math.random() * this.coinCollectingSounds.length);
+        let randomSound = new Audio(this.coinCollectingSounds[randomIndex]);
+        randomSound.play().catch(error => {
+            console.log('Coin collecting audio playback failed:', error);
+        });
+    }
+
+    // Play random bottle collecting sound
+    playRandomBottleCollectingSound() {
+        let randomIndex = Math.floor(Math.random() * this.bottleCollectingSounds.length);
+        let randomSound = new Audio(this.bottleCollectingSounds[randomIndex]);
+        randomSound.play().catch(error => {
+            console.log('Bottle collecting audio playback failed:', error);
+        });
     }
 
     // Zeichnet alle Objekte auf das Canvas
