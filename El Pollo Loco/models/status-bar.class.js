@@ -100,6 +100,7 @@ class BottleStatusBar extends DrawableObject {
 
   percentage = 0;
   bottleCount = 0; // Track actual bottle count
+  maxBottles = 10; // Maximum bottles character can carry
 
   constructor() {
     super();
@@ -111,15 +112,17 @@ class BottleStatusBar extends DrawableObject {
     this.setPercentage(0);
   }
 
-  setPercentage(percentage) {
-    this.percentage = percentage;
+  // Calculate percentage based on max 10 bottles
+  setPercentage(bottleCount) {
+    this.percentage = (bottleCount / this.maxBottles) * 100;
     let path = this.IMAGES_BOTTLE[this.resolveImageIndex()];
     this.img = this.imageCache[path];
   }
 
-  // Set bottle count for display
+  // Set bottle count for display and update percentage
   setBottleCount(count) {
-    this.bottleCount = count;
+    this.bottleCount = Math.min(count, this.maxBottles); // Cap at max bottles
+    this.setPercentage(this.bottleCount);
   }
 
   // Override draw method to include bottle count
@@ -131,7 +134,7 @@ class BottleStatusBar extends DrawableObject {
     this.drawBottleCount(ctx);
   }
 
-  // Draw the bottle count number
+  // Draw the bottle count number with max bottles info
   drawBottleCount(ctx) {
     ctx.save();
     ctx.font = 'bold 20px Arial';
@@ -140,7 +143,7 @@ class BottleStatusBar extends DrawableObject {
     ctx.lineWidth = 2;
     ctx.textAlign = 'left';
     
-    let countText = `x${this.bottleCount}`;
+    let countText = `x${this.bottleCount}/${this.maxBottles}`;
     let textX = this.x + 10;
     let textY = this.y + this.height + 25;
     

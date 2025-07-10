@@ -130,9 +130,7 @@ class World {
                 return; // Failed to use bottle
             }
             
-            // Update bottle status bar and count display
-            let collectedPercentage = (this.character.bottles / this.totalBottlesInLevel) * 100;    
-            this.bottlestatusbar.setPercentage(collectedPercentage);
+            // Update bottle status bar and count display (now based on max 10 bottles)
             this.bottlestatusbar.setBottleCount(this.character.bottles);
             
             // Position und Richtung basierend auf Character-Richtung
@@ -281,17 +279,22 @@ class World {
      * @param {number} index - Der Index der Flasche im bottles-Array
      */
     collectBottle(bottle, index) {
+        // Check if character already has maximum bottles
+        if (this.character.bottles >= 10) {
+            console.log('Maximum bottles reached! Cannot collect more.');
+            return; // Don't collect if at maximum
+        }
+        
         // Flasche aus dem Array entfernen
         this.level.bottles.splice(index, 1);
         // Bottles in der Character-Klasse erhöhen
         this.character.bottles += 1; 
-        // Berechne Prozentsatz basierend auf ursprünglicher Anzahl
-        let collectedPercentage = (this.character.bottles / this.totalBottlesInLevel) * 100;    
-        this.bottlestatusbar.setPercentage(collectedPercentage);
-        // Update bottle count display
+        
+        // Update bottle status bar and count display (now based on max 10 bottles)
         this.bottlestatusbar.setBottleCount(this.character.bottles);
+        
         console.log('Flasche gesammelt! Bottles:', this.character.bottles);
-        console.log(`Bottles gesammelt: ${this.character.bottles}/${this.totalBottlesInLevel} (${Math.round(collectedPercentage)}%)`);
+        console.log(`Bottles gesammelt: ${this.character.bottles}/10`);
     }
 
     // Zeichnet alle Objekte auf das Canvas
