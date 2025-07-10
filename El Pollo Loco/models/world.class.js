@@ -204,6 +204,14 @@ class World {
         this.coinstatusbar.setPercentage(collectedPercentage);  
         console.log('Münze gesammelt! Score:', this.coinScore);
         console.log(`Coins gesammelt: ${this.character.coins}/${this.totalCoinsInLevel} (${Math.round(collectedPercentage)}%)`);
+        
+        // Prüfe ob alle Münzen gesammelt wurden
+        if (this.character.coins === this.totalCoinsInLevel) {
+            // Stelle volle Energie wieder her
+            this.character.energy = 100;
+            this.statusbar.setPercentage(this.character.energy);
+            console.log('Alle Münzen gesammelt! Energie vollständig wiederhergestellt!');
+        }
     }
 
     /**

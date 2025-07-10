@@ -12,7 +12,12 @@ const level1 = new Level(
         new Endboss(0),
         new Endboss(1)
     ],
-    [  // Clouds
+    [  // Clouds - more clouds with wider distribution
+        new Cloud(),
+        new Cloud(),
+        new Cloud(),
+        new Cloud(),
+        new Cloud(),
         new Cloud(),
         new Cloud(),
         new Cloud()
