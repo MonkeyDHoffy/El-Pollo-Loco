@@ -154,6 +154,7 @@ class World {
         this.checkCharacterEndbossCollisions();
         this.checkCharacterCoinCollisions();
         this.checkCharacterBottleCollisions();
+        this.checkCharacterCactusCollisions();
         this.checkBottleProjectileCollisions();
     }
 
@@ -193,13 +194,44 @@ class World {
         });
     }
 
-    checkBottleProjectileCollisions() {
-        this.throwableObjects.forEach((throwableObject, throwableIndex) => {
-            if (throwableObject.hasHit) return;
-            
-            this.checkBottleHitsEnemies(throwableObject);
-            this.checkBottleHitsEndboss(throwableObject);
+    checkCharacterCactusCollisions() {
+        this.level.cacti.forEach(cactus => {
+            if (this.isCharacterCollidingWithCactus(cactus) && !this.character.isHurt()) {
+                this.handleCharacterHitByCactus();
+            }
         });
+    }
+
+    isCharacterCollidingWithCactus(cactus) {
+        let charLeft = this.character.x + 20;
+        let charRight = this.character.x + this.character.width - 30;
+        let charTop = this.character.y + 90;
+        let charBottom = this.character.y + this.character.height - 10;
+
+        let cactusLeft = cactus.x + 60;
+        let cactusRight = cactus.x + cactus.width - 60;
+        let cactusTop = cactus.y + 50;
+        let cactusBottom = cactus.y + cactus.height - 30;
+
+        return charRight > cactusLeft &&
+               charLeft < cactusRight &&
+               charBottom > cactusTop &&
+               charTop < cactusBottom;
+    }
+
+    handleCharacterHitByCactus() {
+        this.character.hit(15);
+        
+        if (this.character.otherDirection) {
+            this.character.x += 150;
+        } else {
+            this.character.x -= 150;
+        }
+        
+        this.character.speedY = 15;
+        
+        console.log("Kollision mit Kaktus! Energie:", this.character.energy);
+        this.statusbar.setPercentage(this.character.energy);
     }
 
     isCharacterJumpingOnEnemy(enemy) {
@@ -339,9 +371,11 @@ class World {
 
         this.addObjectsToMap(this.level.backgroundObjects);
         this.addObjectsToMap(this.level.clouds);
+         this.addObjectsToMap(this.level.cacti);
         this.addObjectsToMap(this.level.bottles);
         this.addObjectsToMap(this.level.enemies);
         this.addObjectsToMap(this.level.coins);
+       
         this.addObjectsToMap(this.level.endboss);
         this.addObjectsToMap(this.throwableObjects);
         this.addToMap(this.character);
@@ -380,6 +414,12 @@ class World {
         this.level.bottles.forEach(bottle => {
             if (bottle.updatePosition) {
                 bottle.updatePosition(this.character.x);
+            }
+        });
+
+        this.level.cacti.forEach(cactus => {
+            if (cactus.updatePosition) {
+                cactus.updatePosition(this.character.x);
             }
         });
     }

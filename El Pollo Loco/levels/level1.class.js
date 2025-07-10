@@ -128,5 +128,9 @@ const level1 = new Level(
         new Bottle(),
         new Bottle(),
         new Bottle()
+    ],
+    [  // Cacti - at beginning and end of level
+        new Cactus(-100),  // Beginning of level
+        new Cactus(4400)
     ]
 );
