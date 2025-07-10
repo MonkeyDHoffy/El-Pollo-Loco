@@ -210,7 +210,7 @@ class World {
         let charBottom = this.character.y + this.character.height - 10;
 
         let cactusLeft = cactus.x + 60;
-        let cactusRight = cactus.x + cactus.width - 60;
+        let cactusRight = cactus.x + cactus.width - 51;
         let cactusTop = cactus.y + 50;
         let cactusBottom = cactus.y + cactus.height - 30;
 
