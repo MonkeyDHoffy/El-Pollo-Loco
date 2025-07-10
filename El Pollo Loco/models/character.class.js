@@ -180,6 +180,21 @@ class Character extends MovableObject {
         console.log("character is jumping");
     }
 
+    // Check if character can throw bottles
+    canThrowBottle() {
+        return this.bottles > 0;
+    }
+
+    // Consume a bottle when throwing
+    useBottle() {
+        if (this.bottles > 0) {
+            this.bottles--;
+            console.log(`Bottle thrown! Remaining bottles: ${this.bottles}`);
+            return true;
+        }
+        return false;
+    }
+
     // Override collision detection to use adjusted collision box
     isColliding(mobject) {
         // Character's collision box (adjusted)

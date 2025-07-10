@@ -99,6 +99,7 @@ class BottleStatusBar extends DrawableObject {
   ];
 
   percentage = 0;
+  bottleCount = 0; // Track actual bottle count
 
   constructor() {
     super();
@@ -114,6 +115,41 @@ class BottleStatusBar extends DrawableObject {
     this.percentage = percentage;
     let path = this.IMAGES_BOTTLE[this.resolveImageIndex()];
     this.img = this.imageCache[path];
+  }
+
+  // Set bottle count for display
+  setBottleCount(count) {
+    this.bottleCount = count;
+  }
+
+  // Override draw method to include bottle count
+  draw(ctx) {
+    // Draw the status bar image
+    super.draw(ctx);
+    
+    // Draw bottle count number
+    this.drawBottleCount(ctx);
+  }
+
+  // Draw the bottle count number
+  drawBottleCount(ctx) {
+    ctx.save();
+    ctx.font = 'bold 20px Arial';
+    ctx.fillStyle = '#ffffff';
+    ctx.strokeStyle = '#000000';
+    ctx.lineWidth = 2;
+    ctx.textAlign = 'left';
+    
+    let countText = `x${this.bottleCount}`;
+    let textX = this.x + 10;
+    let textY = this.y + this.height + 25;
+    
+    // Draw text outline
+    ctx.strokeText(countText, textX, textY);
+    // Draw text fill
+    ctx.fillText(countText, textX, textY);
+    
+    ctx.restore();
   }
 
   resolveImageIndex() {

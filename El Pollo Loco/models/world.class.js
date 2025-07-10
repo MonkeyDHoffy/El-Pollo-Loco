@@ -36,6 +36,9 @@ class World {
         
         this.character = new Character();
         
+        // Initialize bottle count display based on character's existing bottles
+        this.bottlestatusbar.setBottleCount(this.character.bottles);
+        
         // Initialize background music
         this.initBackgroundMusic();
         
@@ -109,12 +112,28 @@ class World {
 
     checkThrowObjects() { 
         if(this.keyboard.SPACE) {
+            // Check if character has bottles to throw
+            if (!this.character.canThrowBottle()) {
+                console.log("No bottles available to throw!");
+                return;
+            }
+            
             // Verhindere Spam-Werfen (nur alle 300ms)
             let currentTime = Date.now();
             if (currentTime - this.lastThrowTime < 300) {
                 return;
             }
             this.lastThrowTime = currentTime;
+            
+            // Consume a bottle
+            if (!this.character.useBottle()) {
+                return; // Failed to use bottle
+            }
+            
+            // Update bottle status bar and count display
+            let collectedPercentage = (this.character.bottles / this.totalBottlesInLevel) * 100;    
+            this.bottlestatusbar.setPercentage(collectedPercentage);
+            this.bottlestatusbar.setBottleCount(this.character.bottles);
             
             // Position und Richtung basierend auf Character-Richtung
             let throwX, throwDirection;
@@ -268,7 +287,9 @@ class World {
         this.character.bottles += 1; 
         // Berechne Prozentsatz basierend auf ursprünglicher Anzahl
         let collectedPercentage = (this.character.bottles / this.totalBottlesInLevel) * 100;    
-        this.bottlestatusbar.setPercentage(collectedPercentage);  
+        this.bottlestatusbar.setPercentage(collectedPercentage);
+        // Update bottle count display
+        this.bottlestatusbar.setBottleCount(this.character.bottles);
         console.log('Flasche gesammelt! Bottles:', this.character.bottles);
         console.log(`Bottles gesammelt: ${this.character.bottles}/${this.totalBottlesInLevel} (${Math.round(collectedPercentage)}%)`);
     }
