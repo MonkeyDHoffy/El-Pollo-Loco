@@ -1,12 +1,12 @@
 class Coin extends MovableObject {
     height = 160;
     width = 160;
-    baseX; // Store base position for oscillation
-    baseY; // Store base position for oscillation
+    baseX;
+    baseY;
     oscillationTime = 0;
-    horizontalAmplitude = 65; // Increased from 10 to 25 pixels movement
-    verticalAmplitude = 55; // Increased from 10 to 20 pixels movement
-    hasVerticalMovement; // Random property to determine if coin moves vertically
+    horizontalAmplitude = 25;
+    verticalAmplitude = 20;
+    hasVerticalMovement;
     
     IMAGES_COIN = [
         'img/img_pollo_locco/img/8_coin/coin_1.png',
@@ -17,24 +17,24 @@ class Coin extends MovableObject {
         super().loadImage(this.IMAGES_COIN[0]);
         this.loadImages(this.IMAGES_COIN);
         
-        // Zufällige Position innerhalb des erweiterten Spielbereichs
         this.x = 300 + Math.random() * 3800;
         this.y = 50 + Math.random() * 200;
         
-        // Store base positions for oscillation
         this.baseX = this.x;
         this.baseY = this.y;
         
-        // Randomly determine if this coin moves vertically (50% chance)
         this.hasVerticalMovement = Math.random() < 0.5;
         
-        // Random starting phase for variety
         this.oscillationTime = Math.random() * Math.PI * 2;
         
         this.animate();
     }
     
-    // Animiert die Rotation der Münze und Bewegung
+    /**
+     * Animates the coin by rotating it and moving it in an oscillating pattern.
+     * The animation includes both horizontal and vertical oscillation, with
+     * vertical movement being random for each coin instance.
+     */
     animate() {
         // Coin rotation animation
         setInterval(() => {
@@ -46,7 +46,7 @@ class Coin extends MovableObject {
         // Oscillating movement animation
         setInterval(() => {
             if (!this.world || !this.world.isPaused) {
-                this.oscillationTime += 0.1; // Increased increment for more visible movement
+                this.oscillationTime += 0.1;
                 
                 // Horizontal oscillation (all coins)
                 this.x = this.baseX + Math.sin(this.oscillationTime) * this.horizontalAmplitude;
@@ -56,10 +56,18 @@ class Coin extends MovableObject {
                     this.y = this.baseY + Math.sin(this.oscillationTime * 0.7) * this.verticalAmplitude;
                 }
             }
-        }, 50); // Faster update rate for smoother movement
+        }, 50);
     }
     
-    // Override collision detection with much smaller collision box
+    /**
+     * Checks if this coin is colliding with another game object.
+     * The collision detection is based on a simplified bounding box
+     * collision detection algorithm, adjusted for the smaller collision
+     * box of the coin.
+     * 
+     * @param {Object} mobject - The other game object to check collision with.
+     * @returns {boolean} - True if colliding, false otherwise.
+     */
     isColliding(mobject) {
         return (this.x + 60) + (this.width - 120) > mobject.x &&
                (this.x + 60) < mobject.x + mobject.width &&

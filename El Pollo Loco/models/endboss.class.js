@@ -2,7 +2,7 @@ class Endboss extends MovableObject {
     height = 300;
     width = 200;
     y = 175;
-    energy = 50; // Reduced from 70 to 50 Energy
+    energy = 50;
     isDead = false;
     
     IMAGES_WALKING = [
@@ -16,8 +16,7 @@ class Endboss extends MovableObject {
         super().loadImage(this.IMAGES_WALKING[0]);
         this.loadImages(this.IMAGES_WALKING);
         
-        // Position depends on index - moved further back for longer level
-        this.x = 3800 - (index * 600); // Was 2000 - (index * 500)
+        this.x = 3800 - (index * 600);
         this.animate();
     }
 

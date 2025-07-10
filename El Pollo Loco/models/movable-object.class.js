@@ -4,7 +4,7 @@ class MovableObject extends DrawableObject {
     speedY = 0;
     acceleration = 1;
     lastHit = 0;
-    energy = 100; // Adding this default value for all movable objects
+    energy = 100;
 
     // Applies gravity to make objects fall
     applyGravity() {
@@ -18,14 +18,14 @@ class MovableObject extends DrawableObject {
         }, 1000 / 60);
     }
 
+    // Checks if the object is above the ground
     isAboveGround() {
         if (this instanceof ThrowableObject) {
             return true; 
-        } else    {
-        return this.y < 250;
-    }}
-
-  
+        } else {
+            return this.y < 250;
+        }
+    }
 
     // Moves object right
     moveRight() {
@@ -87,29 +87,7 @@ class MovableObject extends DrawableObject {
     isHurt() {
         let timepassed = new Date().getTime() - this.lastHit;
         timepassed = timepassed / 1000;
-        return timepassed < 1.0; // Changed from 0.3 to 1.0 for 1 second invincibility
-    }
-
-    // Returns true if object has no energy left
-    isDead() {
-        return this.energy == 0;
-    }
-
-    // Reduces energy when hit
-    hit(damage) {
-        this.energy -= damage;
-        if (this.energy < 0) {
-            this.energy = 0;
-        } else {
-            this.lastHit = new Date().getTime();
-        }
-    }
-
-    // Returns true if object was recently hit
-    isHurt() {
-        let timepassed = new Date().getTime() - this.lastHit;
-        timepassed = timepassed / 1000;
-        return timepassed < 0.3;
+        return timepassed < 1.0; // 1 second invincibility
     }
 
     // Returns true if object has no energy left
@@ -117,4 +95,3 @@ class MovableObject extends DrawableObject {
         return this.energy == 0;
     }
 }
-

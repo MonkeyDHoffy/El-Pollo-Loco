@@ -1,9 +1,12 @@
 class Character extends MovableObject {
     height = 200;
-    energy = 100; // Changed from 900 to 100
+    energy = 100;
     coins = 0;
     bottles = 0;
     speed = 8;
+    world;
+    showWrongDirectionWarning = false;
+    warningStartTime = 0;
 
     IMAGES_JUMPING = [
         'img/img_pollo_locco/img/2_character_pepe/3_jump/J-31.png',
@@ -64,10 +67,6 @@ class Character extends MovableObject {
         'img/img_pollo_locco/img/2_character_pepe/5_dead/D-57.png'
     ];
 
-    world;
-    showWrongDirectionWarning = false;
-    warningStartTime = 0;
-
     jumpSounds = [
         'audio/sounds/jump1.wav',
         'audio/sounds/jump1.wav',
@@ -79,7 +78,7 @@ class Character extends MovableObject {
         'audio/sounds/jumpfart3.mp3'
     ];
 
-     chickenAttackSounds = [
+    chickenAttackSounds = [
         'audio/sounds/chickenattack/chicken1.wav',
         'audio/sounds/chickenattack/chicken2.wav',
         'audio/sounds/chickenattack/chicken3.wav',
@@ -88,7 +87,6 @@ class Character extends MovableObject {
         'audio/sounds/chickenattack/poppp.flac',
         'audio/sounds/chickenattack/poppp.wav'
     ];
-
 
     constructor() {
         super().loadImage('img/img_pollo_locco/img/2_character_pepe/1_idle/idle/I-1.png');
@@ -104,7 +102,6 @@ class Character extends MovableObject {
         this.animate();
     }
 
-    // Controls character movement, animation and camera position
     animate() {
         setInterval(() => {
             if (!this.world.isPaused) {
@@ -114,7 +111,6 @@ class Character extends MovableObject {
                 if (this.world.keyboard.LEFT && this.x > 0) {
                     this.moveLeft(true);
                 } else if (this.world.keyboard.LEFT && this.x <= 0) {
-                    // Character is at level start and trying to move left
                     this.showWrongDirectionWarning = true;
                     this.warningStartTime = Date.now();
                 }
@@ -122,27 +118,24 @@ class Character extends MovableObject {
                     this.jump(20);
                 }
 
-                // Update camera position
                 this.world.camera_x = -this.x + this.world.canvas.width / 2 - this.width / 2;
             }
         }, 1000 / 32);
 
-        // Animation state management - optimized timing for jump animation
         setInterval(() => {
             if (!this.world.isPaused) {
                 if (this.isDead()) {
                     this.playAnimation(this.IMAGES_DEAD);
                 } else if (this.isHurt()) {
                     this.playAnimation(this.IMAGES_HURT);
-                } else if (this.isAboveGround()) { // Changed: removed speedY > 0 condition
+                } else if (this.isAboveGround()) {
                     this.playAnimation(this.IMAGES_JUMPING);
                 } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
                     this.playAnimation(this.IMAGES_WALKING);
                 }
             }
-        }, 100); // Increased from 50ms to 80ms for smoother jump animation
+        }, 100);
 
-        // Idle animation when not moving - removed SPACE key check
         setInterval(() => {
             if (!this.world.isPaused && !this.world.keyboard.RIGHT && !this.world.keyboard.LEFT && 
                 !this.world.keyboard.UP && !this.world.keyboard.DOWN) {
@@ -157,44 +150,22 @@ class Character extends MovableObject {
         }, 1000 / 5);
     }
 
-    // Check if warning should be hidden
     updateWarning() {
         if (this.showWrongDirectionWarning && Date.now() - this.warningStartTime > 2000) {
             this.showWrongDirectionWarning = false;
         }
     }
 
-    // Play random jump sound
-    playRandomJumpSound() {
-        let randomIndex = Math.floor(Math.random() * this.jumpSounds.length);
-        let randomSound = new Audio(this.jumpSounds[randomIndex]);
-        randomSound.play().catch(error => {
-            console.log('Audio playback failed:', error);
-        });
-    }
-
-    // Play random chicken attack sound
-    playRandomChickenAttackSound() {
-        let randomIndex = Math.floor(Math.random() * this.chickenAttackSounds.length);
-        let randomSound = new Audio(this.chickenAttackSounds[randomIndex]);
-        randomSound.play().catch(error => {
-            console.log('Chicken attack audio playback failed:', error);
-        });
-    }
-
-    // Makes character jump
     jump(howhigh) {
         this.speedY = howhigh;
         this.playRandomJumpSound();
         console.log("character is jumping");
     }
 
-    // Check if character can throw bottles
     canThrowBottle() {
         return this.bottles > 0;
     }
 
-    // Consume a bottle when throwing
     useBottle() {
         if (this.bottles > 0) {
             this.bottles--;
@@ -204,17 +175,29 @@ class Character extends MovableObject {
         return false;
     }
 
-    // Override collision detection to use adjusted collision box
-    isColliding(mobject) {
-        // Character's collision box (adjusted)
-        let charLeft = this.x + 20;
-        let charRight = this.x + this.width - 30; // 20 + 50 = 70 offset from right
-        let charTop = this.y + 90;
-        let charBottom = this.y + this.height - 10; // 90 + 100 = 190 offset from bottom
+    playRandomJumpSound() {
+        let randomIndex = Math.floor(Math.random() * this.jumpSounds.length);
+        let randomSound = new Audio(this.jumpSounds[randomIndex]);
+        randomSound.play().catch(error => {
+            console.log('Audio playback failed:', error);
+        });
+    }
 
-        // Check if the other object has custom collision detection
+    playRandomChickenAttackSound() {
+        let randomIndex = Math.floor(Math.random() * this.chickenAttackSounds.length);
+        let randomSound = new Audio(this.chickenAttackSounds[randomIndex]);
+        randomSound.play().catch(error => {
+            console.log('Chicken attack audio playback failed:', error);
+        });
+    }
+
+    isColliding(mobject) {
+        let charLeft = this.x + 20;
+        let charRight = this.x + this.width - 30;
+        let charTop = this.y + 90;
+        let charBottom = this.y + this.height - 10;
+
         if (mobject instanceof Coin || mobject instanceof Bottle) {
-            // Use the object's own collision method but check against character's adjusted box
             if (mobject instanceof Coin) {
                 return (mobject.x + 60) + (mobject.width - 120) > charLeft &&
                        (mobject.x + 60) < charRight &&
@@ -228,7 +211,6 @@ class Character extends MovableObject {
             }
         }
 
-        // Default collision for other objects (enemies, etc.)
         return charLeft + (charRight - charLeft) > mobject.x &&
                charLeft < mobject.x + mobject.width &&
                charTop + (charBottom - charTop) > mobject.y &&
