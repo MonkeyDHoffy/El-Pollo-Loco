@@ -59,7 +59,7 @@ class World {
     initBackgroundMusic() {
         this.backgroundMusic = new Audio('audio/sounds/music/chicken_background.wav');
         this.backgroundMusic.loop = true;
-        this.backgroundMusic.volume = 0.3;
+        this.backgroundMusic.volume = 0.7;
         
         setTimeout(() => {
             this.startBackgroundMusic();

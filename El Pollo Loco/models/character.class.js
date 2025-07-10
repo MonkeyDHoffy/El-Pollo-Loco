@@ -95,6 +95,9 @@ class Character extends MovableObject {
         'audio/sounds/ouch4.wav'
     ];
 
+    walkingSound;
+    isWalkingSoundPlaying = false;
+
     constructor() {
         super().loadImage('img/img_pollo_locco/img/2_character_pepe/1_idle/idle/I-1.png');
         
@@ -105,6 +108,10 @@ class Character extends MovableObject {
         this.loadImages(this.IMAGES_DEAD);
         this.loadImages(this.IMAGES_HURT);
         
+        this.walkingSound = new Audio('audio/sounds/walkigmud.wav');
+        this.walkingSound.loop = true;
+        this.walkingSound.volume = 0.3;
+        
         this.applyGravity();
         this.animate();
     }
@@ -114,18 +121,25 @@ class Character extends MovableObject {
             if (!this.world.isPaused) {
                 if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
                     this.moveRight();
-                }
-                if (this.world.keyboard.LEFT && this.x > 0) {
+                    this.playWalkingSound();
+                } else if (this.world.keyboard.LEFT && this.x > 0) {
                     this.moveLeft(true);
+                    this.playWalkingSound();
                 } else if (this.world.keyboard.LEFT && this.x <= 0) {
                     this.showWrongDirectionWarning = true;
                     this.warningStartTime = Date.now();
+                    this.stopWalkingSound();
+                } else {
+                    this.stopWalkingSound();
                 }
+                
                 if (this.world.keyboard.UP && !this.isAboveGround()) {
                     this.jump(20);
                 }
 
                 this.world.camera_x = -this.x + this.world.canvas.width / 2 - this.width / 2;
+            } else {
+                this.stopWalkingSound();
             }
         }, 1000 / 32);
 
@@ -204,6 +218,27 @@ class Character extends MovableObject {
         randomSound.play().catch(error => {
             console.log('Hurt sound playback failed:', error);
         });
+    }
+
+    playWalkingSound() {
+        if (!this.isAboveGround() && !this.isWalkingSoundPlaying) {
+            this.walkingSound.play().catch(error => {
+                console.log('Walking sound playback failed:', error);
+            });
+            this.isWalkingSoundPlaying = true;
+        }
+        
+        if (this.isAboveGround() && this.isWalkingSoundPlaying) {
+            this.stopWalkingSound();
+        }
+    }
+
+    stopWalkingSound() {
+        if (this.isWalkingSoundPlaying) {
+            this.walkingSound.pause();
+            this.walkingSound.currentTime = 0;
+            this.isWalkingSoundPlaying = false;
+        }
     }
 
     isColliding(mobject) {
