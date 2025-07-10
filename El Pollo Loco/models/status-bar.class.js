@@ -164,20 +164,20 @@ class BottleStatusBar extends DrawableObject {
   // Draw the bottle count number with max bottles info
   drawBottleCount(ctx) {
     ctx.save();
-    ctx.font = 'bold 20px Arial';
-    ctx.fillStyle = '#ffffff';
-    ctx.strokeStyle = '#000000';
-    ctx.lineWidth = 2;
+    ctx.font = '28px Comic Sans MS';
+    ctx.fillStyle = '#fff';
+    ctx.strokeStyle = '#000';
+    ctx.lineWidth = 3;
     ctx.textAlign = 'left';
     
-    let countText = `x${this.bottleCount}/${this.maxBottles}`;
-    let textX = this.x + 10;
-    let textY = this.y + this.height + 25;
+    let text = `x ${this.bottleCount}`;
+    let textX = this.x + 60;
+    let textY = this.y + 35;
     
     // Draw text outline
-    ctx.strokeText(countText, textX, textY);
+    ctx.strokeText(text, textX, textY);
     // Draw text fill
-    ctx.fillText(countText, textX, textY);
+    ctx.fillText(text, textX, textY);
     
     ctx.restore();
   }
