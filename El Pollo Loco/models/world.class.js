@@ -274,6 +274,15 @@ class World {
         });
     }
 
+    checkBottleProjectileCollisions() {
+        this.throwableObjects.forEach((throwableObject, throwableIndex) => {
+            if (throwableObject.hasHit) return;
+            
+            this.checkBottleHitsEnemies(throwableObject);
+            this.checkBottleHitsEndboss(throwableObject);
+        });
+    }
+
     handleBottleHitsEnemy(throwableObject, enemy) {
         throwableObject.hasHit = true;
         throwableObject.splash();

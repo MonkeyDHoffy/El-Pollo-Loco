@@ -20,7 +20,7 @@ class Cactus extends DrawableObject {
     drawFrame(ctx) {
         ctx.beginPath();
         ctx.lineWidth = "4";
-        ctx.strokeStyle = "rgba(255, 0, 0, 0.8)";
+        ctx.strokeStyle = "rgba(255, 0, 0, 0)";
         ctx.rect(this.x + 60, this.y + 50, this.width - 120, this.height - 80);
         ctx.stroke();
     }
