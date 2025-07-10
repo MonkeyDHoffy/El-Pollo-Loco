@@ -3,6 +3,8 @@ class ThrowableObject extends MovableObject {
     speedX = 10;
     gravity = 2.5;
     direction = 1; // 1 for right, -1 for left
+    isSplashing = false;
+    hasHit = false; // Track if bottle has already hit something
     
     IMAGES_ROTATION = [
         'img/img_pollo_locco/img/6_salsa_bottle/bottle_rotation/1_bottle_rotation.png',
@@ -29,6 +31,7 @@ class ThrowableObject extends MovableObject {
         this.height = 60;
         this.width = 50;
         this.direction = direction;
+        this.hasHit = false;
         this.throw();
     }
 
@@ -36,12 +39,16 @@ class ThrowableObject extends MovableObject {
         this.speedY = 15; // Erhöht von 10 auf 15 für höheren Wurf
         this.applyGravity();
         setInterval(() => {
-            this.x += 12 * this.direction; // Multipliziere mit Richtung
-            this.playAnimation(this.IMAGES_ROTATION);
+            if (!this.isSplashing) {
+                this.x += 12 * this.direction; // Multipliziere mit Richtung
+                this.playAnimation(this.IMAGES_ROTATION);
+            }
         }, 28);
     }
 
     splash() {
+        this.isSplashing = true;
+        this.hasHit = true; // Mark as hit when splashing
         this.speedY = 0;
         this.speedX = 0;
         this.playAnimation(this.IMAGES_SPLASH);

@@ -185,6 +185,48 @@ class World {
                 this.collectBottle(bottle, index);
             }
         });
+
+        // Überprüft Kollisionen zwischen geworfenen Flaschen und Gegnern
+        this.throwableObjects.forEach((throwableObject, throwableIndex) => {
+            // Skip if bottle already hit something
+            if (throwableObject.hasHit) return;
+            
+            // Kollision mit normalen Gegnern
+            this.level.enemies.forEach((enemy, enemyIndex) => {
+                if (throwableObject.isColliding(enemy) && !throwableObject.hasHit) {
+                    throwableObject.hasHit = true; // Mark as hit
+                    throwableObject.splash();
+                    enemy.die();
+                    setTimeout(() => {
+                        const enemyIdx = this.level.enemies.indexOf(enemy);
+                        if (enemyIdx > -1) {
+                            this.level.enemies.splice(enemyIdx, 1);
+                        }
+                    }, 500);
+                    console.log("Gegner von Flasche getroffen!");
+                }
+            });
+
+            // Kollision mit Endboss
+            this.level.endboss.forEach((endboss, endbossIndex) => {
+                if (throwableObject.isColliding(endboss) && !endboss.isDead && !throwableObject.hasHit) {
+                    throwableObject.hasHit = true; // Mark as hit
+                    throwableObject.splash();
+                    endboss.hit(10);
+                    console.log("Endboss von Flasche getroffen!");
+                    
+                    // Remove endboss if dead
+                    if (endboss.isDead) {
+                        setTimeout(() => {
+                            const bossIdx = this.level.endboss.indexOf(endboss);
+                            if (bossIdx > -1) {
+                                this.level.endboss.splice(bossIdx, 1);
+                            }
+                        }, 1000);
+                    }
+                }
+            });
+        });
     }
 
     /**
