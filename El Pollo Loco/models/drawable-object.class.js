@@ -88,7 +88,7 @@ class DrawableObject {
             this instanceof Coin || this instanceof Bottle) {
             ctx.beginPath();
             ctx.lineWidth = "4";
-            ctx.strokeStyle = "rgba(255, 0, 0, 0.15)";
+            ctx.strokeStyle = "rgba(255, 0, 0, 0)";
             
             if (this instanceof Character) {
                 // Adjusted collision box for Character - smaller and lower

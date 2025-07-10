@@ -88,6 +88,13 @@ class Character extends MovableObject {
         'audio/sounds/chickenattack/poppp.wav'
     ];
 
+    hurtSounds = [
+        'audio/sounds/ouch1.wav',
+        'audio/sounds/ouch2.wav',
+        'audio/sounds/ouch3.wav',
+        'audio/sounds/ouch4.wav'
+    ];
+
     constructor() {
         super().loadImage('img/img_pollo_locco/img/2_character_pepe/1_idle/idle/I-1.png');
         
@@ -188,6 +195,14 @@ class Character extends MovableObject {
         let randomSound = new Audio(this.chickenAttackSounds[randomIndex]);
         randomSound.play().catch(error => {
             console.log('Chicken attack audio playback failed:', error);
+        });
+    }
+
+    playRandomHurtSound() {
+        let randomIndex = Math.floor(Math.random() * this.hurtSounds.length);
+        let randomSound = new Audio(this.hurtSounds[randomIndex]);
+        randomSound.play().catch(error => {
+            console.log('Hurt sound playback failed:', error);
         });
     }
 
