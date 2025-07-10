@@ -54,6 +54,7 @@ class CoinStatusBar extends DrawableObject {
   ];
 
   percentage = 0;
+  coinCount = 0;
 
   constructor() {
     super();
@@ -69,6 +70,32 @@ class CoinStatusBar extends DrawableObject {
     this.percentage = percentage;
     let path = this.IMAGES_COINS[this.resolveImageIndex()];
     this.img = this.imageCache[path];
+  }
+
+  setCoinCount(count) {
+    this.coinCount = count;
+  }
+
+  draw(ctx) {
+    super.draw(ctx);
+    this.drawCoinCount(ctx);
+  }
+
+  drawCoinCount(ctx) {
+    ctx.save();
+    ctx.font = '28px Comic Sans MS';
+    ctx.fillStyle = '#FFD700';
+    ctx.strokeStyle = '#000';
+    ctx.lineWidth = 3;
+    ctx.textAlign = 'left';
+    
+    let text = `x ${this.coinCount}`;
+    let textX = this.x + 60;
+    let textY = this.y + 35;
+    
+    ctx.strokeText(text, textX, textY);
+    ctx.fillText(text, textX, textY);
+    ctx.restore();
   }
 
   resolveImageIndex() {

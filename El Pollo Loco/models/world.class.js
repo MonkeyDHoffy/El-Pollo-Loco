@@ -324,7 +324,8 @@ class World {
         this.coinScore += 1;
         this.character.coins += 1; 
         let collectedPercentage = (this.character.coins / this.totalCoinsInLevel) * 100;    
-        this.coinstatusbar.setPercentage(collectedPercentage);  
+        this.coinstatusbar.setPercentage(collectedPercentage);
+        this.coinstatusbar.setCoinCount(this.character.coins);
         
         this.playRandomCoinCollectingSound();
         
