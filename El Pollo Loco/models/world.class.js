@@ -17,6 +17,7 @@ class World {
     isPaused = false;
     lastThrowTime = 0;
     backgroundMusic;
+    totalScore = 0;
 
     coinCollectingSounds = [
         'audio/sounds/coincollecting(1).mp3',
@@ -244,6 +245,13 @@ class World {
         this.character.playRandomChickenAttackSound();
         enemy.die();
         this.character.speedY = 15;
+        
+        if (enemy instanceof MiniChicken) {
+            this.totalScore += 10;
+        } else if (enemy instanceof Chicken) {
+            this.totalScore += 20;
+        }
+        
         setTimeout(() => {
             const chickenIndex = this.level.enemies.indexOf(enemy);
             if (chickenIndex > -1) {
@@ -288,6 +296,13 @@ class World {
         throwableObject.splash();
         enemy.die();
         this.playGlassBreakSound();
+        
+        if (enemy instanceof MiniChicken) {
+            this.totalScore += 10;
+        } else if (enemy instanceof Chicken) {
+            this.totalScore += 20;
+        }
+        
         setTimeout(() => {
             const enemyIdx = this.level.enemies.indexOf(enemy);
             if (enemyIdx > -1) {
@@ -305,6 +320,7 @@ class World {
         console.log("Endboss von Flasche getroffen!");
         
         if (endboss.isDead) {
+            this.totalScore += 50;
             setTimeout(() => {
                 const bossIdx = this.level.endboss.indexOf(endboss);
                 if (bossIdx > -1) {
@@ -322,7 +338,8 @@ class World {
     collectCoin(coin, index) {
         this.level.coins.splice(index, 1);
         this.coinScore += 1;
-        this.character.coins += 1; 
+        this.character.coins += 1;
+        this.totalScore += 5;
         let collectedPercentage = (this.character.coins / this.totalCoinsInLevel) * 100;    
         this.coinstatusbar.setPercentage(collectedPercentage);
         this.coinstatusbar.setCoinCount(this.character.coins);
@@ -381,11 +398,10 @@ class World {
 
         this.addObjectsToMap(this.level.backgroundObjects);
         this.addObjectsToMap(this.level.clouds);
-         this.addObjectsToMap(this.level.cacti);
+        this.addObjectsToMap(this.level.cacti);
         this.addObjectsToMap(this.level.bottles);
         this.addObjectsToMap(this.level.enemies);
         this.addObjectsToMap(this.level.coins);
-       
         this.addObjectsToMap(this.level.endboss);
         this.addObjectsToMap(this.throwableObjects);
         this.addToMap(this.character);
@@ -399,6 +415,7 @@ class World {
         this.addToMap(this.statusbar);
         this.addToMap(this.coinstatusbar);
         this.addToMap(this.bottlestatusbar);
+        this.drawMexicanScore();
 
         if (this.isPaused) {
             this.drawPauseOverlay();
@@ -412,6 +429,58 @@ class World {
         requestAnimationFrame(function() {
             self.draw();
         });
+    }
+
+    drawMexicanScore() {
+        this.ctx.save();
+        
+        let scoreX = this.canvas.width - 120;
+        let scoreY = 30;
+        let boxWidth = 100;
+        let boxHeight = 35;
+        
+        // Simple rounded background
+        this.ctx.fillStyle = '#FF6B35';
+        this.roundRect(this.ctx, scoreX - 10, scoreY - 20, boxWidth, boxHeight, 8);
+        this.ctx.fill();
+        
+        // Simple border
+        this.ctx.strokeStyle = '#E63946';
+        this.ctx.lineWidth = 2;
+        this.roundRect(this.ctx, scoreX - 10, scoreY - 20, boxWidth, boxHeight, 8);
+        this.ctx.stroke();
+        
+        // Clean text
+        this.ctx.font = 'bold 24px Comic Sans MS';
+        this.ctx.textAlign = 'center';
+        
+        // Text shadow
+        this.ctx.fillStyle = '#8B1538';
+        this.ctx.fillText(`${this.totalScore}`, scoreX + 40 + 2, scoreY + 2);
+        
+        // Main text
+        this.ctx.fillStyle = '#FFFFFF';
+        this.ctx.fillText(`${this.totalScore}`, scoreX + 40, scoreY);
+        
+        this.ctx.restore();
+    }
+
+    roundRect(ctx, x, y, width, height, radius) {
+        ctx.beginPath();
+        ctx.moveTo(x + radius, y);
+        ctx.lineTo(x + width - radius, y);
+        ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+        ctx.lineTo(x + width, y + height - radius);
+        ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+        ctx.lineTo(x + radius, y + height);
+        ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+        ctx.lineTo(x, y + radius);
+        ctx.quadraticCurveTo(x, y, x + radius, y);
+        ctx.closePath();
+    }
+
+    drawCartoonStar(x, y, radius) {
+        // Remove stars for minimalistic design
     }
 
     updateBackgroundPosition() {
