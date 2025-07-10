@@ -2,7 +2,7 @@ class Endboss extends MovableObject {
     height = 300;
     width = 200;
     y = 175;
-    energy = 70; // Erhöht von 40 auf 70 Energy
+    energy = 50; // Reduced from 70 to 50 Energy
     isDead = false;
     
     IMAGES_WALKING = [
@@ -47,7 +47,7 @@ class Endboss extends MovableObject {
             this.energy = 0;
             this.die();
         }
-        console.log(`Endboss getroffen! Energy: ${this.energy}/70`);
+        console.log(`Endboss getroffen! Energy: ${this.energy}/50`);
     }
 
     // Handle endboss death
@@ -76,7 +76,7 @@ class Endboss extends MovableObject {
         let barY = this.y - 40;
         
         // Calculate energy percentage
-        let energyPercentage = this.energy / 70;
+        let energyPercentage = this.energy / 50;
         
         // Mexikanische Flaggen-Streifen als Hintergrund
         // Grüner Streifen (links)
@@ -132,14 +132,14 @@ class Endboss extends MovableObject {
         
         // Text Schatten (schwarz)
         ctx.fillStyle = 'black';
-        ctx.fillText(`Pollo Loco: ${this.energy}/70`, barX + barWidth / 2 + 1, barY + barHeight / 2 + 5 + 1);
+        ctx.fillText(`Pollo Loco: ${this.energy}/50`, barX + barWidth / 2 + 1, barY + barHeight / 2 + 5 + 1);
         
         // Haupttext (weiß mit goldenem Rand)
         ctx.strokeStyle = '#FFD700';
         ctx.lineWidth = 2;
         ctx.fillStyle = 'white';
-        ctx.strokeText(`Pollo Loco: ${this.energy}/70`, barX + barWidth / 2, barY + barHeight / 2 + 5);
-        ctx.fillText(`Pollo Loco: ${this.energy}/70`, barX + barWidth / 2, barY + barHeight / 2 + 5);
+        ctx.strokeText(`Pollo Loco: ${this.energy}/50`, barX + barWidth / 2, barY + barHeight / 2 + 5);
+        ctx.fillText(`Pollo Loco: ${this.energy}/50`, barX + barWidth / 2, barY + barHeight / 2 + 5);
         
         ctx.restore();
         

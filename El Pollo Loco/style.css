@@ -136,3 +136,8 @@ body.fullscreen-active {
     overflow: hidden;
     background: black;
 }
+
+#pauseButton:focus {
+    outline: none;
+}
+

@@ -148,6 +148,10 @@ class World {
             
             let bottle = new ThrowableObject(throwX, throwY, throwDirection);
             this.throwableObjects.push(bottle);
+            
+            // Play throw sound
+            let throwSound = new Audio('audio/sounds/throw1.wav');
+            throwSound.play().catch(e => console.log('Throw sound failed:', e));
         }
     }
 
@@ -214,6 +218,9 @@ class World {
                     throwableObject.hasHit = true; // Mark as hit
                     throwableObject.splash();
                     enemy.die();
+                    // Play glass break sound
+                    let glassBreakSound = new Audio('audio/sounds/glas_breaks.wav');
+                    glassBreakSound.play().catch(e => console.log('Glass break sound failed:', e));
                     setTimeout(() => {
                         const enemyIdx = this.level.enemies.indexOf(enemy);
                         if (enemyIdx > -1) {
@@ -230,6 +237,9 @@ class World {
                     throwableObject.hasHit = true; // Mark as hit
                     throwableObject.splash();
                     endboss.hit(10);
+                    // Play glass break sound
+                    let glassBreakSound = new Audio('audio/sounds/glas_breaks.wav');
+                    glassBreakSound.play().catch(e => console.log('Glass break sound failed:', e));
                     console.log("Endboss von Flasche getroffen!");
                     
                     // Remove endboss if dead
@@ -308,13 +318,13 @@ class World {
 
         this.addObjectsToMap(this.level.backgroundObjects);
         this.addObjectsToMap(this.level.clouds);
-        this.addToMap(this.character);
+         this.addObjectsToMap(this.level.bottles);
         this.addObjectsToMap(this.level.enemies);
         this.addObjectsToMap(this.level.coins);
-        this.addObjectsToMap(this.level.bottles);
+       
         this.addObjectsToMap(this.level.endboss);
         this.addObjectsToMap(this.throwableObjects);
-        
+        this.addToMap(this.character);
         // Draw level marker
         if (this.level.levelMarker) {
             this.addToMap(this.level.levelMarker);
@@ -350,6 +360,13 @@ class World {
         this.level.backgroundObjects.forEach(bgObject => {
             if (bgObject.updatePosition) {
                 bgObject.updatePosition(this.character.x);
+            }
+        });
+        
+        // Update bottles position with same parallax as first layer
+        this.level.bottles.forEach(bottle => {
+            if (bottle.updatePosition) {
+                bottle.updatePosition(this.character.x);
             }
         });
     }
