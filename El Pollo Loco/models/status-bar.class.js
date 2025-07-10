@@ -9,6 +9,7 @@ class StatusBar extends DrawableObject {
   ];
 
   percentage = 100;
+  currentHealth = 100;
 
   constructor() {
     super();
@@ -22,8 +23,31 @@ class StatusBar extends DrawableObject {
 
   setPercentage(percentage) {
     this.percentage = percentage;
+    this.currentHealth = percentage;
     let path = this.IMAGES_LIFEPOINTS[this.resolveImageIndex()];
     this.img = this.imageCache[path];
+  }
+
+  draw(ctx) {
+    super.draw(ctx);
+    this.drawHealthCount(ctx);
+  }
+
+  drawHealthCount(ctx) {
+    ctx.save();
+    ctx.font = '28px Comic Sans MS';
+    ctx.fillStyle = '#ff0000';
+    ctx.strokeStyle = '#000';
+    ctx.lineWidth = 3;
+    ctx.textAlign = 'left';
+    
+    let text = `${this.currentHealth}%`;
+    let textX = this.x + 60;
+    let textY = this.y + 35;
+    
+    ctx.strokeText(text, textX, textY);
+    ctx.fillText(text, textX, textY);
+    ctx.restore();
   }
 
   resolveImageIndex() {
