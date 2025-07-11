@@ -42,6 +42,8 @@ class CollisionManager {
             if (this.world.character.isColliding(endboss) && !this.world.character.isHurt()) {
                 // Only deal damage if endboss is not dead or dying
                 if (!endboss.isDead && !endboss.isDying) {
+                    // Trigger attack animation before dealing damage
+                    endboss.attack();
                     this.handleCharacterHitByEnemy(20);
                 }
                 // If endboss is dead/dying, no damage dealt

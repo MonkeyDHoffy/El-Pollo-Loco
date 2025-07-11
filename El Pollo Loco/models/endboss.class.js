@@ -18,6 +18,28 @@ class Endboss extends MovableObject {
         'img/img_pollo_locco/img/4_enemie_boss_chicken/4_hurt/G23.png'
     ];
 
+    IMAGES_ALERT = [
+        'img/img_pollo_locco/img/4_enemie_boss_chicken/2_alert/G5.png',
+        'img/img_pollo_locco/img/4_enemie_boss_chicken/2_alert/G6.png',
+        'img/img_pollo_locco/img/4_enemie_boss_chicken/2_alert/G7.png',
+        'img/img_pollo_locco/img/4_enemie_boss_chicken/2_alert/G8.png',
+        'img/img_pollo_locco/img/4_enemie_boss_chicken/2_alert/G9.png',
+        'img/img_pollo_locco/img/4_enemie_boss_chicken/2_alert/G10.png',
+        'img/img_pollo_locco/img/4_enemie_boss_chicken/2_alert/G11.png',
+        'img/img_pollo_locco/img/4_enemie_boss_chicken/2_alert/G12.png'
+    ];
+
+    IMAGES_ATTACK = [
+        'img/img_pollo_locco/img/4_enemie_boss_chicken/3_attack/G13.png',
+        'img/img_pollo_locco/img/4_enemie_boss_chicken/3_attack/G14.png',
+        'img/img_pollo_locco/img/4_enemie_boss_chicken/3_attack/G15.png',
+        'img/img_pollo_locco/img/4_enemie_boss_chicken/3_attack/G16.png',
+        'img/img_pollo_locco/img/4_enemie_boss_chicken/3_attack/G17.png',
+        'img/img_pollo_locco/img/4_enemie_boss_chicken/3_attack/G18.png',
+        'img/img_pollo_locco/img/4_enemie_boss_chicken/3_attack/G19.png',
+        'img/img_pollo_locco/img/4_enemie_boss_chicken/3_attack/G20.png'
+    ];
+
     IMAGES_DEAD = [
         'img/img_pollo_locco/img/4_enemie_boss_chicken/5_dead/G24.png',
         'img/img_pollo_locco/img/4_enemie_boss_chicken/5_dead/G25.png',
@@ -28,6 +50,8 @@ class Endboss extends MovableObject {
         super().loadImage(this.IMAGES_WALKING[0]);
         this.loadImages(this.IMAGES_WALKING);
         this.loadImages(this.IMAGES_HURT);
+        this.loadImages(this.IMAGES_ALERT);
+        this.loadImages(this.IMAGES_ATTACK);
         this.loadImages(this.IMAGES_DEAD);
         
         // Animation states
@@ -41,6 +65,22 @@ class Endboss extends MovableObject {
         this.startedFalling = false;
         this.originalY = 175; // Store original Y position
         
+        // Attack animation states
+        this.isAttacking = false;
+        this.attackAnimationTimer = 0;
+        this.attackFrameIndex = 0;
+        this.attackAnimationComplete = false;
+        
+        // Alert animation states
+        this.isAlert = false;
+        this.alertAnimationTimer = 0;
+        this.alertFrameIndex = 0;
+        this.alertAnimationComplete = false;
+        this.alertCycleCount = 0; // Track how many times alert animation has played
+        this.maxAlertCycles = 2; // Play alert animation twice
+        this.hasSeenCharacter = false; // Track if character has been spotted
+        this.detectionRange = 400; // Distance to detect character
+        
         // Default spawn position - can be overridden after creation
         this.x = 3800 - (index * 600);
         this.animate();
@@ -50,7 +90,11 @@ class Endboss extends MovableObject {
     animate() {
         setInterval(() => {
             if (!this.world || !this.world.isPaused) {
-                if (!this.isDead) {
+                // Check for character detection
+                this.checkCharacterDetection();
+                
+                // Only move if not dead and not alerting
+                if (!this.isDead && !this.isAlert) {
                     this.moveLeft(false);
                 }
             }
@@ -80,8 +124,16 @@ class Endboss extends MovableObject {
                         }
                     }
                 } else if (!this.isDead) {
-                    // Check if hurt animation should play
-                    if (this.isHurt) {
+                    // Check if alert animation should play (highest priority for living boss)
+                    if (this.isAlert) {
+                        this.playAlertAnimationOnce();
+                    }
+                    // Check if attack animation should play (second priority)
+                    else if (this.isAttacking) {
+                        this.playAttackAnimationOnce();
+                    }
+                    // Check if hurt animation should play (third priority)
+                    else if (this.isHurt) {
                         this.playAnimation(this.IMAGES_HURT);
                         
                         // Decrease hurt timer
@@ -93,7 +145,7 @@ class Endboss extends MovableObject {
                             console.log("Endboss hurt animation ended");
                         }
                     } else {
-                        // Normal walking animation
+                        // Normal walking animation (lowest priority)
                         this.playAnimation(this.IMAGES_WALKING);
                     }
                 }
@@ -131,6 +183,127 @@ class Endboss extends MovableObject {
             this.startedFalling = false;
             this.speed = 0; // Stop horizontal movement
             console.log("Endboss death animation started!");
+        }
+    }
+
+    /**
+     * Check if character is within detection range
+     */
+    checkCharacterDetection() {
+        if (!this.hasSeenCharacter && this.world && this.world.character) {
+            let distance = Math.abs(this.x - this.world.character.x);
+            
+            // If character is within detection range, trigger alert
+            if (distance <= this.detectionRange) {
+                this.triggerAlert();
+            }
+        }
+    }
+
+    /**
+     * Trigger alert animation when character is first spotted
+     */
+    triggerAlert() {
+        if (!this.isDead && !this.isDying && !this.hasSeenCharacter) {
+            this.hasSeenCharacter = true; // Mark as seen to prevent repeated alerts
+            this.isAlert = true;
+            this.alertAnimationTimer = 800; // 800ms for one cycle (8 frames * 100ms each)
+            this.alertFrameIndex = 0;
+            this.alertAnimationComplete = false;
+            this.alertCycleCount = 0; // Reset cycle counter
+            console.log("Endboss spotted character! Alert animation started! (Will play 2 times)");
+        }
+    }
+
+    /**
+     * Play alert animation exactly twice, frame by frame
+     */
+    playAlertAnimationOnce() {
+        // Decrease timer
+        this.alertAnimationTimer -= 1000 / 10;
+        
+        // Calculate which frame to show based on time elapsed
+        let timeElapsed = 800 - this.alertAnimationTimer;
+        let frameIndex = Math.floor(timeElapsed / 100); // Change frame every 100ms
+        
+        // Check if one cycle is complete
+        if (frameIndex >= this.IMAGES_ALERT.length) {
+            this.alertCycleCount++;
+            console.log(`Alert animation cycle ${this.alertCycleCount} completed`);
+            
+            // If we haven't reached max cycles, restart animation
+            if (this.alertCycleCount < this.maxAlertCycles) {
+                this.alertAnimationTimer = 800; // Reset timer for next cycle
+                this.alertFrameIndex = 0; // Reset frame index
+                frameIndex = 0; // Start from first frame again
+                console.log(`Starting alert animation cycle ${this.alertCycleCount + 1}`);
+            } else {
+                // All cycles complete, end alert animation
+                frameIndex = this.IMAGES_ALERT.length - 1;
+                this.alertAnimationComplete = true;
+                this.isAlert = false; // End alert animation
+                console.log("All alert animation cycles complete - endboss resumes normal behavior");
+            }
+        }
+        
+        // Set the current image to the correct alert frame
+        let path = this.IMAGES_ALERT[frameIndex];
+        if (this.imageCache[path] && this.imageCache[path].complete) {
+            this.img = this.imageCache[path];
+        }
+        
+        // Log frame changes
+        if (frameIndex !== this.alertFrameIndex) {
+            this.alertFrameIndex = frameIndex;
+            console.log(`Alert frame: ${frameIndex + 1}/${this.IMAGES_ALERT.length} (Cycle: ${this.alertCycleCount + 1}/${this.maxAlertCycles})`);
+        }
+    }
+
+    /**
+     * Start attack animation
+     */
+    attack() {
+        if (!this.isDead && !this.isDying && !this.isAttacking) {
+            this.isAttacking = true;
+            this.attackAnimationTimer = 800; // 800ms for attack animation (8 frames * 100ms each)
+            this.attackFrameIndex = 0;
+            this.attackAnimationComplete = false;
+            console.log("Endboss attack animation started!");
+        }
+    }
+
+    /**
+     * Play attack animation exactly once, frame by frame
+     */
+    playAttackAnimationOnce() {
+        // Decrease timer
+        this.attackAnimationTimer -= 1000 / 10;
+        
+        // Calculate which frame to show based on time elapsed
+        let timeElapsed = 800 - this.attackAnimationTimer;
+        let frameIndex = Math.floor(timeElapsed / 100); // Change frame every 100ms
+        
+        // Clamp to last frame when animation should be complete
+        if (frameIndex >= this.IMAGES_ATTACK.length) {
+            frameIndex = this.IMAGES_ATTACK.length - 1;
+            this.attackAnimationComplete = true;
+            this.isAttacking = false; // End attack animation
+        }
+        
+        // Set the current image to the correct attack frame
+        let path = this.IMAGES_ATTACK[frameIndex];
+        if (this.imageCache[path] && this.imageCache[path].complete) {
+            this.img = this.imageCache[path];
+        }
+        
+        // Log frame changes
+        if (frameIndex !== this.attackFrameIndex) {
+            this.attackFrameIndex = frameIndex;
+            console.log(`Attack frame: ${frameIndex + 1}/${this.IMAGES_ATTACK.length}`);
+            
+            if (this.attackAnimationComplete) {
+                console.log("Attack animation complete");
+            }
         }
     }
 
