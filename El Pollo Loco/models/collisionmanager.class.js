@@ -119,6 +119,11 @@ class CollisionManager {
         // Add to combo if character is airborne
         this.world.character.addComboKill();
         
+        // Create dust particles at enemy position
+        let enemyCenterX = enemy.x + enemy.width / 2;
+        let enemyBottomY = enemy.y + enemy.height; // Bottom of enemy (ground level)
+        this.world.particleManager.createDustParticles(enemyCenterX, enemyBottomY, 12);
+        
         this.world.character.playRandomChickenAttackSound();
         enemy.die();
         this.world.character.speedY = 15;

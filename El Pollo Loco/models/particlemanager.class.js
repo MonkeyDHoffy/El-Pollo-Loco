@@ -31,6 +31,20 @@ class ParticleManager {
     }
 
     /**
+     * Create dust particles when enemy is killed
+     */
+    createDustParticles(x, y, count = 12) {
+        for (let i = 0; i < count; i++) {
+            // Dust spreads more horizontally and starts from ground level
+            let particleX = x + (Math.random() - 0.5) * 80; // Wider spread
+            let particleY = y + Math.random() * 20; // Near ground level
+            
+            this.particles.push(new Particle(particleX, particleY, 'dust'));
+        }
+        console.log(`Created ${count} dust particles at (${x}, ${y})`);
+    }
+
+    /**
      * Update all particles
      */
     update() {

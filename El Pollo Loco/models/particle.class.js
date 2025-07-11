@@ -5,14 +5,23 @@ class Particle {
         this.type = type;
         this.life = 1.0; // Full opacity at start
         this.maxLife = 1.0;
-        this.size = Math.random() * 4 + 2; // Random size between 2-6px
         
-        // Random velocity for scatter effect
-        this.velocityX = (Math.random() - 0.5) * 4; // -2 to +2
-        this.velocityY = (Math.random() - 0.5) * 4 - 2; // Slight upward bias
-        
-        // Fade speed
-        this.fadeSpeed = 0.02; // How fast particle fades (0.02 = ~50 frames)
+        // Size and properties based on type
+        if (type === 'dust') {
+            this.size = Math.random() * 6 + 3; // Larger dust particles (3-9px)
+            this.fadeSpeed = 0.015; // Slower fade for dust (lasts longer)
+            
+            // More horizontal spread for dust
+            this.velocityX = (Math.random() - 0.5) * 6; // -3 to +3
+            this.velocityY = (Math.random() - 0.5) * 3 - 1; // Slight upward bias
+        } else {
+            this.size = Math.random() * 4 + 2; // Regular size (2-6px)
+            this.fadeSpeed = 0.02; // Regular fade speed
+            
+            // Random velocity for scatter effect
+            this.velocityX = (Math.random() - 0.5) * 4; // -2 to +2
+            this.velocityY = (Math.random() - 0.5) * 4 - 2; // Slight upward bias
+        }
         
         // Color based on type
         this.setColor();
@@ -29,6 +38,15 @@ class Particle {
             case 'combo':
                 this.color = { r: 255, g: 215, b: 0 }; // Gold
                 break;
+            case 'dust':
+                // Brown/tan dust colors with some variation
+                let dustVariation = Math.random() * 60; // 0-60 variation
+                this.color = { 
+                    r: 139 + dustVariation, 
+                    g: 69 + dustVariation * 0.5, 
+                    b: 19 + dustVariation * 0.3 
+                }; // Sandy brown variations
+                break;
             default:
                 this.color = { r: 255, g: 255, b: 255 }; // White
         }
@@ -39,8 +57,15 @@ class Particle {
         this.x += this.velocityX;
         this.y += this.velocityY;
         
-        // Apply slight gravity
-        this.velocityY += 0.1;
+        // Apply physics based on type
+        if (this.type === 'dust') {
+            // Dust settles slower and has air resistance
+            this.velocityY += 0.05; // Lighter gravity for dust
+            this.velocityX *= 0.98; // Air resistance slows horizontal movement
+        } else {
+            // Regular particles have stronger gravity
+            this.velocityY += 0.1;
+        }
         
         // Fade out
         this.life -= this.fadeSpeed;
