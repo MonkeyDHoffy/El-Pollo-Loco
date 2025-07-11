@@ -25,6 +25,7 @@ class World {
     uiManager;
     itemCollector;
     endlessMode;
+    particleManager;
 
     constructor(canvas) {
         this.ctx = canvas.getContext("2d");
@@ -50,6 +51,7 @@ class World {
         this.itemCollector = new ItemCollector(this);
         this.waveManager = new WaveManager(this);
         this.endlessMode = new EndlessMode(this);
+        this.particleManager = new ParticleManager(this);
         
         // Start the game
         this.draw();
@@ -73,6 +75,7 @@ class World {
                 this.character.updateWarning();
                 this.endlessMode.update();
                 this.waveManager.update(); // Update wave system
+                this.particleManager.update(); // Update particles
             }
         }, 10);
     }
@@ -156,6 +159,9 @@ class World {
         this.addObjectsToMap(this.level.endboss);
         this.addObjectsToMap(this.throwableObjects);
         this.addToMap(this.character);
+        
+        // Draw particles (in world coordinates, before camera reset)
+        this.particleManager.draw();
         
         if (this.level.levelMarker) {
             this.addToMap(this.level.levelMarker);

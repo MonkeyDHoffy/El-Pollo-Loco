@@ -147,6 +147,11 @@ class CollisionManager {
         this.world.character.hit(damage);
         console.log("Kollision mit Gegner! Energie:", this.world.character.energy);
         this.world.statusbar.setPercentage(this.world.character.energy);
+        
+        // Create damage particles at character position
+        let characterCenterX = this.world.character.x + this.world.character.width / 2;
+        let characterCenterY = this.world.character.y + this.world.character.height / 2;
+        this.world.particleManager.createDamageParticles(characterCenterX, characterCenterY, 8);
     }
 
     /**
