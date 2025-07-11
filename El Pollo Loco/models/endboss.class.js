@@ -68,115 +68,45 @@ class Endboss extends MovableObject {
     }
 
     drawEnergyBar(ctx) {
-        // Energy bar dimensions
         let barWidth = 180;
         let barHeight = 20;
         let barX = this.x + (this.width - barWidth) / 2;
         let barY = this.y - 40;
         
-        // Calculate energy percentage
         let energyPercentage = this.energy / 50;
         
-        // Mexikanische Flaggen-Streifen als Hintergrund
-        // Grüner Streifen (links)
-        ctx.fillStyle = '#006847';
-        ctx.fillRect(barX, barY, barWidth / 3, barHeight);
+        // Simple background
+        ctx.fillStyle = '#333333';
+        ctx.fillRect(barX, barY, barWidth, barHeight);
         
-        // Weißer Streifen (mitte)
-        ctx.fillStyle = '#FFFFFF';
-        ctx.fillRect(barX + barWidth / 3, barY, barWidth / 3, barHeight);
-        
-        // Roter Streifen (rechts)
-        ctx.fillStyle = '#CE1126';
-        ctx.fillRect(barX + (barWidth / 3) * 2, barY, barWidth / 3, barHeight);
-        
-        // Aktuelle Energy Bar (mexikanische Farben)
+        // Health bar color based on percentage
         let currentWidth = barWidth * energyPercentage;
         if (energyPercentage > 0.6) {
-            // Grün-Gold Gradient
-            let gradient = ctx.createLinearGradient(barX, barY, barX + currentWidth, barY);
-            gradient.addColorStop(0, '#228B22');
-            gradient.addColorStop(1, '#FFD700');
-            ctx.fillStyle = gradient;
+            ctx.fillStyle = '#00FF00';
         } else if (energyPercentage > 0.3) {
-            // Orange-Gelb (wie mexikanische Sonne)
-            let gradient = ctx.createLinearGradient(barX, barY, barX + currentWidth, barY);
-            gradient.addColorStop(0, '#FF8C00');
-            gradient.addColorStop(1, '#FFFF00');
-            ctx.fillStyle = gradient;
+            ctx.fillStyle = '#FFFF00';
         } else {
-            // Rot-Pink (wie Chili/Paprika)
-            let gradient = ctx.createLinearGradient(barX, barY, barX + currentWidth, barY);
-            gradient.addColorStop(0, '#DC143C');
-            gradient.addColorStop(1, '#FF1493');
-            ctx.fillStyle = gradient;
+            ctx.fillStyle = '#FF0000';
         }
         
         ctx.fillRect(barX, barY, currentWidth, barHeight);
         
-        // Dekorative Azteken-inspirierte Umrandung
-        ctx.strokeStyle = '#8B4513'; // Braun wie Adobe
-        ctx.lineWidth = 3;
-        ctx.strokeRect(barX - 2, barY - 2, barWidth + 4, barHeight + 4);
-        
-        // Innere goldene Umrandung
-        ctx.strokeStyle = '#FFD700';
-        ctx.lineWidth = 1;
+        // Simple border
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = 2;
         ctx.strokeRect(barX, barY, barWidth, barHeight);
         
-        // Mexikanischer Stil Text mit Schatten
+        // Simple text
         ctx.save();
-        ctx.font = 'bold 14px serif'; // Serif für klassischen Look
+        ctx.font = 'bold 14px Arial';
         ctx.textAlign = 'center';
-        
-        // Text Schatten (schwarz)
-        ctx.fillStyle = 'black';
-        ctx.fillText(`Pollo Loco: ${this.energy}/50`, barX + barWidth / 2 + 1, barY + barHeight / 2 + 5 + 1);
-        
-        // Haupttext (weiß mit goldenem Rand)
-        ctx.strokeStyle = '#FFD700';
-        ctx.lineWidth = 2;
         ctx.fillStyle = 'white';
+        ctx.strokeStyle = 'black';
+        ctx.lineWidth = 1;
+        
         ctx.strokeText(`Pollo Loco: ${this.energy}/50`, barX + barWidth / 2, barY + barHeight / 2 + 5);
         ctx.fillText(`Pollo Loco: ${this.energy}/50`, barX + barWidth / 2, barY + barHeight / 2 + 5);
         
-        ctx.restore();
-        
-        // Kleine dekorative Sterne (wie auf mexikanischer Flagge inspiriert)
-        if (energyPercentage > 0) {
-            this.drawMexicanStar(ctx, barX - 15, barY + barHeight / 2, 8);
-            this.drawMexicanStar(ctx, barX + barWidth + 7, barY + barHeight / 2, 8);
-        }
-    }
-
-    // Hilfsmethode für mexikanische Sterne
-    drawMexicanStar(ctx, x, y, radius) {
-        ctx.save();
-        ctx.fillStyle = '#FFD700';
-        ctx.strokeStyle = '#FF8C00';
-        ctx.lineWidth = 1;
-        
-        ctx.beginPath();
-        for (let i = 0; i < 5; i++) {
-            let angle = (i * 2 * Math.PI) / 5 - Math.PI / 2;
-            let xPos = x + Math.cos(angle) * radius;
-            let yPos = y + Math.sin(angle) * radius;
-            
-            if (i === 0) {
-                ctx.moveTo(xPos, yPos);
-            } else {
-                ctx.lineTo(xPos, yPos);
-            }
-            
-            // Innere Punkte für Stern-Form
-            angle = ((i + 0.5) * 2 * Math.PI) / 5 - Math.PI / 2;
-            xPos = x + Math.cos(angle) * (radius * 0.5);
-            yPos = y + Math.sin(angle) * (radius * 0.5);
-            ctx.lineTo(xPos, yPos);
-        }
-        ctx.closePath();
-        ctx.fill();
-        ctx.stroke();
         ctx.restore();
     }
 }
