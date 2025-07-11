@@ -116,7 +116,7 @@ class EndlessMode {
         // Add to enemies array
         this.world.level.enemies.push(newEnemy);
         
-        console.log(`[EndlessMode] New ${randomType.name} spawned at x: ${Math.round(newEnemy.x)}`);
+       
     }
 
     /**
@@ -136,7 +136,7 @@ class EndlessMode {
         // Add to endboss array
         this.world.level.endboss.push(newEndboss);
         
-        console.log(`[EndlessMode] New Endboss spawned at x: ${Math.round(newEndboss.x)}`);
+     
     }
 
     /**
