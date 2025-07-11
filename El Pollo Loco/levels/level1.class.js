@@ -131,6 +131,6 @@ const level1 = new Level(
     ],
     [  // Cacti - at beginning and end of level
         new Cactus(-125),  // Beginning of level
-        new Cactus(4400)
+        new Cactus(5200)
     ]
 );

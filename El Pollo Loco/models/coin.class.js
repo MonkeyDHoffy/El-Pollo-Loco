@@ -18,7 +18,7 @@ class Coin extends MovableObject {
         this.loadImages(this.IMAGES_COIN);
         
         // Spawn coins between 300 and 4375 (4400 - 25 for oscillation buffer)
-        this.x = 300 + Math.random() * 4075;
+        this.x = 300 + Math.random() * 4000;
         this.y = 50 + Math.random() * 200;
         
         this.baseX = this.x;
