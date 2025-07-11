@@ -246,9 +246,33 @@ class CollisionManager {
     handleBottleHitsEndboss(throwableObject, endboss) {
         throwableObject.hasHit = true;
         throwableObject.splash();
-        endboss.hit(10);
+        
+        // Calculate combo damage - base damage (10) multiplied by combo count
+        let baseDamage = 10;
+        let comboMultiplier = Math.max(1, this.world.character.combo); // Minimum 1x damage
+        let totalDamage = baseDamage * comboMultiplier;
+        
+        endboss.hit(totalDamage);
         this.world.audioManager.playGlassBreakSound();
-        console.log("Endboss von Flasche getroffen!");
+        
+        // Enhanced logging with combo information
+        if (this.world.character.combo > 0) {
+            console.log(`Endboss von Flasche getroffen! Combo Damage: ${baseDamage} x ${comboMultiplier} = ${totalDamage}`);
+            
+            // Create combo particles for visual feedback on high combos
+            if (this.world.character.combo >= 3) {
+                let endbossX = endboss.x + endboss.width / 2;
+                let endbossY = endboss.y + endboss.height / 2;
+                this.world.particleManager.createComboParticles(endbossX, endbossY, this.world.character.combo);
+            }
+            
+            // Show floating damage number for high damage
+            if (totalDamage > 20) {
+                this.showFloatingDamage(endboss.x + endboss.width / 2, endboss.y, totalDamage);
+            }
+        } else {
+            console.log(`Endboss von Flasche getroffen! Base Damage: ${totalDamage}`);
+        }
         
         if (endboss.isDead) {
             this.world.totalScore += 50;
@@ -262,6 +286,19 @@ class CollisionManager {
                     this.world.level.endboss.splice(bossIdx, 1);
                 }
             }, 1000);
+        }
+    }
+
+    /**
+     * Show floating damage number (visual feedback for high damage)
+     */
+    showFloatingDamage(x, y, damage) {
+        // Simple console output for now - could be extended to visual floating text
+        console.log(`💥 MASSIVE DAMAGE: ${damage}! 💥`);
+        
+        // Create extra visual particles for massive damage
+        if (damage >= 50) {
+            this.world.particleManager.createDustParticles(x, y + 50, 20); // Extra dust
         }
     }
 }
