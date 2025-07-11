@@ -13,6 +13,12 @@ class WaveManager {
         this.chickenIncreaseStartWave = 5; // Start increasing from wave 5
         this.maxExtraChickens = 31; // Maximum additional chickens
         
+        // Endboss spawning system
+        this.baseMinEndbosses = 2; // Original minEndbosses from endless mode
+        this.endbossIncreaseStartWave = 15; // Start increasing from wave 15
+        this.endbossIncreaseInterval = 10; // Every 10 waves after wave 15
+        this.maxEndbosses = 6; // Maximum endbosses
+        
         console.log("[WaveManager] Initialized - Wave 1 started");
     }
 
@@ -54,6 +60,7 @@ class WaveManager {
         console.log(`[WaveManager] Advanced from Wave ${oldWave} to Wave ${this.currentWave}`);
         console.log(`[WaveManager] Speed multiplier: ${(this.baseSpeedMultiplier * 100).toFixed(0)}%`);
         console.log(`[WaveManager] Enemy count: ${this.getCurrentEnemyCount()}`);
+        console.log(`[WaveManager] Endboss count: ${this.getCurrentEndbossCount()}`);
         
         // Show wave change notification
         this.showWaveChangeNotification();
@@ -65,8 +72,11 @@ class WaveManager {
     updateEnemyCount() {
         if (this.world.endlessMode) {
             const newEnemyCount = this.getCurrentEnemyCount();
+            const newEndbossCount = this.getCurrentEndbossCount();
+            
             this.world.endlessMode.updateConfig({ 
-                minEnemies: newEnemyCount 
+                minEnemies: newEnemyCount,
+                minEndbosses: newEndbossCount
             });
         }
     }
@@ -86,6 +96,21 @@ class WaveManager {
         );
         
         return this.baseMinEnemies + extraChickens;
+    }
+
+    /**
+     * Calculate current endboss count based on wave
+     */
+    getCurrentEndbossCount() {
+        if (this.currentWave < this.endbossIncreaseStartWave) {
+            return this.baseMinEndbosses; // Waves 1-14: base amount (2)
+        }
+        
+        // From wave 15+: add 1 endboss every 10 waves, capped at max
+        const wavesAfterStart = this.currentWave - this.endbossIncreaseStartWave;
+        const extraEndbosses = Math.floor(wavesAfterStart / this.endbossIncreaseInterval) + 1; // +1 for wave 15 itself
+        
+        return Math.min(this.baseMinEndbosses + extraEndbosses, this.maxEndbosses);
     }
 
     /**
@@ -149,9 +174,12 @@ class WaveManager {
             speedPercentage: Math.round(this.baseSpeedMultiplier * 100),
             enemyCount: this.getCurrentEnemyCount(),
             extraChickens: Math.max(0, this.getCurrentEnemyCount() - this.baseMinEnemies),
+            endbossCount: this.getCurrentEndbossCount(),
+            extraEndbosses: Math.max(0, this.getCurrentEndbossCount() - this.baseMinEndbosses),
             pointsToNextWave: this.pointsPerWave - (this.world.totalScore % this.pointsPerWave),
             maxWaveReached: this.baseSpeedMultiplier >= this.maxSpeedMultiplier,
-            maxChickensReached: this.getCurrentEnemyCount() >= (this.baseMinEnemies + this.maxExtraChickens)
+            maxChickensReached: this.getCurrentEnemyCount() >= (this.baseMinEnemies + this.maxExtraChickens),
+            maxEndbossesReached: this.getCurrentEndbossCount() >= this.maxEndbosses
         };
     }
 
@@ -163,10 +191,11 @@ class WaveManager {
         this.baseSpeedMultiplier = 1.0;
         this.lastCheckedScore = 0;
         
-        // Reset enemy count to base
+        // Reset enemy and endboss count to base
         if (this.world.endlessMode) {
             this.world.endlessMode.updateConfig({ 
-                minEnemies: this.baseMinEnemies 
+                minEnemies: this.baseMinEnemies,
+                minEndbosses: this.baseMinEndbosses
             });
         }
         

@@ -242,13 +242,16 @@ class UIManager {
         this.world.ctx.fillStyle = '#FFFFFF';
         this.world.ctx.fillText(`WAVE ${waveInfo.currentWave}`, indicatorX, indicatorY - 5);
         
-        // Info line: Speed and Chicken count
+        // Info line: Speed, Chicken count, and Endboss count
         this.world.ctx.font = 'bold 11px Comic Sans MS';
         this.world.ctx.fillStyle = borderColor;
         
         let infoText = `${waveInfo.speedPercentage}% Speed`;
         if (waveInfo.extraChickens > 0) {
             infoText += ` | +${waveInfo.extraChickens} 🐔`;
+        }
+        if (waveInfo.extraEndbosses > 0) {
+            infoText += ` | +${waveInfo.extraEndbosses} 👑`;
         }
         this.world.ctx.fillText(infoText, indicatorX, indicatorY + 12);
         
@@ -438,6 +441,9 @@ class UIManager {
             let subtitleText = `${waveInfo.speedPercentage}% Speed`;
             if (waveInfo.extraChickens > 0) {
                 subtitleText += ` | +${waveInfo.extraChickens} 🐔`;
+            }
+            if (waveInfo.extraEndbosses > 0) {
+                subtitleText += ` | +${waveInfo.extraEndbosses} 👑`;
             }
             this.world.ctx.fillText(subtitleText, centerX, centerY + 25);
         } else {
