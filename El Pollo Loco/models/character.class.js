@@ -134,7 +134,15 @@ class Character extends MovableObject {
                 }
                 
                 if (this.world.keyboard.UP && !this.isAboveGround()) {
-                    this.jump(20);
+                    if (this.bottles === 0) {
+                        // Super jump: lower height but faster horizontal movement
+                        this.jump(28); // Reduced from 35 to 28
+                        this.activateSuperJumpSpeed();
+                        console.log("Super jump activated! (no bottles) - lower but faster");
+                    } else {
+                        // Regular jump
+                        this.jump(20);
+                    }
                 }
 
                 this.world.camera_x = -this.x + this.world.canvas.width / 2 - this.width / 2;
@@ -181,6 +189,25 @@ class Character extends MovableObject {
         this.speedY = howhigh;
         this.playRandomJumpSound();
         console.log("character is jumping");
+    }
+
+    /**
+     * Activate super jump speed boost for horizontal movement
+     */
+    activateSuperJumpSpeed() {
+        // Store original speed
+        this.originalSpeed = this.speed;
+        
+        // Increase horizontal speed for super jump
+        this.speed = 15; // Increased from 8 to 15
+        
+        // Reset speed after jump duration (approximately when landing)
+        setTimeout(() => {
+            this.speed = this.originalSpeed || 8;
+            console.log("Super jump speed boost ended");
+        }, 800); // 800ms should be enough for the jump arc
+        
+        console.log("Super jump speed boost activated!");
     }
 
     canThrowBottle() {

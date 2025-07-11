@@ -16,6 +16,10 @@ class UIManager {
         if (this.world.character.showWrongDirectionWarning) {
             this.drawWrongDirectionWarning();
         }
+
+        if (this.world.character.bottles === 0) {
+            this.drawSuperJumpIndicator();
+        }
     }
 
     /**
@@ -188,6 +192,47 @@ class UIManager {
         this.world.ctx.fillText(`Score: ${this.world.totalScore}`, 20, y);
         y += 15;
         this.world.ctx.fillText(`FPS: ${this.world.fps || 'N/A'}`, 20, y);
+        
+        this.world.ctx.restore();
+    }
+
+    /**
+     * Draw super jump indicator when no bottles
+     */
+    drawSuperJumpIndicator() {
+        this.world.ctx.save();
+        
+        // Position at bottom right
+        let indicatorX = this.world.canvas.width - 200;
+        let indicatorY = this.world.canvas.height - 50;
+        let boxWidth = 180;
+        let boxHeight = 40;
+        
+        // Pulsing effect
+        let pulseValue = Math.sin(Date.now() * 0.005) * 0.3 + 0.7;
+        
+        // Glowing background
+        this.world.ctx.fillStyle = `rgba(255, 215, 0, ${pulseValue})`;
+        this.roundRect(this.world.ctx, indicatorX - 10, indicatorY - 25, boxWidth, boxHeight, 12);
+        this.world.ctx.fill();
+        
+        // Border
+        this.world.ctx.strokeStyle = '#FFD700';
+        this.world.ctx.lineWidth = 3;
+        this.roundRect(this.world.ctx, indicatorX - 10, indicatorY - 25, boxWidth, boxHeight, 12);
+        this.world.ctx.stroke();
+        
+        // Text
+        this.world.ctx.font = 'bold 18px Comic Sans MS';
+        this.world.ctx.textAlign = 'center';
+        
+        // Text shadow
+        this.world.ctx.fillStyle = '#B8860B';
+        this.world.ctx.fillText('🚀 SUPER JUMP!', indicatorX + 80 + 2, indicatorY + 2);
+        
+        // Main text
+        this.world.ctx.fillStyle = '#FFFFFF';
+        this.world.ctx.fillText('🚀 SUPER JUMP!', indicatorX + 80, indicatorY);
         
         this.world.ctx.restore();
     }
