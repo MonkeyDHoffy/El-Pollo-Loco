@@ -256,10 +256,13 @@ class UIManager {
     }
 
     /**
-     * Draw combo indicator when combo > 0
+     * Draw combo indicator when combo > 0 or during grace period
      */
     drawComboIndicator() {
-        if (!this.world.character.combo || this.world.character.combo === 0) return;
+        let effectiveCombo = this.world.character.getEffectiveCombo();
+        let currentCombo = this.world.character.combo;
+        
+        if (effectiveCombo === 0) return;
         
         this.world.ctx.save();
         
@@ -269,19 +272,49 @@ class UIManager {
         let boxWidth = 120;
         let boxHeight = 40;
         
+        // Check if we're in grace period
+        let inGracePeriod = currentCombo === 0 && effectiveCombo > 0;
+        let comboText = '';
+        let subText = '';
+        
+        if (inGracePeriod) {
+            // Calculate remaining grace period time
+            let currentTime = Date.now();
+            let timeSinceComboEnded = currentTime - this.world.character.comboEndTime;
+            let remainingTime = Math.max(0, this.world.character.comboGracePeriod - timeSinceComboEnded);
+            let secondsRemaining = Math.ceil(remainingTime / 1000);
+            
+            comboText = `${effectiveCombo}x`;
+            subText = `${secondsRemaining}s`;
+            boxHeight = 50; // Make box taller for grace period text
+        } else {
+            comboText = `${effectiveCombo}x`;
+            subText = 'COMBO';
+        }
+        
         // Pulsing effect based on combo count
         let pulseValue = Math.sin(Date.now() * 0.01) * 0.2 + 0.8;
-        let intensity = Math.min(this.world.character.combo / 10, 1); // More intense with higher combo
+        let intensity = Math.min(effectiveCombo / 10, 1); // More intense with higher combo
         
-        // Dynamic colors based on combo count
+        // Dynamic colors based on combo count and grace period
         let bgColor, borderColor, textColor;
-        if (this.world.character.combo >= 10) {
+        if (inGracePeriod) {
+            // Fading orange for grace period
+            let currentTime = Date.now();
+            let timeSinceComboEnded = currentTime - this.world.character.comboEndTime;
+            let fadeProgress = timeSinceComboEnded / this.world.character.comboGracePeriod;
+            let alpha = Math.max(0.3, 1 - fadeProgress);
+            
+            bgColor = `rgba(255, 140, 0, ${alpha * pulseValue * 0.6})`;
+            borderColor = `rgba(255, 165, 0, ${alpha})`;
+            textColor = '#FFFFFF';
+        } else if (effectiveCombo >= 10) {
             // Rainbow/legendary effect for 10+ combo
             let hue = (Date.now() * 0.1) % 360;
             bgColor = `hsla(${hue}, 80%, 50%, ${pulseValue * 0.9})`;
             borderColor = `hsla(${hue + 60}, 90%, 60%, 1)`;
             textColor = '#FFFFFF';
-        } else if (this.world.character.combo >= 5) {
+        } else if (effectiveCombo >= 5) {
             // Gold for 5+ combo
             bgColor = `rgba(255, 215, 0, ${pulseValue * 0.8})`;
             borderColor = '#FFD700';
@@ -308,15 +341,34 @@ class UIManager {
         this.world.ctx.font = 'bold 18px Comic Sans MS';
         this.world.ctx.textAlign = 'center';
         
-        // Text shadow
-        this.world.ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
-        this.world.ctx.fillText(`COMBO`, indicatorX + boxWidth/2 - 10 + 1, indicatorY - 8 + 1);
-        this.world.ctx.fillText(`${this.world.character.combo}x`, indicatorX + boxWidth/2 - 10 + 1, indicatorY + 8 + 1);
-        
-        // Main text
-        this.world.ctx.fillStyle = textColor;
-        this.world.ctx.fillText(`COMBO`, indicatorX + boxWidth/2 - 10, indicatorY - 8);
-        this.world.ctx.fillText(`${this.world.character.combo}x`, indicatorX + boxWidth/2 - 10, indicatorY + 8);
+        if (inGracePeriod) {
+            // Grace period layout
+            // Text shadow
+            this.world.ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+            this.world.ctx.fillText(comboText, indicatorX + boxWidth/2 - 10 + 1, indicatorY - 5 + 1);
+            this.world.ctx.font = 'bold 12px Comic Sans MS';
+            this.world.ctx.fillText('DAMAGE', indicatorX + boxWidth/2 - 10 + 1, indicatorY + 8 + 1);
+            this.world.ctx.fillText(subText, indicatorX + boxWidth/2 - 10 + 1, indicatorY + 20 + 1);
+            
+            // Main text
+            this.world.ctx.fillStyle = textColor;
+            this.world.ctx.font = 'bold 18px Comic Sans MS';
+            this.world.ctx.fillText(comboText, indicatorX + boxWidth/2 - 10, indicatorY - 5);
+            this.world.ctx.font = 'bold 12px Comic Sans MS';
+            this.world.ctx.fillText('DAMAGE', indicatorX + boxWidth/2 - 10, indicatorY + 8);
+            this.world.ctx.fillText(subText, indicatorX + boxWidth/2 - 10, indicatorY + 20);
+        } else {
+            // Normal combo layout
+            // Text shadow
+            this.world.ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+            this.world.ctx.fillText(subText, indicatorX + boxWidth/2 - 10 + 1, indicatorY - 8 + 1);
+            this.world.ctx.fillText(comboText, indicatorX + boxWidth/2 - 10 + 1, indicatorY + 8 + 1);
+            
+            // Main text
+            this.world.ctx.fillStyle = textColor;
+            this.world.ctx.fillText(subText, indicatorX + boxWidth/2 - 10, indicatorY - 8);
+            this.world.ctx.fillText(comboText, indicatorX + boxWidth/2 - 10, indicatorY + 8);
+        }
         
         this.world.ctx.restore();
     }

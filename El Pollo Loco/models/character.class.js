@@ -12,6 +12,11 @@ class Character extends MovableObject {
     combo = 0;
     lastGroundTouch = 0; // Timestamp when character last touched ground
     wasOnGround = true; // Track if character was on ground
+    
+    // Combo grace period system
+    lastComboValue = 0; // Store the last combo value after it ends
+    comboEndTime = 0; // Timestamp when combo ended
+    comboGracePeriod = 2000; // 2 seconds grace period in milliseconds
 
     IMAGES_JUMPING = [
         'img/img_pollo_locco/img/2_character_pepe/3_jump/J-31.png',
@@ -312,6 +317,9 @@ class Character extends MovableObject {
         if (isCurrentlyOnGround && !this.wasOnGround) {
             if (this.combo > 0) {
                 console.log(`Combo ended at ${this.combo} kills - landed on ground`);
+                // Store the combo value and timestamp for grace period
+                this.lastComboValue = this.combo;
+                this.comboEndTime = Date.now();
                 this.combo = 0;
             }
             this.lastGroundTouch = Date.now();
@@ -344,9 +352,35 @@ class Character extends MovableObject {
      */
     resetCombo() {
         if (this.combo > 0) {
-            console.log(`Combo reset from ${this.combo}`);
+            console.log(`Combo reset from ${this.combo} due to damage`);
+            // Store the combo value and timestamp for grace period
+            this.lastComboValue = this.combo;
+            this.comboEndTime = Date.now();
             this.combo = 0;
         }
+    }
+
+    /**
+     * Get the effective combo value for damage calculation
+     * Returns current combo or last combo if within grace period
+     */
+    getEffectiveCombo() {
+        // If we have an active combo, use that
+        if (this.combo > 0) {
+            return this.combo;
+        }
+        
+        // Check if we're within the grace period after combo ended
+        const currentTime = Date.now();
+        const timeSinceComboEnded = currentTime - this.comboEndTime;
+        
+        if (this.lastComboValue > 0 && timeSinceComboEnded <= this.comboGracePeriod) {
+            console.log(`Using grace period combo: ${this.lastComboValue} (${Math.round((this.comboGracePeriod - timeSinceComboEnded) / 1000)}s remaining)`);
+            return this.lastComboValue;
+        }
+        
+        // No combo or grace period expired
+        return 0;
     }
 
     /**

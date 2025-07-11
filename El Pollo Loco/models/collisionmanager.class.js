@@ -247,23 +247,24 @@ class CollisionManager {
         throwableObject.hasHit = true;
         throwableObject.splash();
         
-        // Calculate combo damage - base damage (10) multiplied by combo count
+        // Calculate combo damage using effective combo (includes grace period)
         let baseDamage = 10;
-        let comboMultiplier = Math.max(1, this.world.character.combo); // Minimum 1x damage
+        let effectiveCombo = this.world.character.getEffectiveCombo();
+        let comboMultiplier = Math.max(1, effectiveCombo); // Minimum 1x damage
         let totalDamage = baseDamage * comboMultiplier;
         
         endboss.hit(totalDamage);
         this.world.audioManager.playGlassBreakSound();
         
         // Enhanced logging with combo information
-        if (this.world.character.combo > 0) {
+        if (effectiveCombo > 0) {
             console.log(`Endboss von Flasche getroffen! Combo Damage: ${baseDamage} x ${comboMultiplier} = ${totalDamage}`);
             
             // Create combo particles for visual feedback on high combos
-            if (this.world.character.combo >= 3) {
+            if (effectiveCombo >= 3) {
                 let endbossX = endboss.x + endboss.width / 2;
                 let endbossY = endboss.y + endboss.height / 2;
-                this.world.particleManager.createComboParticles(endbossX, endbossY, this.world.character.combo);
+                this.world.particleManager.createComboParticles(endbossX, endbossY, effectiveCombo);
             }
             
             // Show floating damage number for high damage
