@@ -401,9 +401,9 @@ class UIManager {
     drawSuperJumpIndicator() {
         this.world.ctx.save();
         
-        // Position at bottom right
-        let indicatorX = this.world.canvas.width - 200;
-        let indicatorY = this.world.canvas.height - 50;
+        // Position at bottom left - moved to left corner
+        let indicatorX = 20; // Changed from canvas.width - 200 to 20
+        let indicatorY = this.world.canvas.height - 20;
         let boxWidth = 180;
         let boxHeight = 40;
         

@@ -24,7 +24,11 @@ class CollisionManager {
                 if (this.isCharacterJumpingOnEnemy(enemy)) {
                     this.handleCharacterKillsEnemy(enemy);
                 } else {
-                    this.handleCharacterHitByEnemy(10);
+                    // Only take damage from enemies if character is on ground (not airborne)
+                    if (!this.world.character.isAboveGround()) {
+                        this.handleCharacterHitByEnemy(10);
+                    }
+                    // If character is airborne, no damage but also no kill - just collision
                 }
             }
         });
@@ -36,7 +40,11 @@ class CollisionManager {
     checkCharacterEndbossCollisions() {
         this.world.level.endboss.forEach(endboss => {
             if (this.world.character.isColliding(endboss) && !this.world.character.isHurt()) {
-                this.handleCharacterHitByEnemy(20);
+                // Only deal damage if endboss is not dead or dying
+                if (!endboss.isDead && !endboss.isDying) {
+                    this.handleCharacterHitByEnemy(20);
+                }
+                // If endboss is dead/dying, no damage dealt
             }
         });
     }
