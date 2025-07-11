@@ -19,6 +19,17 @@ class World {
     backgroundMusic;
     totalScore = 0;
 
+    // Endless Runner Configuration
+    endlessRunnerConfig = {
+        minEnemies: 5,
+        minEndbosses: 2,
+        spawnAreaStart: 4550,
+        spawnAreaEnd: 5500,
+        cleanupLeftBound: -200,
+        cleanupRightBound: 4900,
+        enemyTypes: [Chicken, MiniChicken]
+    };
+
     coinCollectingSounds = [
         'audio/sounds/coincollecting(1).mp3',
         'audio/sounds/coincollecting(1).wav',
@@ -97,8 +108,163 @@ class World {
                 this.checkCollisions();
                 this.checkThrowObjects();
                 this.character.updateWarning();
+                this.manageEndlessRunner();
             }
         }, 10);
+    }
+
+    /**
+     * Manages the endless runner mechanics:
+     * - Removes enemies that are too far left or right
+     * - Spawns new enemies when needed
+     */
+    manageEndlessRunner() {
+        this.cleanupDistantEnemies();
+        this.cleanupDistantEndbosses();
+        this.maintainEnemyCount();
+        this.maintainEndbossCount();
+        
+        // Debug log every 5 seconds
+        if (!this.lastDebugTime || Date.now() - this.lastDebugTime > 5000) {
+            this.logEndlessRunnerStatus();
+            this.lastDebugTime = Date.now();
+        }
+    }
+
+    /**
+     * Logs the current status of enemies and endbosses for debugging
+     */
+    logEndlessRunnerStatus() {
+        const enemyCount = this.level.enemies.length;
+        const endbossCount = this.level.endboss.length;
+        const characterX = Math.round(this.character.x);
+        
+        console.log(`Endless Runner Status - Character X: ${characterX}, Enemies: ${enemyCount}, Endbosses: ${endbossCount}`);
+        
+        // Log enemy positions
+        this.level.enemies.forEach((enemy, i) => {
+            const type = enemy instanceof MiniChicken ? 'Mini' : 'Chicken';
+            console.log(`  ${type} ${i}: x=${Math.round(enemy.x)}, dead=${enemy.isDead}`);
+        });
+        
+        // Log endboss positions
+        this.level.endboss.forEach((endboss, i) => {
+            console.log(`  Endboss ${i}: x=${Math.round(endboss.x)}, energy=${endboss.energy}, dead=${endboss.isDead}`);
+        });
+    }
+
+    /**
+     * Removes enemies that are too far from the action area
+     */
+    cleanupDistantEnemies() {
+        const beforeCount = this.level.enemies.length;
+        this.level.enemies = this.level.enemies.filter(enemy => {
+            // Remove enemies that are too far left or right
+            if (enemy.x < this.endlessRunnerConfig.cleanupLeftBound || 
+                enemy.x > this.endlessRunnerConfig.cleanupRightBound) {
+                console.log(`Removing distant enemy at x: ${Math.round(enemy.x)}`);
+                return false; // Remove this enemy
+            }
+            return true; // Keep this enemy
+        });
+        const afterCount = this.level.enemies.length;
+        if (beforeCount !== afterCount) {
+            console.log(`Cleaned up ${beforeCount - afterCount} distant enemies`);
+        }
+    }
+
+    /**
+     * Removes endbosses that are too far from the action area
+     */
+    cleanupDistantEndbosses() {
+        const beforeCount = this.level.endboss.length;
+        this.level.endboss = this.level.endboss.filter(endboss => {
+            // Remove endbosses that are too far left or right
+            if (endboss.x < this.endlessRunnerConfig.cleanupLeftBound || 
+                endboss.x > this.endlessRunnerConfig.cleanupRightBound) {
+                console.log(`Removing distant endboss at x: ${Math.round(endboss.x)}`);
+                return false; // Remove this endboss
+            }
+            return true; // Keep this endboss
+        });
+        const afterCount = this.level.endboss.length;
+        if (beforeCount !== afterCount) {
+            console.log(`Cleaned up ${beforeCount - afterCount} distant endbosses`);
+        }
+    }
+
+    /**
+     * Maintains a minimum number of enemies by spawning new ones
+     */
+    maintainEnemyCount() {
+        const currentEnemyCount = this.level.enemies.length;
+        
+        if (currentEnemyCount < this.endlessRunnerConfig.minEnemies) {
+            const enemiesToSpawn = this.endlessRunnerConfig.minEnemies - currentEnemyCount;
+            for (let i = 0; i < enemiesToSpawn; i++) {
+                this.spawnNewEnemy();
+            }
+        }
+    }
+
+    /**
+     * Maintains a minimum number of endbosses by spawning new ones
+     */
+    maintainEndbossCount() {
+        const currentEndbossCount = this.level.endboss.length;
+        
+        if (currentEndbossCount < this.endlessRunnerConfig.minEndbosses) {
+            const endbossesToSpawn = this.endlessRunnerConfig.minEndbosses - currentEndbossCount;
+            for (let i = 0; i < endbossesToSpawn; i++) {
+                this.spawnNewEndboss();
+            }
+        }
+    }
+
+    /**
+     * Spawns a new enemy outside the current level area
+     */
+    spawnNewEnemy() {
+        // Randomly choose enemy type
+        const randomType = this.endlessRunnerConfig.enemyTypes[
+            Math.floor(Math.random() * this.endlessRunnerConfig.enemyTypes.length)
+        ];
+        
+        // Create new enemy
+        const newEnemy = new randomType();
+        
+        // Position enemy outside level end
+        const spawnRange = this.endlessRunnerConfig.spawnAreaEnd - this.endlessRunnerConfig.spawnAreaStart;
+        newEnemy.x = this.endlessRunnerConfig.spawnAreaStart + Math.random() * spawnRange;
+        newEnemy.y = randomType === MiniChicken ? 385 : 376;
+        
+        // Set world reference
+        newEnemy.world = this;
+        
+        // Add to enemies array
+        this.level.enemies.push(newEnemy);
+        
+        console.log(`New ${randomType.name} spawned at x: ${Math.round(newEnemy.x)}`);
+    }
+
+    /**
+     * Spawns a new endboss outside the current level area
+     */
+    spawnNewEndboss() {
+        // Create new endboss
+        const newEndboss = new Endboss();
+        
+        // Position endboss outside level end
+        const spawnRange = this.endlessRunnerConfig.spawnAreaEnd - this.endlessRunnerConfig.spawnAreaStart;
+        newEndboss.x = this.endlessRunnerConfig.spawnAreaStart + Math.random() * spawnRange;
+        
+        // Set world reference
+        newEndboss.world = this;
+        
+        // Add to endboss array
+        this.level.endboss.push(newEndboss);
+        
+        console.log(`New Endboss spawned at x: ${Math.round(newEndboss.x)}`);
     }
 
     togglePause() {
@@ -252,6 +418,9 @@ class World {
             this.totalScore += 20;
         }
         
+        // Spawn new enemy immediately
+        this.spawnNewEnemy();
+        
         setTimeout(() => {
             const chickenIndex = this.level.enemies.indexOf(enemy);
             if (chickenIndex > -1) {
@@ -303,6 +472,9 @@ class World {
             this.totalScore += 20;
         }
         
+        // Spawn new enemy immediately
+        this.spawnNewEnemy();
+        
         setTimeout(() => {
             const enemyIdx = this.level.enemies.indexOf(enemy);
             if (enemyIdx > -1) {
@@ -321,6 +493,10 @@ class World {
         
         if (endboss.isDead) {
             this.totalScore += 50;
+            
+            // Spawn new endboss immediately when one dies
+            this.spawnNewEndboss();
+            
             setTimeout(() => {
                 const bossIdx = this.level.endboss.indexOf(endboss);
                 if (bossIdx > -1) {

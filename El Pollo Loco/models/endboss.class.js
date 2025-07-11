@@ -16,6 +16,7 @@ class Endboss extends MovableObject {
         super().loadImage(this.IMAGES_WALKING[0]);
         this.loadImages(this.IMAGES_WALKING);
         
+        // Default spawn position - can be overridden after creation
         this.x = 3800 - (index * 600);
         this.animate();
     }
