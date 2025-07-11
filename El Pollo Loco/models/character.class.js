@@ -7,6 +7,11 @@ class Character extends MovableObject {
     world;
     showWrongDirectionWarning = false;
     warningStartTime = 0;
+    
+    // Combo system
+    combo = 0;
+    lastGroundTouch = 0; // Timestamp when character last touched ground
+    wasOnGround = true; // Track if character was on ground
 
     IMAGES_JUMPING = [
         'img/img_pollo_locco/img/2_character_pepe/3_jump/J-31.png',
@@ -153,6 +158,9 @@ class Character extends MovableObject {
 
         setInterval(() => {
             if (!this.world.isPaused) {
+                // Update combo tracking
+                this.updateComboTracking();
+                
                 if (this.isDead()) {
                     this.playAnimation(this.IMAGES_DEAD);
                 } else if (this.isHurt()) {
@@ -292,5 +300,60 @@ class Character extends MovableObject {
                charLeft < mobject.x + mobject.width &&
                charTop + (charBottom - charTop) > mobject.y &&
                charTop < mobject.y + mobject.height;
+    }
+
+    /**
+     * Check if character is on ground and update combo tracking
+     */
+    updateComboTracking() {
+        const isCurrentlyOnGround = !this.isAboveGround(); // Use existing isAboveGround method
+        
+        // If character just landed on ground, reset combo
+        if (isCurrentlyOnGround && !this.wasOnGround) {
+            if (this.combo > 0) {
+                console.log(`Combo ended at ${this.combo} kills - landed on ground`);
+                this.combo = 0;
+            }
+            this.lastGroundTouch = Date.now();
+        }
+        
+        this.wasOnGround = isCurrentlyOnGround;
+    }
+
+    /**
+     * Add to combo when killing chicken while airborne
+     */
+    addComboKill() {
+        if (this.isAboveGround()) { // Use existing isAboveGround method
+            this.combo++;
+            console.log(`Combo: ${this.combo} airborne kills!`);
+            
+            // Play combo sound or effect here if desired
+            if (this.combo > 1) {
+                // Could add special combo sound effects
+                this.playRandomChickenAttackSound();
+            }
+        } else {
+            // Reset combo if on ground when killing
+            this.combo = 0;
+        }
+    }
+
+    /**
+     * Reset combo (called when taking damage or other events)
+     */
+    resetCombo() {
+        if (this.combo > 0) {
+            console.log(`Combo reset from ${this.combo}`);
+            this.combo = 0;
+        }
+    }
+
+    /**
+     * Override hit method to reset combo when taking damage
+     */
+    hit(damage) {
+        super.hit(damage);
+        this.resetCombo(); // Reset combo when taking damage
     }
 }

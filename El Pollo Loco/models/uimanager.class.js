@@ -9,6 +9,7 @@ class UIManager {
     drawUI() {
         this.drawMexicanScore();
         this.drawWaveIndicator(); // Add wave indicator
+        this.drawComboIndicator(); // Add combo indicator
         
         if (this.world.isPaused) {
             this.drawPauseOverlay();
@@ -214,19 +215,19 @@ class UIManager {
         // Position at center top
         let indicatorX = this.world.canvas.width / 2;
         let indicatorY = 50;
-        let boxWidth = 150;
-        let boxHeight = 40;
+        let boxWidth = 200; // Increased width for more info
+        let boxHeight = 50; // Increased height for two lines
         
         // Background with gradient effect
         this.world.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-        this.roundRect(this.world.ctx, indicatorX - boxWidth/2, indicatorY - 25, boxWidth, boxHeight, 10);
+        this.roundRect(this.world.ctx, indicatorX - boxWidth/2, indicatorY - 30, boxWidth, boxHeight, 10);
         this.world.ctx.fill();
         
         // Border with wave-based color
-        let borderColor = waveInfo.maxWaveReached ? '#FF6B35' : '#4ECDC4';
+        let borderColor = (waveInfo.maxWaveReached && waveInfo.maxChickensReached) ? '#FF6B35' : '#4ECDC4';
         this.world.ctx.strokeStyle = borderColor;
         this.world.ctx.lineWidth = 3;
-        this.roundRect(this.world.ctx, indicatorX - boxWidth/2, indicatorY - 25, boxWidth, boxHeight, 10);
+        this.roundRect(this.world.ctx, indicatorX - boxWidth/2, indicatorY - 30, boxWidth, boxHeight, 10);
         this.world.ctx.stroke();
         
         // Wave text
@@ -235,16 +236,87 @@ class UIManager {
         
         // Text shadow
         this.world.ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
-        this.world.ctx.fillText(`WAVE ${waveInfo.currentWave}`, indicatorX + 1, indicatorY + 1);
+        this.world.ctx.fillText(`WAVE ${waveInfo.currentWave}`, indicatorX + 1, indicatorY - 5 + 1);
         
         // Main text
         this.world.ctx.fillStyle = '#FFFFFF';
-        this.world.ctx.fillText(`WAVE ${waveInfo.currentWave}`, indicatorX, indicatorY);
+        this.world.ctx.fillText(`WAVE ${waveInfo.currentWave}`, indicatorX, indicatorY - 5);
         
-        // Speed indicator (smaller text below)
-        this.world.ctx.font = 'bold 12px Comic Sans MS';
+        // Info line: Speed and Chicken count
+        this.world.ctx.font = 'bold 11px Comic Sans MS';
         this.world.ctx.fillStyle = borderColor;
-        this.world.ctx.fillText(`${waveInfo.speedPercentage}% Speed`, indicatorX, indicatorY + 15);
+        
+        let infoText = `${waveInfo.speedPercentage}% Speed`;
+        if (waveInfo.extraChickens > 0) {
+            infoText += ` | +${waveInfo.extraChickens} 🐔`;
+        }
+        this.world.ctx.fillText(infoText, indicatorX, indicatorY + 12);
+        
+        this.world.ctx.restore();
+    }
+
+    /**
+     * Draw combo indicator when combo > 0
+     */
+    drawComboIndicator() {
+        if (!this.world.character.combo || this.world.character.combo === 0) return;
+        
+        this.world.ctx.save();
+        
+        // Position at left side of screen
+        let indicatorX = 150;
+        let indicatorY = 120;
+        let boxWidth = 120;
+        let boxHeight = 40;
+        
+        // Pulsing effect based on combo count
+        let pulseValue = Math.sin(Date.now() * 0.01) * 0.2 + 0.8;
+        let intensity = Math.min(this.world.character.combo / 10, 1); // More intense with higher combo
+        
+        // Dynamic colors based on combo count
+        let bgColor, borderColor, textColor;
+        if (this.world.character.combo >= 10) {
+            // Rainbow/legendary effect for 10+ combo
+            let hue = (Date.now() * 0.1) % 360;
+            bgColor = `hsla(${hue}, 80%, 50%, ${pulseValue * 0.9})`;
+            borderColor = `hsla(${hue + 60}, 90%, 60%, 1)`;
+            textColor = '#FFFFFF';
+        } else if (this.world.character.combo >= 5) {
+            // Gold for 5+ combo
+            bgColor = `rgba(255, 215, 0, ${pulseValue * 0.8})`;
+            borderColor = '#FFD700';
+            textColor = '#8B0000';
+        } else {
+            // Orange for lower combos
+            bgColor = `rgba(255, 165, 0, ${pulseValue * 0.7})`;
+            borderColor = '#FF8C00';
+            textColor = '#FFFFFF';
+        }
+        
+        // Glowing background
+        this.world.ctx.fillStyle = bgColor;
+        this.roundRect(this.world.ctx, indicatorX - 10, indicatorY - 25, boxWidth, boxHeight, 12);
+        this.world.ctx.fill();
+        
+        // Border with glow effect
+        this.world.ctx.strokeStyle = borderColor;
+        this.world.ctx.lineWidth = 3;
+        this.roundRect(this.world.ctx, indicatorX - 10, indicatorY - 25, boxWidth, boxHeight, 12);
+        this.world.ctx.stroke();
+        
+        // Main text
+        this.world.ctx.font = 'bold 18px Comic Sans MS';
+        this.world.ctx.textAlign = 'center';
+        
+        // Text shadow
+        this.world.ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+        this.world.ctx.fillText(`COMBO`, indicatorX + boxWidth/2 - 10 + 1, indicatorY - 8 + 1);
+        this.world.ctx.fillText(`${this.world.character.combo}x`, indicatorX + boxWidth/2 - 10 + 1, indicatorY + 8 + 1);
+        
+        // Main text
+        this.world.ctx.fillStyle = textColor;
+        this.world.ctx.fillText(`COMBO`, indicatorX + boxWidth/2 - 10, indicatorY - 8);
+        this.world.ctx.fillText(`${this.world.character.combo}x`, indicatorX + boxWidth/2 - 10, indicatorY + 8);
         
         this.world.ctx.restore();
     }
@@ -304,10 +376,21 @@ class UIManager {
         this.world.ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
         this.world.ctx.fillText(`WAVE ${this.waveChangeNotification.wave}`, centerX, centerY);
         
-        // Subtitle
+        // Subtitle with enhanced info
         this.world.ctx.font = 'bold 18px Comic Sans MS';
         this.world.ctx.fillStyle = `rgba(255, 255, 255, ${alpha * 0.8})`;
-        this.world.ctx.fillText('Enemies are faster!', centerX, centerY + 25);
+        
+        // Get wave info for enhanced subtitle
+        if (this.world.waveManager) {
+            const waveInfo = this.world.waveManager.getWaveInfo();
+            let subtitleText = `${waveInfo.speedPercentage}% Speed`;
+            if (waveInfo.extraChickens > 0) {
+                subtitleText += ` | +${waveInfo.extraChickens} 🐔`;
+            }
+            this.world.ctx.fillText(subtitleText, centerX, centerY + 25);
+        } else {
+            this.world.ctx.fillText('Enemies are faster!', centerX, centerY + 25);
+        }
         
         this.world.ctx.restore();
     }

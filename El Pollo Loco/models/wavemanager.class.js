@@ -8,6 +8,11 @@ class WaveManager {
         this.pointsPerWave = 100; // Points needed for next wave
         this.lastCheckedScore = 0;
         
+        // Chicken spawning system
+        this.baseMinEnemies = 5; // Original minEnemies from endless mode
+        this.chickenIncreaseStartWave = 5; // Start increasing from wave 5
+        this.maxExtraChickens = 31; // Maximum additional chickens
+        
         console.log("[WaveManager] Initialized - Wave 1 started");
     }
 
@@ -40,14 +45,47 @@ class WaveManager {
         
         this.baseSpeedMultiplier = newMultiplier;
         
+        // Calculate and update enemy count for endless mode
+        this.updateEnemyCount();
+        
         // Apply speed increase to all existing enemies
         this.updateEnemySpeeds();
         
         console.log(`[WaveManager] Advanced from Wave ${oldWave} to Wave ${this.currentWave}`);
         console.log(`[WaveManager] Speed multiplier: ${(this.baseSpeedMultiplier * 100).toFixed(0)}%`);
+        console.log(`[WaveManager] Enemy count: ${this.getCurrentEnemyCount()}`);
         
         // Show wave change notification
         this.showWaveChangeNotification();
+    }
+
+    /**
+     * Update enemy count in endless mode based on current wave
+     */
+    updateEnemyCount() {
+        if (this.world.endlessMode) {
+            const newEnemyCount = this.getCurrentEnemyCount();
+            this.world.endlessMode.updateConfig({ 
+                minEnemies: newEnemyCount 
+            });
+        }
+    }
+
+    /**
+     * Calculate current enemy count based on wave
+     */
+    getCurrentEnemyCount() {
+        if (this.currentWave < this.chickenIncreaseStartWave) {
+            return this.baseMinEnemies; // Waves 1-4: base amount
+        }
+        
+        // From wave 5+: add 1 chicken per wave, capped at max
+        const extraChickens = Math.min(
+            this.currentWave - this.chickenIncreaseStartWave + 1,
+            this.maxExtraChickens
+        );
+        
+        return this.baseMinEnemies + extraChickens;
     }
 
     /**
@@ -109,8 +147,11 @@ class WaveManager {
             currentWave: this.currentWave,
             speedMultiplier: this.baseSpeedMultiplier,
             speedPercentage: Math.round(this.baseSpeedMultiplier * 100),
+            enemyCount: this.getCurrentEnemyCount(),
+            extraChickens: Math.max(0, this.getCurrentEnemyCount() - this.baseMinEnemies),
             pointsToNextWave: this.pointsPerWave - (this.world.totalScore % this.pointsPerWave),
-            maxWaveReached: this.baseSpeedMultiplier >= this.maxSpeedMultiplier
+            maxWaveReached: this.baseSpeedMultiplier >= this.maxSpeedMultiplier,
+            maxChickensReached: this.getCurrentEnemyCount() >= (this.baseMinEnemies + this.maxExtraChickens)
         };
     }
 
@@ -121,6 +162,14 @@ class WaveManager {
         this.currentWave = 1;
         this.baseSpeedMultiplier = 1.0;
         this.lastCheckedScore = 0;
+        
+        // Reset enemy count to base
+        if (this.world.endlessMode) {
+            this.world.endlessMode.updateConfig({ 
+                minEnemies: this.baseMinEnemies 
+            });
+        }
+        
         console.log("[WaveManager] Reset to Wave 1");
     }
 }

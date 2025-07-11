@@ -107,6 +107,10 @@ class CollisionManager {
      */
     handleCharacterKillsEnemy(enemy) {
         console.log("huhn besiegt");
+        
+        // Add to combo if character is airborne
+        this.world.character.addComboKill();
+        
         this.world.character.playRandomChickenAttackSound();
         enemy.die();
         this.world.character.speedY = 15;
