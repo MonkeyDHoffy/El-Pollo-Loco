@@ -8,6 +8,7 @@ class UIManager {
      */
     drawUI() {
         this.drawMexicanScore();
+        this.drawWaveIndicator(); // Add wave indicator
         
         if (this.world.isPaused) {
             this.drawPauseOverlay();
@@ -19,6 +20,11 @@ class UIManager {
 
         if (this.world.character.bottles === 0) {
             this.drawSuperJumpIndicator();
+        }
+
+        // Draw wave change notification if active
+        if (this.waveChangeNotification) {
+            this.drawWaveChangeNotification();
         }
     }
 
@@ -192,6 +198,116 @@ class UIManager {
         this.world.ctx.fillText(`Score: ${this.world.totalScore}`, 20, y);
         y += 15;
         this.world.ctx.fillText(`FPS: ${this.world.fps || 'N/A'}`, 20, y);
+        
+        this.world.ctx.restore();
+    }
+
+    /**
+     * Draw wave indicator in the center top of screen
+     */
+    drawWaveIndicator() {
+        if (!this.world.waveManager) return;
+        
+        const waveInfo = this.world.waveManager.getWaveInfo();
+        this.world.ctx.save();
+        
+        // Position at center top
+        let indicatorX = this.world.canvas.width / 2;
+        let indicatorY = 50;
+        let boxWidth = 150;
+        let boxHeight = 40;
+        
+        // Background with gradient effect
+        this.world.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+        this.roundRect(this.world.ctx, indicatorX - boxWidth/2, indicatorY - 25, boxWidth, boxHeight, 10);
+        this.world.ctx.fill();
+        
+        // Border with wave-based color
+        let borderColor = waveInfo.maxWaveReached ? '#FF6B35' : '#4ECDC4';
+        this.world.ctx.strokeStyle = borderColor;
+        this.world.ctx.lineWidth = 3;
+        this.roundRect(this.world.ctx, indicatorX - boxWidth/2, indicatorY - 25, boxWidth, boxHeight, 10);
+        this.world.ctx.stroke();
+        
+        // Wave text
+        this.world.ctx.font = 'bold 20px Comic Sans MS';
+        this.world.ctx.textAlign = 'center';
+        
+        // Text shadow
+        this.world.ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+        this.world.ctx.fillText(`WAVE ${waveInfo.currentWave}`, indicatorX + 1, indicatorY + 1);
+        
+        // Main text
+        this.world.ctx.fillStyle = '#FFFFFF';
+        this.world.ctx.fillText(`WAVE ${waveInfo.currentWave}`, indicatorX, indicatorY);
+        
+        // Speed indicator (smaller text below)
+        this.world.ctx.font = 'bold 12px Comic Sans MS';
+        this.world.ctx.fillStyle = borderColor;
+        this.world.ctx.fillText(`${waveInfo.speedPercentage}% Speed`, indicatorX, indicatorY + 15);
+        
+        this.world.ctx.restore();
+    }
+
+    /**
+     * Show wave change notification
+     */
+    showWaveChangeNotification(wave) {
+        this.waveChangeNotification = {
+            wave: wave,
+            startTime: Date.now(),
+            duration: 3000 // 3 seconds
+        };
+    }
+
+    /**
+     * Draw wave change notification
+     */
+    drawWaveChangeNotification() {
+        if (!this.waveChangeNotification) return;
+        
+        const elapsed = Date.now() - this.waveChangeNotification.startTime;
+        if (elapsed > this.waveChangeNotification.duration) {
+            this.waveChangeNotification = null;
+            return;
+        }
+        
+        this.world.ctx.save();
+        
+        // Fade effect
+        const alpha = Math.max(0, 1 - elapsed / this.waveChangeNotification.duration);
+        
+        // Center position
+        let centerX = this.world.canvas.width / 2;
+        let centerY = this.world.canvas.height / 2 - 50;
+        
+        // Large notification box
+        this.world.ctx.fillStyle = `rgba(255, 107, 53, ${alpha * 0.9})`;
+        this.roundRect(this.world.ctx, centerX - 200, centerY - 50, 400, 100, 15);
+        this.world.ctx.fill();
+        
+        // Border
+        this.world.ctx.strokeStyle = `rgba(230, 57, 70, ${alpha})`;
+        this.world.ctx.lineWidth = 4;
+        this.roundRect(this.world.ctx, centerX - 200, centerY - 50, 400, 100, 15);
+        this.world.ctx.stroke();
+        
+        // Text
+        this.world.ctx.font = 'bold 36px Comic Sans MS';
+        this.world.ctx.textAlign = 'center';
+        
+        // Shadow
+        this.world.ctx.fillStyle = `rgba(0, 0, 0, ${alpha * 0.8})`;
+        this.world.ctx.fillText(`WAVE ${this.waveChangeNotification.wave}`, centerX + 2, centerY + 2);
+        
+        // Main text
+        this.world.ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+        this.world.ctx.fillText(`WAVE ${this.waveChangeNotification.wave}`, centerX, centerY);
+        
+        // Subtitle
+        this.world.ctx.font = 'bold 18px Comic Sans MS';
+        this.world.ctx.fillStyle = `rgba(255, 255, 255, ${alpha * 0.8})`;
+        this.world.ctx.fillText('Enemies are faster!', centerX, centerY + 25);
         
         this.world.ctx.restore();
     }

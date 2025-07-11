@@ -48,6 +48,7 @@ class World {
         this.collisionManager = new CollisionManager(this);
         this.uiManager = new UIManager(this);
         this.itemCollector = new ItemCollector(this);
+        this.waveManager = new WaveManager(this);
         this.endlessMode = new EndlessMode(this);
         
         // Start the game
@@ -71,6 +72,7 @@ class World {
                 this.checkThrowObjects();
                 this.character.updateWarning();
                 this.endlessMode.update();
+                this.waveManager.update(); // Update wave system
             }
         }, 10);
     }

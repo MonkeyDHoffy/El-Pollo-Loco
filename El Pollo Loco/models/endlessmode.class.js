@@ -113,6 +113,11 @@ class EndlessMode {
         // Set world reference
         newEnemy.world = this.world;
         
+        // Apply current wave speed multiplier
+        if (this.world.waveManager) {
+            this.world.waveManager.applySpeedToEnemy(newEnemy);
+        }
+        
         // Add to enemies array
         this.world.level.enemies.push(newEnemy);
         
@@ -132,6 +137,11 @@ class EndlessMode {
         
         // Set world reference
         newEndboss.world = this.world;
+        
+        // Apply current wave speed multiplier
+        if (this.world.waveManager) {
+            this.world.waveManager.applySpeedToEnemy(newEndboss);
+        }
         
         // Add to endboss array
         this.world.level.endboss.push(newEndboss);
