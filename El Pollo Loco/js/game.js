@@ -1,6 +1,7 @@
 let canvas;
 let world;
 let startScreen;
+let gameOver;
 let keyboard = new Keyboard();
 let gameStarted = false;
 
@@ -12,9 +13,17 @@ function init() {
     // Create start screen first
     startScreen = new StartScreen(canvas, ctx);
     
+    // Create game over screen
+    gameOver = new GameOver(canvas, ctx);
+    
     // Set up start game callback
     window.onStartGame = function() {
         startGame();
+    };
+    
+    // Set up game restart callback
+    window.onGameRestart = function() {
+        restartGame();
     };
     
     // Start the start screen loop
@@ -55,6 +64,42 @@ function startGame() {
     // Add click listener to enable audio on first user interaction
     document.addEventListener('click', enableAudio, { once: true });
     document.addEventListener('keydown', enableAudio, { once: true });
+}
+
+// Restart the game
+function restartGame() {
+    console.log('[Game] Restarting game...');
+    
+    // Reset game state completely
+    gameStarted = false;
+    
+    // Clear existing world and intervals
+    if (world) {
+        world.isPaused = true; // Stop any ongoing processes
+        world = null;
+    }
+    
+    // Clear any existing level data
+    if (typeof level1 !== 'undefined') {
+        level1 = null;
+    }
+    
+    // Small delay to ensure cleanup
+    setTimeout(() => {
+        // Re-initialize level completely
+        initLevel1();
+        console.log('[Game] Level re-initialized');
+        
+        // Create completely new world instance
+        world = new World(canvas);
+        world.isPaused = false; // Ensure game is not paused
+        world.draw();
+        
+        // Set game as started
+        gameStarted = true;
+        
+        console.log('[Game] Game restarted successfully');
+    }, 100);
 }
 
 // Enable audio on first user interaction

@@ -76,6 +76,14 @@ class World {
     runWorld() {
         setInterval(() => {
             if (!this.isPaused) {
+                // Check for game over (only if game over is not already active)
+                if (this.character.isDead() && !gameOver.isGameOverActive()) {
+                    console.log('[World] Character died, triggering game over');
+                    gameOver.startGameOver(this.totalScore);
+                    this.isPaused = true; // Pause immediately
+                    return; // Stop game loop when game over
+                }
+                
                 this.collisionManager.checkAllCollisions();
                 this.checkThrowObjects();
                 this.character.updateWarning();
@@ -181,6 +189,11 @@ class World {
         
         // Use UIManager for all UI drawing
         this.uiManager.drawUI();
+        
+        // Draw game over screen if active
+        if (gameOver && gameOver.isGameOverActive()) {
+            gameOver.draw();
+        }
 
         let self = this;
         requestAnimationFrame(function() {
