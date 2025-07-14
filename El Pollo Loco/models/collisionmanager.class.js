@@ -206,6 +206,9 @@ class CollisionManager {
     handleCharacterBounceOffEndboss(endboss) {
         console.log("Character bounces off endboss");
         
+        // Trigger attack animation when character jumps on endboss
+        endboss.attack();
+        
         // Add to combo for the bounce (even though no kill)
         this.world.character.addComboKill();
         
