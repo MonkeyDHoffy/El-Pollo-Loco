@@ -140,7 +140,7 @@ class CollisionManager {
         this.world.endlessMode.onEnemyKilled(enemy);
         
         setTimeout(() => {
-            const chickenIndex = this.world.level.enemies.indexOf(enemy);
+            let chickenIndex = this.world.level.enemies.indexOf(enemy);
             if (chickenIndex > -1) {
                 this.world.level.enemies.splice(chickenIndex, 1);
             }
@@ -232,7 +232,7 @@ class CollisionManager {
         this.world.endlessMode.onEnemyKilled(enemy);
         
         setTimeout(() => {
-            const enemyIdx = this.world.level.enemies.indexOf(enemy);
+            let enemyIdx = this.world.level.enemies.indexOf(enemy);
             if (enemyIdx > -1) {
                 this.world.level.enemies.splice(enemyIdx, 1);
             }
@@ -282,7 +282,7 @@ class CollisionManager {
             this.world.endlessMode.onEndbossKilled(endboss);
             
             setTimeout(() => {
-                const bossIdx = this.world.level.endboss.indexOf(endboss);
+                let bossIdx = this.world.level.endboss.indexOf(endboss);
                 if (bossIdx > -1) {
                     this.world.level.endboss.splice(bossIdx, 1);
                 }

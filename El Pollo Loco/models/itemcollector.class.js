@@ -70,10 +70,10 @@ class ItemCollector {
      */
     spawnNewBottle() {
         // Create new bottle
-        const newBottle = new Bottle();
+        let newBottle = new Bottle();
         
         // Random spawn location - spread across the level (only X-axis)
-        const spawnX = 300 + Math.random() * 4200; // Between 300 and 4500
+        let spawnX = 300 + Math.random() * 4200; // Between 300 and 4500
         newBottle.x = spawnX;
         newBottle.y = 350; // Fixed Y position on ground (same as original bottles)
         
@@ -91,10 +91,10 @@ class ItemCollector {
      */
     spawnNewCoin() {
         // Create new coin
-        const newCoin = new Coin();
+        let newCoin = new Coin();
         
         // Random spawn location - spread across the level
-        const spawnX = 300 + Math.random() * 4075; // Same as original coin spawn range
+        let spawnX = 300 + Math.random() * 4075; // Same as original coin spawn range
         newCoin.x = spawnX;
         newCoin.y = 50 + Math.random() * 200; // Random height
         
@@ -124,7 +124,7 @@ class ItemCollector {
         this.world.coinScore = 0;
         
         // Spawn the original amount of coins (same as level start)
-        const coinsToSpawn = this.world.totalCoinsInLevel;
+        let coinsToSpawn = this.world.totalCoinsInLevel;
         
         for (let i = 0; i < coinsToSpawn; i++) {
             this.spawnNewCoin();

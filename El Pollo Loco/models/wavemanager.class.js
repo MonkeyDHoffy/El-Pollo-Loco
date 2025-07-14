@@ -26,10 +26,10 @@ class WaveManager {
      * Update wave system based on current score
      */
     update() {
-        const currentScore = this.world.totalScore;
+        let currentScore = this.world.totalScore;
         
         // Check if we should advance to next wave
-        const expectedWave = Math.floor(currentScore / this.pointsPerWave) + 1;
+        let expectedWave = Math.floor(currentScore / this.pointsPerWave) + 1;
         
         if (expectedWave > this.currentWave) {
             this.advanceToWave(expectedWave);
@@ -40,11 +40,11 @@ class WaveManager {
      * Advance to a new wave
      */
     advanceToWave(newWave) {
-        const oldWave = this.currentWave;
+        let oldWave = this.currentWave;
         this.currentWave = newWave;
         
         // Calculate new speed multiplier (capped at max)
-        const newMultiplier = Math.min(
+        let newMultiplier = Math.min(
             1.0 + (this.currentWave - 1) * this.speedIncreasePerWave,
             this.maxSpeedMultiplier
         );
@@ -71,8 +71,8 @@ class WaveManager {
      */
     updateEnemyCount() {
         if (this.world.endlessMode) {
-            const newEnemyCount = this.getCurrentEnemyCount();
-            const newEndbossCount = this.getCurrentEndbossCount();
+            let newEnemyCount = this.getCurrentEnemyCount();
+            let newEndbossCount = this.getCurrentEndbossCount();
             
             this.world.endlessMode.updateConfig({ 
                 minEnemies: newEnemyCount,
@@ -90,7 +90,7 @@ class WaveManager {
         }
         
         // From wave 5+: add 1 chicken per wave, capped at max
-        const extraChickens = Math.min(
+        let extraChickens = Math.min(
             this.currentWave - this.chickenIncreaseStartWave + 1,
             this.maxExtraChickens
         );
@@ -107,8 +107,8 @@ class WaveManager {
         }
         
         // From wave 15+: add 1 endboss every 10 waves, capped at max
-        const wavesAfterStart = this.currentWave - this.endbossIncreaseStartWave;
-        const extraEndbosses = Math.floor(wavesAfterStart / this.endbossIncreaseInterval) + 1; // +1 for wave 15 itself
+        let wavesAfterStart = this.currentWave - this.endbossIncreaseStartWave;
+        let extraEndbosses = Math.floor(wavesAfterStart / this.endbossIncreaseInterval) + 1; // +1 for wave 15 itself
         
         return Math.min(this.baseMinEndbosses + extraEndbosses, this.maxEndbosses);
     }

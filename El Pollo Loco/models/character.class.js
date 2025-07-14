@@ -311,7 +311,7 @@ class Character extends MovableObject {
      * Check if character is on ground and update combo tracking
      */
     updateComboTracking() {
-        const isCurrentlyOnGround = !this.isAboveGround(); // Use existing isAboveGround method
+        let isCurrentlyOnGround = !this.isAboveGround(); // Use existing isAboveGround method
         
         // If character just landed on ground, reset combo
         if (isCurrentlyOnGround && !this.wasOnGround) {
@@ -371,8 +371,8 @@ class Character extends MovableObject {
         }
         
         // Check if we're within the grace period after combo ended
-        const currentTime = Date.now();
-        const timeSinceComboEnded = currentTime - this.comboEndTime;
+        let currentTime = Date.now();
+        let timeSinceComboEnded = currentTime - this.comboEndTime;
         
         if (this.lastComboValue > 0 && timeSinceComboEnded <= this.comboGracePeriod) {
             console.log(`Using grace period combo: ${this.lastComboValue} (${Math.round((this.comboGracePeriod - timeSinceComboEnded) / 1000)}s remaining)`);

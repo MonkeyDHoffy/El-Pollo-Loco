@@ -209,7 +209,7 @@ class UIManager {
     drawWaveIndicator() {
         if (!this.world.waveManager) return;
         
-        const waveInfo = this.world.waveManager.getWaveInfo();
+        let waveInfo = this.world.waveManager.getWaveInfo();
         this.world.ctx.save();
         
         // Position at center top
@@ -393,7 +393,7 @@ class UIManager {
     drawWaveChangeNotification() {
         if (!this.waveChangeNotification) return;
         
-        const elapsed = Date.now() - this.waveChangeNotification.startTime;
+        let elapsed = Date.now() - this.waveChangeNotification.startTime;
         if (elapsed > this.waveChangeNotification.duration) {
             this.waveChangeNotification = null;
             return;
@@ -402,7 +402,7 @@ class UIManager {
         this.world.ctx.save();
         
         // Fade effect
-        const alpha = Math.max(0, 1 - elapsed / this.waveChangeNotification.duration);
+        let alpha = Math.max(0, 1 - elapsed / this.waveChangeNotification.duration);
         
         // Center position
         let centerX = this.world.canvas.width / 2;
@@ -437,7 +437,7 @@ class UIManager {
         
         // Get wave info for enhanced subtitle
         if (this.world.waveManager) {
-            const waveInfo = this.world.waveManager.getWaveInfo();
+            let waveInfo = this.world.waveManager.getWaveInfo();
             let subtitleText = `${waveInfo.speedPercentage}% Speed`;
             if (waveInfo.extraChickens > 0) {
                 subtitleText += ` | +${waveInfo.extraChickens} 🐔`;

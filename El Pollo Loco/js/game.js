@@ -1,10 +1,54 @@
 let canvas;
 let world;
+let startScreen;
 let keyboard = new Keyboard();
+let gameStarted = false;
 
 // Initialize the game
 function init() {
     canvas = document.getElementById("canvas");
+    let ctx = canvas.getContext('2d');
+    
+    // Create start screen first
+    startScreen = new StartScreen(canvas, ctx);
+    
+    // Set up start game callback
+    window.onStartGame = function() {
+        startGame();
+    };
+    
+    // Start the start screen loop
+    startScreenLoop();
+    
+    console.log('[Game] Start screen initialized');
+}
+
+// Start screen animation loop
+function startScreenLoop() {
+    if (startScreen && startScreen.isStartScreenActive()) {
+        startScreen.update();
+        startScreen.draw();
+        requestAnimationFrame(startScreenLoop);
+    }
+}
+
+// Start the actual game
+function startGame() {
+    if (gameStarted) return;
+    
+    gameStarted = true;
+    console.log('[Game] Starting main game...');
+    
+    // Hide start screen
+    if (startScreen) {
+        startScreen.hide();
+    }
+    
+    // Initialize level first
+    initLevel1();
+    console.log('[Game] Level initialized');
+    
+    // Initialize world and start game
     world = new World(canvas);
     world.draw();
     
@@ -22,11 +66,14 @@ function enableAudio() {
 
 // Toggle pause function
 function togglePause() {
+    // Don't allow pause if game hasn't started yet
+    if (!gameStarted || !world) return;
+    
     if (world) {
         world.togglePause();
         
         // Update button text and style
-        const pauseButton = document.getElementById('pauseButton');
+        let pauseButton = document.getElementById('pauseButton');
         if (world.isPaused) {
             pauseButton.textContent = 'RESUME';
             pauseButton.classList.add('paused');
@@ -39,9 +86,9 @@ function togglePause() {
 
 // Toggle fullscreen function
 function toggleFullscreen() {
-    const canvas = document.getElementById('canvas');
-    const fullscreenButton = document.getElementById('fullscreenButton');
-    const body = document.body;
+    let canvas = document.getElementById('canvas');
+    let fullscreenButton = document.getElementById('fullscreenButton');
+    let body = document.body;
     
     if (!document.fullscreenElement) {
         // Enter fullscreen
@@ -54,9 +101,9 @@ function toggleFullscreen() {
         }
         
         // Calculate scale factor based on screen size
-        const scaleX = window.screen.width / 720;
-        const scaleY = window.screen.height / 480;
-        const scaleFactor = Math.min(scaleX, scaleY) * 0.9; // 0.9 for some padding
+        let scaleX = window.screen.width / 720;
+        let scaleY = window.screen.height / 480;
+        let scaleFactor = Math.min(scaleX, scaleY) * 0.9; // 0.9 for some padding
         
         // Set CSS custom property for scale
         document.documentElement.style.setProperty('--scale-factor', scaleFactor);
@@ -94,9 +141,9 @@ document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
 document.addEventListener('msfullscreenchange', handleFullscreenChange);
 
 function handleFullscreenChange() {
-    const canvas = document.getElementById('canvas');
-    const fullscreenButton = document.getElementById('fullscreenButton');
-    const body = document.body;
+    let canvas = document.getElementById('canvas');
+    let fullscreenButton = document.getElementById('fullscreenButton');
+    let body = document.body;
     
     if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) {
         // Exited fullscreen

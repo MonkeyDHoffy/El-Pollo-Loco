@@ -1,9 +1,9 @@
 class World {
     character;
-    level = level1;
-    enemies = level1.enemies;
-    clouds = level1.clouds;
-    backgroundObjects = level1.backgroundObjects;
+    level;
+    enemies;
+    clouds;
+    backgroundObjects;
     canvas;
     ctx;
     keyboard;
@@ -31,6 +31,12 @@ class World {
         this.ctx = canvas.getContext("2d");
         this.canvas = canvas;
         this.keyboard = keyboard;
+        
+        // Initialize level properties
+        this.level = level1;
+        this.enemies = level1.enemies;
+        this.clouds = level1.clouds;
+        this.backgroundObjects = level1.backgroundObjects;
         
         this.totalCoinsInLevel = this.level.coins.length;
         this.totalBottlesInLevel = this.level.bottles.length;

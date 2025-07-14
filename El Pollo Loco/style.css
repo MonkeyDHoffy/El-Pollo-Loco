@@ -141,3 +141,13 @@ body.fullscreen-active {
     outline: none;
 }
 
+/* Start Screen Specific Styles */
+canvas {
+    cursor: default;
+    user-select: none;
+}
+
+canvas:hover {
+    cursor: pointer; /* Will be overridden by StartScreen class based on hover state */
+}
+

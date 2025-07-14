@@ -310,7 +310,7 @@ class Endboss extends MovableObject {
     // Remove endboss from game (called after death animation)
     removeFromGame() {
         if (this.world && this.world.level && this.world.level.endboss) {
-            const index = this.world.level.endboss.indexOf(this);
+            let index = this.world.level.endboss.indexOf(this);
             if (index > -1) {
                 this.world.level.endboss.splice(index, 1);
                 console.log("Endboss removed from game after death animation");

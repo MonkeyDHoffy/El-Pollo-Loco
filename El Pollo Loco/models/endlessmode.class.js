@@ -29,7 +29,7 @@ class EndlessMode {
      * Removes enemies that are too far from the action area
      */
     cleanupDistantEnemies() {
-        const beforeCount = this.world.level.enemies.length;
+        let beforeCount = this.world.level.enemies.length;
         this.world.level.enemies = this.world.level.enemies.filter(enemy => {
             // Remove enemies that are too far left or right
             if (enemy.x < this.config.cleanupLeftBound || 
@@ -39,7 +39,7 @@ class EndlessMode {
             }
             return true; // Keep this enemy
         });
-        const afterCount = this.world.level.enemies.length;
+        let afterCount = this.world.level.enemies.length;
         if (beforeCount !== afterCount) {
             console.log(`[EndlessMode] Cleaned up ${beforeCount - afterCount} distant enemies`);
         }
@@ -49,7 +49,7 @@ class EndlessMode {
      * Removes endbosses that are too far from the action area
      */
     cleanupDistantEndbosses() {
-        const beforeCount = this.world.level.endboss.length;
+        let beforeCount = this.world.level.endboss.length;
         this.world.level.endboss = this.world.level.endboss.filter(endboss => {
             // Remove endbosses that are too far left or right
             if (endboss.x < this.config.cleanupLeftBound || 
@@ -59,7 +59,7 @@ class EndlessMode {
             }
             return true; // Keep this endboss
         });
-        const afterCount = this.world.level.endboss.length;
+        let afterCount = this.world.level.endboss.length;
         if (beforeCount !== afterCount) {
             console.log(`[EndlessMode] Cleaned up ${beforeCount - afterCount} distant endbosses`);
         }
@@ -69,10 +69,10 @@ class EndlessMode {
      * Maintains a minimum number of enemies by spawning new ones
      */
     maintainEnemyCount() {
-        const currentEnemyCount = this.world.level.enemies.length;
+        let currentEnemyCount = this.world.level.enemies.length;
         
         if (currentEnemyCount < this.config.minEnemies) {
-            const enemiesToSpawn = this.config.minEnemies - currentEnemyCount;
+            let enemiesToSpawn = this.config.minEnemies - currentEnemyCount;
             for (let i = 0; i < enemiesToSpawn; i++) {
                 this.spawnNewEnemy();
             }
@@ -83,10 +83,10 @@ class EndlessMode {
      * Maintains a minimum number of endbosses by spawning new ones
      */
     maintainEndbossCount() {
-        const currentEndbossCount = this.world.level.endboss.length;
+        let currentEndbossCount = this.world.level.endboss.length;
         
         if (currentEndbossCount < this.config.minEndbosses) {
-            const endbossesToSpawn = this.config.minEndbosses - currentEndbossCount;
+            let endbossesToSpawn = this.config.minEndbosses - currentEndbossCount;
             for (let i = 0; i < endbossesToSpawn; i++) {
                 this.spawnNewEndboss();
             }
@@ -98,15 +98,15 @@ class EndlessMode {
      */
     spawnNewEnemy() {
         // Randomly choose enemy type
-        const randomType = this.config.enemyTypes[
+        let randomType = this.config.enemyTypes[
             Math.floor(Math.random() * this.config.enemyTypes.length)
         ];
         
         // Create new enemy
-        const newEnemy = new randomType();
+        let newEnemy = new randomType();
         
         // Position enemy outside level end
-        const spawnRange = this.config.spawnAreaEnd - this.config.spawnAreaStart;
+        let spawnRange = this.config.spawnAreaEnd - this.config.spawnAreaStart;
         newEnemy.x = this.config.spawnAreaStart + Math.random() * spawnRange;
         newEnemy.y = randomType === MiniChicken ? 385 : 376;
         
@@ -129,10 +129,10 @@ class EndlessMode {
      */
     spawnNewEndboss() {
         // Create new endboss
-        const newEndboss = new Endboss();
+        let newEndboss = new Endboss();
         
         // Position endboss outside level end
-        const spawnRange = this.config.spawnAreaEnd - this.config.spawnAreaStart;
+        let spawnRange = this.config.spawnAreaEnd - this.config.spawnAreaStart;
         newEndboss.x = this.config.spawnAreaStart + Math.random() * spawnRange;
         
         // Set world reference
