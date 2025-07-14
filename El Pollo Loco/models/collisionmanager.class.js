@@ -39,14 +39,23 @@ class CollisionManager {
      */
     checkCharacterEndbossCollisions() {
         this.world.level.endboss.forEach(endboss => {
-            if (this.world.character.isColliding(endboss) && !this.world.character.isHurt()) {
-                // Only deal damage if endboss is not dead or dying
-                if (!endboss.isDead && !endboss.isDying) {
-                    // Trigger attack animation before dealing damage
-                    endboss.attack();
-                    this.handleCharacterHitByEnemy(20);
+            if (!this.world.character.isHurt()) {
+                // Check for jump collision first (independent of general collision)
+                if (this.isCharacterJumpingOnEndboss(endboss)) {
+                    // Character is jumping on endboss - no damage but catapult effect
+                    this.handleCharacterBounceOffEndboss(endboss);
+                } else if (this.world.character.isColliding(endboss)) {
+                    // Normal collision - only deal damage if endboss is not dead or dying
+                    if (!endboss.isDead && !endboss.isDying) {
+                        // Only deal damage if character is on ground (not airborne)
+                        if (!this.world.character.isAboveGround()) {
+                            // Trigger attack animation before dealing damage
+                            endboss.attack();
+                            this.handleCharacterHitByEnemy(20);
+                        }
+                    }
+                    // If endboss is dead/dying or character is airborne, no damage dealt
                 }
-                // If endboss is dead/dying, no damage dealt
             }
         });
     }
@@ -113,6 +122,43 @@ class CollisionManager {
     }
 
     /**
+     * Check if character is jumping on endboss (more precise detection)
+     * 
+     * ANPASSBARE PARAMETER FÜR KOLLISIONSBOX:
+     * 1. endbossTopOffset: Wie weit in den Endboss hinein die Kollision startet (aktuell: 80px)
+     * 2. collisionMargin: Vertikaler Bereich über dem Endboss für Sprungerkennnung (aktuell: 15px)  
+     * 3. horizontalPadding: Horizontaler Abstand vom Endboss-Rand (aktuell: 10px)
+     */
+    isCharacterJumpingOnEndboss(endboss) {
+        // Character must be falling (negative speedY)
+        let isFalling = this.world.character.speedY < 0;
+        
+        // PARAMETER 1: Vertikaler Offset in den Endboss hinein
+        let endbossTopOffset = 140; // HIER ANPASSEN: Höher = Kollision startet tiefer im Endboss
+        
+        // PARAMETER 2: Kollisionsspielraum über dem Endboss  
+        let collisionMargin = 15; // HIER ANPASSEN: Kleiner = Character muss näher sein
+        
+        // PARAMETER 3: Horizontaler Puffer
+        let horizontalPadding = 10; // HIER ANPASSEN: Kleiner = schmalere Kollisionsbox
+        
+        // Calculate precise collision boundaries for jump detection
+        let characterBottom = this.world.character.y + this.world.character.height;
+        let characterCenterX = this.world.character.x + this.world.character.width / 2;
+        
+        let endbossJumpTop = endboss.y + endbossTopOffset; 
+        let endbossLeft = endboss.x + horizontalPadding;
+        let endbossRight = endboss.x + endboss.width - horizontalPadding;
+        
+        // Check if character is in the jump zone
+        let isInJumpZoneVertically = characterBottom >= (endbossJumpTop - collisionMargin) && 
+                                     characterBottom <= (endbossJumpTop + collisionMargin);
+        let isInJumpZoneHorizontally = characterCenterX >= endbossLeft && characterCenterX <= endbossRight;
+        
+        return isFalling && isInJumpZoneVertically && isInJumpZoneHorizontally;
+    }
+
+    /**
      * Handle character killing an enemy
      */
     handleCharacterKillsEnemy(enemy) {
@@ -145,6 +191,22 @@ class CollisionManager {
                 this.world.level.enemies.splice(chickenIndex, 1);
             }
         }, 500);
+    }
+
+    /**
+     * Handle character bouncing off endboss when jumping on it
+     */
+    handleCharacterBounceOffEndboss(endboss) {
+        console.log("Character bounces off endboss");
+        
+        // Add to combo for the bounce (even though no kill)
+        this.world.character.addComboKill();
+        
+        // Create vertical catapult effect - same as when killing enemies
+        this.world.character.speedY = 15;
+        
+        // Optional: Play a sound effect for bouncing
+        this.world.character.playRandomChickenAttackSound();
     }
 
     /**
