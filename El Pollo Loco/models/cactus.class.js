@@ -1,6 +1,6 @@
 class Cactus extends DrawableObject {
     width = 200;
-    height = 400;
+    height = 600;
     parallaxSpeed = 0.2;
     originalX;
 
@@ -8,7 +8,7 @@ class Cactus extends DrawableObject {
         super();
         this.loadImage('img/img_pollo_locco/img/10_special/cactus.png');
         this.x = x;
-        this.y = y;
+        this.y = y - 155;
         this.originalX = this.x;
     }
 
