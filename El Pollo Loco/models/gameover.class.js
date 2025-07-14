@@ -149,8 +149,14 @@ class GameOver {
             if (!this.isActive || !this.showReplayScreen) return;
 
             const rect = this.canvas.getBoundingClientRect();
-            const x = event.clientX - rect.left;
-            const y = event.clientY - rect.top;
+            
+            // Calculate scale factors for fullscreen mode
+            const scaleX = rect.width / this.canvas.width;
+            const scaleY = rect.height / this.canvas.height;
+            
+            // Convert mouse coordinates to canvas coordinates
+            const x = (event.clientX - rect.left) / scaleX;
+            const y = (event.clientY - rect.top) / scaleY;
 
             // Check if click is on replay button
             if (x >= this.replayButton.x && 

@@ -19,10 +19,6 @@ class UIManager {
             this.drawWrongDirectionWarning();
         }
 
-        if (this.world.character.bottles === 0) {
-            this.drawSuperJumpIndicator();
-        }
-
         // Draw wave change notification if active
         if (this.waveChangeNotification) {
             this.drawWaveChangeNotification();
@@ -463,47 +459,6 @@ class UIManager {
         } else {
             this.world.ctx.fillText('Enemies are faster!', centerX, centerY + 25);
         }
-        
-        this.world.ctx.restore();
-    }
-
-    /**
-     * Draw super jump indicator when no bottles
-     */
-    drawSuperJumpIndicator() {
-        this.world.ctx.save();
-        
-        // Position at bottom left - moved to left corner
-        let indicatorX = 20; // Changed from canvas.width - 200 to 20
-        let indicatorY = this.world.canvas.height - 20;
-        let boxWidth = 180;
-        let boxHeight = 40;
-        
-        // Pulsing effect
-        let pulseValue = Math.sin(Date.now() * 0.005) * 0.3 + 0.7;
-        
-        // Glowing background
-        this.world.ctx.fillStyle = `rgba(255, 215, 0, ${pulseValue})`;
-        this.roundRect(this.world.ctx, indicatorX - 10, indicatorY - 25, boxWidth, boxHeight, 12);
-        this.world.ctx.fill();
-        
-        // Border
-        this.world.ctx.strokeStyle = '#FFD700';
-        this.world.ctx.lineWidth = 3;
-        this.roundRect(this.world.ctx, indicatorX - 10, indicatorY - 25, boxWidth, boxHeight, 12);
-        this.world.ctx.stroke();
-        
-        // Text
-        this.world.ctx.font = 'bold 18px Comic Sans MS';
-        this.world.ctx.textAlign = 'center';
-        
-        // Text shadow
-        this.world.ctx.fillStyle = '#B8860B';
-        this.world.ctx.fillText('🚀 SUPER JUMP!', indicatorX + 80 + 2, indicatorY + 2);
-        
-        // Main text
-        this.world.ctx.fillStyle = '#FFFFFF';
-        this.world.ctx.fillText('🚀 SUPER JUMP!', indicatorX + 80, indicatorY);
         
         this.world.ctx.restore();
     }
