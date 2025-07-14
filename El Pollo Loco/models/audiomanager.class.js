@@ -2,6 +2,8 @@ class AudioManager {
     constructor() {
         this.backgroundMusic = null;
         this.isMusicPlaying = false;
+        this.isMuted = false; // Add mute state
+        this.walkingSound = null; // Walking sound reference
         
         this.coinCollectingSounds = [
             'audio/sounds/coincollecting(1).mp3',
@@ -15,8 +17,34 @@ class AudioManager {
             'audio/sounds/collect2.mp3',
             'audio/sounds/collectbottle.wav'
         ];
+
+        // Character sounds
+        this.jumpSounds = [
+            'audio/sounds/jump1.wav',
+            'audio/sounds/jumpfart1.wav',
+            'audio/sounds/jumpfart2.wav',
+            'audio/sounds/jumpfart3.mp3'
+        ];
+
+        this.chickenAttackSounds = [
+            'audio/sounds/chickenattack/chicken1.wav',
+            'audio/sounds/chickenattack/chicken2.wav',
+            'audio/sounds/chickenattack/chicken3.wav',
+            'audio/sounds/chickenattack/pop.flac',
+            'audio/sounds/chickenattack/popp.mp3',
+            'audio/sounds/chickenattack/poppp.flac',
+            'audio/sounds/chickenattack/poppp.wav'
+        ];
+
+        this.hurtSounds = [
+            'audio/sounds/ouch1.wav',
+            'audio/sounds/ouch2.wav',
+            'audio/sounds/ouch3.wav',
+            'audio/sounds/ouch4.wav'
+        ];
         
         this.initBackgroundMusic();
+        this.initWalkingSound();
     }
 
     /**
@@ -30,6 +58,15 @@ class AudioManager {
         setTimeout(() => {
             this.startBackgroundMusic();
         }, 1000);
+    }
+
+    /**
+     * Initialize walking sound
+     */
+    initWalkingSound() {
+        this.walkingSound = new Audio('audio/sounds/walkigmud.wav');
+        this.walkingSound.loop = true;
+        this.walkingSound.volume = 0.3;
     }
 
     /**
@@ -77,48 +114,77 @@ class AudioManager {
      * Play glass break sound effect
      */
     playGlassBreakSound() {
-        let glassBreakSound = new Audio('audio/sounds/glas_breaks.wav');
-        glassBreakSound.play().catch(e => console.log('Glass break sound failed:', e));
+        this.playSound('audio/sounds/glas_breaks.wav');
     }
 
     /**
      * Play throw sound effect
      */
     playThrowSound() {
-        let throwSound = new Audio('audio/sounds/throw1.wav');
-        throwSound.play().catch(e => console.log('Throw sound failed:', e));
+        this.playSound('audio/sounds/throw1.wav');
     }
 
     /**
      * Play random coin collecting sound
      */
     playRandomCoinCollectingSound() {
-        let randomIndex = Math.floor(Math.random() * this.coinCollectingSounds.length);
-        let randomSound = new Audio(this.coinCollectingSounds[randomIndex]);
-        randomSound.play().catch(error => {
-            console.log('Coin collecting audio playback failed:', error);
-        });
+        this.playRandomSound(this.coinCollectingSounds);
     }
 
     /**
      * Play random bottle collecting sound
      */
     playRandomBottleCollectingSound() {
-        let randomIndex = Math.floor(Math.random() * this.bottleCollectingSounds.length);
-        let randomSound = new Audio(this.bottleCollectingSounds[randomIndex]);
-        randomSound.play().catch(error => {
-            console.log('Bottle collecting audio playback failed:', error);
-        });
+        this.playRandomSound(this.bottleCollectingSounds);
     }
 
     /**
      * Play coin respawn sound
      */
     playCoinRespawnSound() {
-        let coinRespawnSound = new Audio('audio/sounds/coinrespawn.wav');
-        coinRespawnSound.play().catch(error => {
-            console.log('Coin respawn audio playback failed:', error);
-        });
+        this.playSound('audio/sounds/coinrespawn.wav');
+    }
+
+    /**
+     * Play random jump sound
+     */
+    playRandomJumpSound() {
+        this.playRandomSound(this.jumpSounds);
+    }
+
+    /**
+     * Play random chicken attack sound
+     */
+    playRandomChickenAttackSound() {
+        this.playRandomSound(this.chickenAttackSounds);
+    }
+
+    /**
+     * Play random hurt sound
+     */
+    playRandomHurtSound() {
+        this.playRandomSound(this.hurtSounds);
+    }
+
+    /**
+     * Play walking sound
+     */
+    playWalkingSound() {
+        if (this.isMuted) return;
+        
+        if (this.walkingSound && this.walkingSound.paused) {
+            this.walkingSound.play().catch(e => console.log('Walking sound play failed:', e));
+        }
+    }
+
+    /**
+     * Stop walking sound
+     */
+    stopWalkingSound() {
+        if (this.walkingSound && !this.walkingSound.paused) {
+            this.walkingSound.pause();
+            this.walkingSound.currentTime = 0;
+        }
     }
 
     /**
@@ -137,7 +203,52 @@ class AudioManager {
         return {
             isPlaying: this.isMusicPlaying,
             volume: this.backgroundMusic ? this.backgroundMusic.volume : 0,
-            currentTime: this.backgroundMusic ? this.backgroundMusic.currentTime : 0
+            currentTime: this.backgroundMusic ? this.backgroundMusic.currentTime : 0,
+            isMuted: this.isMuted
         };
+    }
+
+    /**
+     * Set mute state for all audio
+     */
+    setMuted(muted) {
+        this.isMuted = muted;
+        
+        // Mute/unmute background music
+        if (this.backgroundMusic) {
+            this.backgroundMusic.muted = muted;
+        }
+        
+        // Mute/unmute walking sound
+        if (this.walkingSound) {
+            this.walkingSound.muted = muted;
+        }
+        
+        console.log(`[AudioManager] Audio ${muted ? 'muted' : 'unmuted'}`);
+    }
+
+    /**
+     * Play sound with mute check
+     */
+    playSound(soundPath, volume = 1.0) {
+        if (this.isMuted) return; // Don't play if muted
+        
+        try {
+            let audio = new Audio(soundPath);
+            audio.volume = volume;
+            audio.play().catch(e => console.log('Sound play failed:', e));
+        } catch (e) {
+            console.log('Sound creation failed:', e);
+        }
+    }
+
+    /**
+     * Play random sound from array with mute check
+     */
+    playRandomSound(soundArray, volume = 1.0) {
+        if (this.isMuted || !soundArray || soundArray.length === 0) return;
+        
+        let randomSound = soundArray[Math.floor(Math.random() * soundArray.length)];
+        this.playSound(randomSound, volume);
     }
 }

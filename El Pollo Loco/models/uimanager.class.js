@@ -1,6 +1,38 @@
 class UIManager {
     constructor(world) {
         this.world = world;
+        
+        // Canvas button definitions
+        this.buttons = {
+            pause: {
+                x: this.world.canvas.width - 180,
+                y: 50,
+                width: 50,
+                height: 25,
+                text: 'PAUSE'
+            },
+            fullscreen: {
+                x: this.world.canvas.width - 120,
+                y: 50,
+                width: 50,
+                height: 25,
+                text: 'FULL'
+            },
+            mute: {
+                x: this.world.canvas.width - 60,
+                y: 50,
+                width: 50,
+                height: 25,
+                text: 'MUTE'
+            }
+        };
+        
+        // Load mute state from localStorage
+        this.isMuted = localStorage.getItem('elPolloLocoMuted') === 'true';
+        this.updateMuteState();
+        
+        // Setup click event listener
+        this.setupButtonEventListeners();
     }
 
     /**
@@ -10,6 +42,7 @@ class UIManager {
         this.drawMexicanScore();
         this.drawWaveIndicator(); // Add wave indicator
         this.drawComboIndicator(); // Add combo indicator
+        this.drawCanvasButtons(); // Add canvas buttons
         
         if (this.world.isPaused) {
             this.drawPauseOverlay();
@@ -461,5 +494,142 @@ class UIManager {
         }
         
         this.world.ctx.restore();
+    }
+
+    /**
+     * Draw canvas buttons (pause, fullscreen, mute)
+     */
+    drawCanvasButtons() {
+        this.world.ctx.save();
+        
+        // Update pause button text
+        this.buttons.pause.text = this.world.isPaused ? 'RESUME' : 'PAUSE';
+        this.buttons.mute.text = this.isMuted ? '🔇' : '🔊';
+        
+        // Draw each button
+        Object.values(this.buttons).forEach(button => {
+            this.drawButton(button);
+        });
+        
+        this.world.ctx.restore();
+    }
+
+    /**
+     * Draw individual button
+     */
+    drawButton(button) {
+        // Button background
+        this.world.ctx.fillStyle = '#FF6B35';
+        this.roundRect(this.world.ctx, button.x, button.y, button.width, button.height, 5);
+        this.world.ctx.fill();
+        
+        // Button border
+        this.world.ctx.strokeStyle = '#E63946';
+        this.world.ctx.lineWidth = 1;
+        this.roundRect(this.world.ctx, button.x, button.y, button.width, button.height, 5);
+        this.world.ctx.stroke();
+        
+        // Button text
+        this.world.ctx.fillStyle = 'white';
+        this.world.ctx.font = 'bold 10px Arial';
+        this.world.ctx.textAlign = 'center';
+        this.world.ctx.fillText(
+            button.text,
+            button.x + button.width / 2,
+            button.y + button.height / 2 + 3
+        );
+    }
+
+    /**
+     * Setup event listeners for canvas buttons
+     */
+    setupButtonEventListeners() {
+        this.onCanvasClick = (event) => {
+            const rect = this.world.canvas.getBoundingClientRect();
+            
+            // Calculate scale factors for fullscreen mode
+            const scaleX = rect.width / this.world.canvas.width;
+            const scaleY = rect.height / this.world.canvas.height;
+            
+            // Convert mouse coordinates to canvas coordinates
+            const x = (event.clientX - rect.left) / scaleX;
+            const y = (event.clientY - rect.top) / scaleY;
+            
+            // Check button clicks
+            if (this.isPointInButton(x, y, this.buttons.pause)) {
+                this.handlePauseButton();
+            } else if (this.isPointInButton(x, y, this.buttons.fullscreen)) {
+                this.handleFullscreenButton();
+            } else if (this.isPointInButton(x, y, this.buttons.mute)) {
+                this.handleMuteButton();
+            }
+        };
+        
+        this.world.canvas.addEventListener('click', this.onCanvasClick);
+    }
+
+    /**
+     * Check if point is inside button
+     */
+    isPointInButton(x, y, button) {
+        return x >= button.x && 
+               x <= button.x + button.width &&
+               y >= button.y && 
+               y <= button.y + button.height;
+    }
+
+    /**
+     * Handle pause button click
+     */
+    handlePauseButton() {
+        if (typeof togglePause === 'function') {
+            togglePause();
+        } else {
+            this.world.isPaused = !this.world.isPaused;
+            console.log('Game', this.world.isPaused ? 'paused' : 'resumed');
+        }
+    }
+
+    /**
+     * Handle fullscreen button click
+     */
+    handleFullscreenButton() {
+        if (typeof toggleFullscreen === 'function') {
+            toggleFullscreen();
+        } else {
+            if (!document.fullscreenElement) {
+                this.world.canvas.requestFullscreen();
+            } else {
+                document.exitFullscreen();
+            }
+        }
+    }
+
+    /**
+     * Handle mute button click
+     */
+    handleMuteButton() {
+        this.isMuted = !this.isMuted;
+        this.updateMuteState();
+        localStorage.setItem('elPolloLocoMuted', this.isMuted.toString());
+        console.log('Audio', this.isMuted ? 'muted' : 'unmuted');
+    }
+
+    /**
+     * Update mute state in audio manager
+     */
+    updateMuteState() {
+        if (this.world.audioManager) {
+            this.world.audioManager.setMuted(this.isMuted);
+        }
+    }
+
+    /**
+     * Remove event listeners (cleanup)
+     */
+    removeEventListeners() {
+        if (this.onCanvasClick) {
+            this.world.canvas.removeEventListener('click', this.onCanvasClick);
+        }
     }
 }

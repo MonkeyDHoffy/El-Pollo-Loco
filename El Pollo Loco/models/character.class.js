@@ -77,35 +77,7 @@ class Character extends MovableObject {
         'img/img_pollo_locco/img/2_character_pepe/5_dead/D-57.png'
     ];
 
-    jumpSounds = [
-        'audio/sounds/jump1.wav',
-        'audio/sounds/jump1.wav',
-        'audio/sounds/jump1.wav',
-        'audio/sounds/jump1.wav',
-        'audio/sounds/jump1.wav',
-        'audio/sounds/jumpfart1.wav',
-        'audio/sounds/jumpfart2.wav',
-        'audio/sounds/jumpfart3.mp3'
-    ];
-
-    chickenAttackSounds = [
-        'audio/sounds/chickenattack/chicken1.wav',
-        'audio/sounds/chickenattack/chicken2.wav',
-        'audio/sounds/chickenattack/chicken3.wav',
-        'audio/sounds/chickenattack/pop.flac',
-        'audio/sounds/chickenattack/popp.mp3',
-        'audio/sounds/chickenattack/poppp.flac',
-        'audio/sounds/chickenattack/poppp.wav'
-    ];
-
-    hurtSounds = [
-        'audio/sounds/ouch1.wav',
-        'audio/sounds/ouch2.wav',
-        'audio/sounds/ouch3.wav',
-        'audio/sounds/ouch4.wav'
-    ];
-
-    walkingSound;
+    // Sound management now handled by AudioManager
     isWalkingSoundPlaying = false;
 
     constructor() {
@@ -117,10 +89,6 @@ class Character extends MovableObject {
         this.loadImages(this.IMAGES_JUMPING);
         this.loadImages(this.IMAGES_DEAD);
         this.loadImages(this.IMAGES_HURT);
-        
-        this.walkingSound = new Audio('audio/sounds/walkigmud.wav');
-        this.walkingSound.loop = true;
-        this.walkingSound.volume = 0.3;
         
         this.applyGravity();
         this.animate();
@@ -237,34 +205,28 @@ class Character extends MovableObject {
     }
 
     playRandomJumpSound() {
-        let randomIndex = Math.floor(Math.random() * this.jumpSounds.length);
-        let randomSound = new Audio(this.jumpSounds[randomIndex]);
-        randomSound.play().catch(error => {
-            console.log('Audio playback failed:', error);
-        });
+        if (this.world && this.world.audioManager) {
+            this.world.audioManager.playRandomJumpSound();
+        }
     }
 
     playRandomChickenAttackSound() {
-        let randomIndex = Math.floor(Math.random() * this.chickenAttackSounds.length);
-        let randomSound = new Audio(this.chickenAttackSounds[randomIndex]);
-        randomSound.play().catch(error => {
-            console.log('Chicken attack audio playback failed:', error);
-        });
+        if (this.world && this.world.audioManager) {
+            this.world.audioManager.playRandomChickenAttackSound();
+        }
     }
 
     playRandomHurtSound() {
-        let randomIndex = Math.floor(Math.random() * this.hurtSounds.length);
-        let randomSound = new Audio(this.hurtSounds[randomIndex]);
-        randomSound.play().catch(error => {
-            console.log('Hurt sound playback failed:', error);
-        });
+        if (this.world && this.world.audioManager) {
+            this.world.audioManager.playRandomHurtSound();
+        }
     }
 
     playWalkingSound() {
         if (!this.isAboveGround() && !this.isWalkingSoundPlaying) {
-            this.walkingSound.play().catch(error => {
-                console.log('Walking sound playback failed:', error);
-            });
+            if (this.world && this.world.audioManager) {
+                this.world.audioManager.playWalkingSound();
+            }
             this.isWalkingSoundPlaying = true;
         }
         
@@ -275,8 +237,9 @@ class Character extends MovableObject {
 
     stopWalkingSound() {
         if (this.isWalkingSoundPlaying) {
-            this.walkingSound.pause();
-            this.walkingSound.currentTime = 0;
+            if (this.world && this.world.audioManager) {
+                this.world.audioManager.stopWalkingSound();
+            }
             this.isWalkingSoundPlaying = false;
         }
     }
