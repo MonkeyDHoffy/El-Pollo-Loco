@@ -164,6 +164,11 @@ class StartScreen {
         // Draw instructions
         // this.drawInstructions(); // Removed instructions from start screen
         
+        // Draw mobile controls if available
+        if (window.mobileControls) {
+            window.mobileControls.draw();
+        }
+        
         this.ctx.restore();
     }
     

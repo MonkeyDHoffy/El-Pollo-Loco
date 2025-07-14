@@ -4,11 +4,27 @@ let startScreen;
 let gameOver;
 let keyboard = new Keyboard();
 let gameStarted = false;
+let mobileControls;
 
 // Initialize the game
 function init() {
     canvas = document.getElementById("canvas");
     let ctx = canvas.getContext('2d');
+    
+    // Setup responsive canvas and auto-fullscreen for mobile
+    setupResponsiveCanvas();
+    
+    // Initialize mobile controls
+    mobileControls = new MobileControls(canvas, ctx);
+    window.keyboard = keyboard; // Make keyboard globally accessible for mobile controls
+    window.mobileControls = mobileControls; // Make mobile controls globally accessible
+    
+    // Auto-fullscreen on mobile
+    if (isMobileDevice()) {
+        setTimeout(() => {
+            requestFullscreen();
+        }, 500);
+    }
     
     // Create start screen first
     startScreen = new StartScreen(canvas, ctx);
@@ -30,6 +46,114 @@ function init() {
     startScreenLoop();
     
     console.log('[Game] Start screen initialized');
+}
+
+// Detect if device is mobile
+function isMobileDevice() {
+    return /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+           window.innerWidth <= 768;
+}
+
+// Request fullscreen function
+function requestFullscreen() {
+    const canvas = document.getElementById('canvas');
+    const body = document.body;
+    
+    if (canvas.requestFullscreen) {
+        canvas.requestFullscreen();
+    } else if (canvas.webkitRequestFullscreen) {
+        canvas.webkitRequestFullscreen();
+    } else if (canvas.msRequestFullscreen) {
+        canvas.msRequestFullscreen();
+    }
+}
+
+// Setup responsive canvas for different mobile sizes
+function setupResponsiveCanvas() {
+    function resizeCanvas() {
+        const canvas = document.getElementById('canvas');
+        const container = document.querySelector('.mexican-section');
+        
+        // Get current viewport dimensions
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+        const isLandscape = viewportWidth > viewportHeight;
+        const isMobile = isMobileDevice();
+        
+        if (isMobile) {
+            if (document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement) {
+                // Fullscreen mode - use entire screen
+                canvas.style.width = viewportWidth + 'px';
+                canvas.style.height = viewportHeight + 'px';
+                canvas.style.position = 'fixed';
+                canvas.style.top = '0';
+                canvas.style.left = '0';
+                canvas.style.zIndex = '9999';
+            } else if (isLandscape) {
+                // Mobile landscape: maximize canvas use
+                const titleHeight = 0; // Hide title in landscape
+                const availableHeight = viewportHeight - titleHeight;
+                
+                // Calculate aspect ratio preserving dimensions
+                const gameAspectRatio = 720 / 480;
+                let newWidth = viewportWidth;
+                let newHeight = newWidth / gameAspectRatio;
+                
+                // If height is too large, scale down
+                if (newHeight > availableHeight) {
+                    newHeight = availableHeight;
+                    newWidth = newHeight * gameAspectRatio;
+                }
+                
+                canvas.style.width = newWidth + 'px';
+                canvas.style.height = newHeight + 'px';
+                canvas.style.position = 'fixed';
+                canvas.style.top = '50%';
+                canvas.style.left = '50%';
+                canvas.style.transform = 'translate(-50%, -50%)';
+                canvas.style.zIndex = '100';
+            } else {
+                // Mobile portrait: fit to width
+                const containerWidth = viewportWidth * 0.95;
+                const gameAspectRatio = 720 / 480;
+                const newWidth = containerWidth;
+                const newHeight = newWidth / gameAspectRatio;
+                
+                canvas.style.width = newWidth + 'px';
+                canvas.style.height = newHeight + 'px';
+                canvas.style.position = 'relative';
+                canvas.style.transform = 'none';
+            }
+            
+            // Update mobile controls layout
+            if (mobileControls) {
+                mobileControls.updateLayout();
+            }
+        } else {
+            // Desktop: use original size
+            canvas.style.width = '720px';
+            canvas.style.height = '480px';
+            canvas.style.position = 'relative';
+            canvas.style.transform = 'none';
+        }
+    }
+    
+    // Initial resize
+    resizeCanvas();
+    
+    // Resize on window resize and orientation change
+    window.addEventListener('resize', () => {
+        setTimeout(resizeCanvas, 100);
+    });
+    window.addEventListener('orientationchange', () => {
+        // Delay to ensure orientation change is complete
+        setTimeout(resizeCanvas, 300);
+    });
+    
+    // Handle fullscreen changes
+    document.addEventListener('fullscreenchange', resizeCanvas);
+    document.addEventListener('webkitfullscreenchange', resizeCanvas);
+    document.addEventListener('msfullscreenchange', resizeCanvas);
 }
 
 // Start screen animation loop

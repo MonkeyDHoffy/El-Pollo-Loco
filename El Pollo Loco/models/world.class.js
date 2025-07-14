@@ -197,6 +197,11 @@ class World {
         // Use UIManager for all UI drawing
         this.uiManager.drawUI();
         
+        // Draw mobile controls if available
+        if (window.mobileControls) {
+            window.mobileControls.draw();
+        }
+        
         // Draw game over screen if active
         if (gameOver && gameOver.isGameOverActive()) {
             gameOver.draw();

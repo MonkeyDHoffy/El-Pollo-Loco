@@ -29,6 +29,9 @@ canvas {
     background-repeat: no-repeat;
     background-size: 100% 100%;
     border-radius: 20px;
+    max-width: 100%;
+    height: auto;
+    display: block;
 }
 
 .mexican-title {
@@ -149,5 +152,145 @@ canvas {
 
 canvas:hover {
     cursor: pointer; /* Will be overridden by StartScreen class based on hover state */
+}
+
+/* Show mobile controls on mobile devices */
+@media (max-width: 768px) {
+    .mobile-controls {
+        display: flex;
+    }
+    
+    .mexican-title {
+        font-size: 2.5rem;
+        padding: 15px 25px;
+        margin: 15px auto 10px auto;
+    }
+    
+    canvas {
+        max-width: 95vw;
+        height: auto;
+    }
+}
+
+/* Responsive Canvas for Mobile Landscape */
+@media screen and (max-width: 768px) and (orientation: landscape) {
+    body {
+        height: 100vh;
+        overflow: hidden;
+    }
+    
+    .mexican-section {
+        width: 100vw;
+        height: 100vh;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .mexican-title {
+        font-size: 1.8rem;
+        padding: 8px 15px;
+        margin: 5px auto;
+        letter-spacing: 2px;
+    }
+    
+    canvas {
+        width: 100vw;
+        height: calc(100vh - 60px); /* Reserve space for title */
+        max-width: none;
+        border-radius: 0;
+        object-fit: contain;
+    }
+    
+    .mobile-controls {
+        bottom: 10px;
+        padding: 0 15px;
+    }
+    
+    .control-btn {
+        opacity: 0.8;
+    }
+    
+    .movement-btn {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .action-btn {
+        width: 70px;
+        height: 40px;
+    }
+    
+    .btn-text {
+        font-size: 12px;
+    }
+}
+
+/* Extra responsive for very small screens */
+@media screen and (max-width: 480px) and (orientation: landscape) {
+    .mexican-title {
+        font-size: 1.4rem;
+        padding: 5px 10px;
+        margin: 3px auto;
+    }
+    
+    canvas {
+        height: calc(100vh - 40px);
+    }
+    
+    .mobile-controls {
+        bottom: 5px;
+        padding: 0 10px;
+    }
+    
+    .movement-btn {
+        width: 45px;
+        height: 45px;
+    }
+    
+    .action-btn {
+        width: 60px;
+        height: 35px;
+    }
+    
+    .btn-icon {
+        font-size: 20px;
+    }
+    
+    .btn-text {
+        font-size: 10px;
+    }
+}
+
+/* Large mobile screens landscape */
+@media screen and (min-width: 481px) and (max-width: 768px) and (orientation: landscape) {
+    canvas {
+        height: calc(100vh - 70px);
+    }
+    
+    .mexican-title {
+        font-size: 2rem;
+    }
+}
+
+/* Portrait orientation adjustments */
+@media screen and (max-width: 768px) and (orientation: portrait) {
+    .mexican-section {
+        padding: 10px;
+    }
+    
+    canvas {
+        width: 95vw;
+        height: auto;
+        max-height: 60vh;
+    }
+    
+    .mexican-title {
+        font-size: 2.2rem;
+        margin-bottom: 15px;
+    }
+    
+    .mobile-controls {
+        bottom: 15px;
+    }
 }
 
