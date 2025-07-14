@@ -70,7 +70,14 @@ class World {
         this.enemies.forEach(enemy => enemy.world = this);
         this.clouds.forEach(cloud => cloud.world = this);
         this.backgroundObjects.forEach(bgo => bgo.world = this);
-        this.level.endboss.forEach(boss => boss.world = this);
+        this.level.endboss.forEach(boss => {
+            // Use the new setWorld method for endbosses to apply health scaling
+            if (boss.setWorld) {
+                boss.setWorld(this);
+            } else {
+                boss.world = this;
+            }
+        });
     }
 
     runWorld() {

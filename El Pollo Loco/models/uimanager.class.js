@@ -242,7 +242,7 @@ class UIManager {
         this.world.ctx.fillStyle = '#FFFFFF';
         this.world.ctx.fillText(`WAVE ${waveInfo.currentWave}`, indicatorX, indicatorY - 5);
         
-        // Info line: Speed, Chicken count, and Endboss count
+        // Info line: Speed, Chicken count, Endboss count, and scaling info
         this.world.ctx.font = 'bold 11px Comic Sans MS';
         this.world.ctx.fillStyle = borderColor;
         
@@ -253,6 +253,13 @@ class UIManager {
         if (waveInfo.extraEndbosses > 0) {
             infoText += ` | +${waveInfo.extraEndbosses} 👑`;
         }
+        
+        // Add damage/health scaling info for wave 35+
+        if (waveInfo.isDamageScaling) {
+            infoText += ` | ⚔️${waveInfo.damagePercentage}%`;
+            infoText += ` | ❤️${waveInfo.healthPercentage}%`;
+        }
+        
         this.world.ctx.fillText(infoText, indicatorX, indicatorY + 12);
         
         this.world.ctx.restore();
@@ -445,6 +452,13 @@ class UIManager {
             if (waveInfo.extraEndbosses > 0) {
                 subtitleText += ` | +${waveInfo.extraEndbosses} 👑`;
             }
+            
+            // Add scaling info for wave 35+
+            if (waveInfo.isDamageScaling) {
+                subtitleText += ` | ⚔️${waveInfo.damagePercentage}%`;
+                subtitleText += ` | ❤️${waveInfo.healthPercentage}%`;
+            }
+            
             this.world.ctx.fillText(subtitleText, centerX, centerY + 25);
         } else {
             this.world.ctx.fillText('Enemies are faster!', centerX, centerY + 25);

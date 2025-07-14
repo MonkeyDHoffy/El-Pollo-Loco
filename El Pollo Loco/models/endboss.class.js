@@ -81,9 +81,32 @@ class Endboss extends MovableObject {
         this.hasSeenCharacter = false; // Track if character has been spotted
         this.detectionRange = 400; // Distance to detect character
         
+        // Health scaling - will be set when world reference is available
+        this.baseEnergy = 50; // Store base energy for scaling
+        this.maxEnergy = 50; // Will be updated based on wave
+        
         // Default spawn position - can be overridden after creation
         this.x = 3800 - (index * 600);
         this.animate();
+    }
+
+    /**
+     * Set world reference and apply health scaling based on current wave
+     */
+    setWorld(world) {
+        this.world = world;
+        
+        // Apply health scaling based on current wave
+        if (world && world.waveManager) {
+            this.maxEnergy = world.waveManager.getScaledEndbossHealth();
+            this.energy = this.maxEnergy; // Set current energy to max
+            console.log(`[Endboss] Health scaled to ${this.maxEnergy} based on wave ${world.waveManager.currentWave}`);
+        } else {
+            // Fallback to base energy if no wave manager
+            this.maxEnergy = this.baseEnergy;
+            this.energy = this.maxEnergy;
+            console.log(`[Endboss] Using base health ${this.maxEnergy} (no wave manager)`);
+        }
     }
 
     // Controls boss movement and animation
@@ -372,7 +395,7 @@ class Endboss extends MovableObject {
         let barX = this.x + (this.width - barWidth) / 2;
         let barY = this.y - 40;
         
-        let energyPercentage = this.energy / 50;
+        let energyPercentage = this.energy / this.maxEnergy;
         
         // Simple background
         ctx.fillStyle = '#333333';
@@ -403,8 +426,8 @@ class Endboss extends MovableObject {
         ctx.strokeStyle = 'black';
         ctx.lineWidth = 1;
         
-        ctx.strokeText(`Pollo Loco: ${this.energy}/50`, barX + barWidth / 2, barY + barHeight / 2 + 5);
-        ctx.fillText(`Pollo Loco: ${this.energy}/50`, barX + barWidth / 2, barY + barHeight / 2 + 5);
+        ctx.strokeText(`Pollo Loco: ${this.energy}/${this.maxEnergy}`, barX + barWidth / 2, barY + barHeight / 2 + 5);
+        ctx.fillText(`Pollo Loco: ${this.energy}/${this.maxEnergy}`, barX + barWidth / 2, barY + barHeight / 2 + 5);
         
         ctx.restore();
     }

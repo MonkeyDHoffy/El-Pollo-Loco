@@ -135,8 +135,8 @@ class EndlessMode {
         let spawnRange = this.config.spawnAreaEnd - this.config.spawnAreaStart;
         newEndboss.x = this.config.spawnAreaStart + Math.random() * spawnRange;
         
-        // Set world reference
-        newEndboss.world = this.world;
+        // Set world reference and apply health scaling
+        newEndboss.setWorld(this.world);
         
         // Apply current wave speed multiplier
         if (this.world.waveManager) {
@@ -146,7 +146,7 @@ class EndlessMode {
         // Add to endboss array
         this.world.level.endboss.push(newEndboss);
         
-     
+        console.log(`[EndlessMode] Spawned new endboss with ${newEndboss.maxEnergy} health at x: ${Math.round(newEndboss.x)}`);
     }
 
     /**

@@ -26,7 +26,10 @@ class CollisionManager {
                 } else {
                     // Only take damage from enemies if character is on ground (not airborne)
                     if (!this.world.character.isAboveGround()) {
-                        this.handleCharacterHitByEnemy(10);
+                        // Get scaled damage from wave manager
+                        let enemyDamage = this.world.waveManager ? 
+                            this.world.waveManager.getScaledEnemyDamage() : 10;
+                        this.handleCharacterHitByEnemy(enemyDamage);
                     }
                     // If character is airborne, no damage but also no kill - just collision
                 }
@@ -51,7 +54,11 @@ class CollisionManager {
                         if (!this.world.character.isAboveGround()) {
                             // Trigger attack animation before dealing damage
                             endboss.attack();
-                            this.handleCharacterHitByEnemy(20);
+                            
+                            // Get scaled damage from wave manager
+                            let endbossDamage = this.world.waveManager ? 
+                                this.world.waveManager.getScaledEndbossDamage() : 20;
+                            this.handleCharacterHitByEnemy(endbossDamage);
                         }
                     }
                     // If endboss is dead/dying or character is airborne, no damage dealt

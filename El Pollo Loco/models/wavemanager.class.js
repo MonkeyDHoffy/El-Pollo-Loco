@@ -19,6 +19,14 @@ class WaveManager {
         this.endbossIncreaseInterval = 10; // Every 10 waves after wave 15
         this.maxEndbosses = 6; // Maximum endbosses
         
+        // Damage and health scaling system (starts at wave 35)
+        this.scalingStartWave = 35; // Start damage/health scaling from wave 35
+        this.damageIncreasePerWave = 0.02; // 2% damage increase per wave
+        this.healthIncreasePerWave = 0.02; // 2% health increase per wave (endboss only)
+        this.baseDamageEnemy = 10; // Base damage for normal enemies
+        this.baseDamageEndboss = 20; // Base damage for endbosses
+        this.baseHealthEndboss = 50; // Base health for endbosses
+        
         console.log("[WaveManager] Initialized - Wave 1 started");
     }
 
@@ -61,6 +69,17 @@ class WaveManager {
         console.log(`[WaveManager] Speed multiplier: ${(this.baseSpeedMultiplier * 100).toFixed(0)}%`);
         console.log(`[WaveManager] Enemy count: ${this.getCurrentEnemyCount()}`);
         console.log(`[WaveManager] Endboss count: ${this.getCurrentEndbossCount()}`);
+        
+        // Special notification for wave 35 (start of damage/health scaling)
+        if (this.currentWave === this.scalingStartWave) {
+            console.log(`[WaveManager] 🚨 WAVE 35 REACHED! 🚨 Damage and health scaling now active!`);
+        }
+        
+        // Log scaling info for wave 35+
+        if (this.currentWave >= this.scalingStartWave) {
+            console.log(`[WaveManager] Damage scaling: ${(this.getDamageMultiplier() * 100).toFixed(0)}% (Enemy: ${this.getScaledEnemyDamage()}, Endboss: ${this.getScaledEndbossDamage()})`);
+            console.log(`[WaveManager] Endboss health scaling: ${(this.getHealthMultiplier() * 100).toFixed(0)}% (${this.getScaledEndbossHealth()} HP)`);
+        }
         
         // Show wave change notification
         this.showWaveChangeNotification();
@@ -155,6 +174,51 @@ class WaveManager {
     }
 
     /**
+     * Get damage multiplier based on current wave (starts at wave 35)
+     */
+    getDamageMultiplier() {
+        if (this.currentWave < this.scalingStartWave) {
+            return 1.0; // No scaling before wave 35
+        }
+        
+        let wavesAfterScaling = this.currentWave - this.scalingStartWave;
+        return 1.0 + (wavesAfterScaling * this.damageIncreasePerWave);
+    }
+
+    /**
+     * Get health multiplier for endbosses based on current wave (starts at wave 35)
+     */
+    getHealthMultiplier() {
+        if (this.currentWave < this.scalingStartWave) {
+            return 1.0; // No scaling before wave 35
+        }
+        
+        let wavesAfterScaling = this.currentWave - this.scalingStartWave;
+        return 1.0 + (wavesAfterScaling * this.healthIncreasePerWave);
+    }
+
+    /**
+     * Get scaled damage for enemies based on current wave
+     */
+    getScaledEnemyDamage() {
+        return Math.round(this.baseDamageEnemy * this.getDamageMultiplier());
+    }
+
+    /**
+     * Get scaled damage for endbosses based on current wave
+     */
+    getScaledEndbossDamage() {
+        return Math.round(this.baseDamageEndboss * this.getDamageMultiplier());
+    }
+
+    /**
+     * Get scaled health for endbosses based on current wave
+     */
+    getScaledEndbossHealth() {
+        return Math.round(this.baseHealthEndboss * this.getHealthMultiplier());
+    }
+
+    /**
      * Show wave change notification (temporary)
      */
     showWaveChangeNotification() {
@@ -179,7 +243,16 @@ class WaveManager {
             pointsToNextWave: this.pointsPerWave - (this.world.totalScore % this.pointsPerWave),
             maxWaveReached: this.baseSpeedMultiplier >= this.maxSpeedMultiplier,
             maxChickensReached: this.getCurrentEnemyCount() >= (this.baseMinEnemies + this.maxExtraChickens),
-            maxEndbossesReached: this.getCurrentEndbossCount() >= this.maxEndbosses
+            maxEndbossesReached: this.getCurrentEndbossCount() >= this.maxEndbosses,
+            // New scaling info (wave 35+)
+            damageMultiplier: this.getDamageMultiplier(),
+            damagePercentage: Math.round(this.getDamageMultiplier() * 100),
+            healthMultiplier: this.getHealthMultiplier(),
+            healthPercentage: Math.round(this.getHealthMultiplier() * 100),
+            scaledEnemyDamage: this.getScaledEnemyDamage(),
+            scaledEndbossDamage: this.getScaledEndbossDamage(),
+            scaledEndbossHealth: this.getScaledEndbossHealth(),
+            isDamageScaling: this.currentWave >= this.scalingStartWave
         };
     }
 
