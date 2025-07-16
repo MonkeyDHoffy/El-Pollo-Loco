@@ -548,12 +548,12 @@ class UIManager {
             const rect = this.world.canvas.getBoundingClientRect();
             
             // Calculate scale factors for fullscreen mode
-            const scaleX = rect.width / this.world.canvas.width;
-            const scaleY = rect.height / this.world.canvas.height;
+            const scaleX = this.world.canvas.width / rect.width;
+            const scaleY = this.world.canvas.height / rect.height;
             
             // Convert mouse coordinates to canvas coordinates
-            const x = (event.clientX - rect.left) / scaleX;
-            const y = (event.clientY - rect.top) / scaleY;
+            const x = (event.clientX - rect.left) * scaleX;
+            const y = (event.clientY - rect.top) * scaleY;
             
             // Check button clicks
             if (this.isPointInButton(x, y, this.buttons.pause)) {
@@ -565,7 +565,33 @@ class UIManager {
             }
         };
         
+        this.onTouchStart = (event) => {
+            // Prevent default to avoid scrolling/zooming
+            event.preventDefault();
+            
+            const rect = this.world.canvas.getBoundingClientRect();
+            const touch = event.touches[0];
+            
+            // Calculate scale factors for proper coordinate conversion
+            const scaleX = this.world.canvas.width / rect.width;
+            const scaleY = this.world.canvas.height / rect.height;
+            
+            // Convert touch coordinates to canvas coordinates
+            const x = (touch.clientX - rect.left) * scaleX;
+            const y = (touch.clientY - rect.top) * scaleY;
+            
+            // Check button touches
+            if (this.isPointInButton(x, y, this.buttons.pause)) {
+                this.handlePauseButton();
+            } else if (this.isPointInButton(x, y, this.buttons.fullscreen)) {
+                this.handleFullscreenButton();
+            } else if (this.isPointInButton(x, y, this.buttons.mute)) {
+                this.handleMuteButton();
+            }
+        };
+        
         this.world.canvas.addEventListener('click', this.onCanvasClick);
+        this.world.canvas.addEventListener('touchstart', this.onTouchStart, { passive: false });
     }
 
     /**
@@ -630,6 +656,9 @@ class UIManager {
     removeEventListeners() {
         if (this.onCanvasClick) {
             this.world.canvas.removeEventListener('click', this.onCanvasClick);
+        }
+        if (this.onTouchStart) {
+            this.world.canvas.removeEventListener('touchstart', this.onTouchStart);
         }
     }
 }

@@ -148,6 +148,9 @@ body.fullscreen-active {
 canvas {
     cursor: default;
     user-select: none;
+    touch-action: none; /* Prevent browser handling of touch events */
+    -webkit-touch-callout: none; /* Disable iOS callout on long-press */
+    -webkit-tap-highlight-color: rgba(0,0,0,0); /* Remove tap highlight on mobile */
 }
 
 canvas:hover {

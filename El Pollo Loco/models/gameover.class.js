@@ -151,18 +151,49 @@ class GameOver {
             const rect = this.canvas.getBoundingClientRect();
             
             // Calculate scale factors for fullscreen mode
-            const scaleX = rect.width / this.canvas.width;
-            const scaleY = rect.height / this.canvas.height;
+            const scaleX = this.canvas.width / rect.width;
+            const scaleY = this.canvas.height / rect.height;
             
             // Convert mouse coordinates to canvas coordinates
-            const x = (event.clientX - rect.left) / scaleX;
-            const y = (event.clientY - rect.top) / scaleY;
+            const x = (event.clientX - rect.left) * scaleX;
+            const y = (event.clientY - rect.top) * scaleY;
 
             // Check if click is on replay button
             if (x >= this.replayButton.x && 
                 x <= this.replayButton.x + this.replayButton.width &&
                 y >= this.replayButton.y && 
                 y <= this.replayButton.y + this.replayButton.height) {
+                this.restartGame();
+            }
+        };
+        
+        this.onTouchStart = (event) => {
+            if (!this.isActive || !this.showReplayScreen) return;
+            
+            // Prevent default to avoid scrolling/zooming
+            event.preventDefault();
+            
+            const rect = this.canvas.getBoundingClientRect();
+            const touch = event.touches[0];
+            
+            // Calculate scale factors for proper coordinate conversion
+            const scaleX = this.canvas.width / rect.width;
+            const scaleY = this.canvas.height / rect.height;
+            
+            // Convert touch coordinates to canvas coordinates
+            const x = (touch.clientX - rect.left) * scaleX;
+            const y = (touch.clientY - rect.top) * scaleY;
+            
+            console.log('[GameOver] Touch at:', x, y);
+            console.log('[GameOver] Button:', this.replayButton.x, this.replayButton.y, 
+                       this.replayButton.width, this.replayButton.height);
+
+            // Check if touch is on replay button
+            if (x >= this.replayButton.x && 
+                x <= this.replayButton.x + this.replayButton.width &&
+                y >= this.replayButton.y && 
+                y <= this.replayButton.y + this.replayButton.height) {
+                console.log('[GameOver] Replay button touched!');
                 this.restartGame();
             }
         };
@@ -177,6 +208,7 @@ class GameOver {
         };
 
         this.canvas.addEventListener('click', this.onMouseClick);
+        this.canvas.addEventListener('touchstart', this.onTouchStart, { passive: false });
         document.addEventListener('keydown', this.onKeyDown);
     }
 
@@ -185,6 +217,7 @@ class GameOver {
      */
     removeEventListeners() {
         this.canvas.removeEventListener('click', this.onMouseClick);
+        this.canvas.removeEventListener('touchstart', this.onTouchStart);
         document.removeEventListener('keydown', this.onKeyDown);
     }
 
