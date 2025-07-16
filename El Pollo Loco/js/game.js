@@ -19,11 +19,10 @@ function init() {
     window.keyboard = keyboard; // Make keyboard globally accessible for mobile controls
     window.mobileControls = mobileControls; // Make mobile controls globally accessible
     
-    // Auto-fullscreen on mobile
+    // Setup handling for user touch interactions to enable fullscreen
     if (isMobileDevice()) {
-        setTimeout(() => {
-            requestFullscreen();
-        }, 500);
+        // Add touch listener to go fullscreen on first touch
+        document.addEventListener('touchstart', enableFullscreen, { once: true });
     }
     
     // Create start screen first
@@ -59,12 +58,33 @@ function requestFullscreen() {
     const canvas = document.getElementById('canvas');
     const body = document.body;
     
-    if (canvas.requestFullscreen) {
-        canvas.requestFullscreen();
-    } else if (canvas.webkitRequestFullscreen) {
-        canvas.webkitRequestFullscreen();
-    } else if (canvas.msRequestFullscreen) {
-        canvas.msRequestFullscreen();
+    try {
+        // Try document element first for better browser compatibility
+        if (document.documentElement.requestFullscreen) {
+            document.documentElement.requestFullscreen()
+                .catch(err => console.log('Fullscreen failed: ', err));
+        } else if (document.documentElement.webkitRequestFullscreen) {
+            document.documentElement.webkitRequestFullscreen();
+        } else if (document.documentElement.mozRequestFullScreen) {
+            document.documentElement.mozRequestFullScreen();
+        } else if (document.documentElement.msRequestFullscreen) {
+            document.documentElement.msRequestFullscreen();
+        } 
+        // If document element doesn't work, try canvas
+        else if (canvas.requestFullscreen) {
+            canvas.requestFullscreen()
+                .catch(err => console.log('Canvas fullscreen failed: ', err));
+        } else if (canvas.webkitRequestFullscreen) {
+            canvas.webkitRequestFullscreen();
+        } else if (canvas.mozRequestFullScreen) {
+            canvas.mozRequestFullScreen();
+        } else if (canvas.msRequestFullscreen) {
+            canvas.msRequestFullscreen();
+        } else {
+            console.log('Fullscreen API not supported');
+        }
+    } catch (error) {
+        console.log('Error trying to enter fullscreen: ', error);
     }
 }
 
@@ -73,6 +93,8 @@ function setupResponsiveCanvas() {
     function resizeCanvas() {
         const canvas = document.getElementById('canvas');
         const container = document.querySelector('.mexican-section');
+        const mexicanTitle = document.querySelector('.mexican-title');
+        const brownGround = document.getElementById('brownGround');
         
         // Get current viewport dimensions
         const viewportWidth = window.innerWidth;
@@ -81,53 +103,61 @@ function setupResponsiveCanvas() {
         const isMobile = isMobileDevice();
         
         if (isMobile) {
-            if (document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement) {
-                // Fullscreen mode - use entire screen
-                canvas.style.width = viewportWidth + 'px';
+            // Hide the title and other elements on mobile for fullscreen experience
+            if (mexicanTitle) mexicanTitle.style.display = 'none';
+            if (brownGround) brownGround.style.display = 'none';
+            
+            // Make container full viewport
+            if (container) {
+                container.style.width = '100vw';
+                container.style.height = '100vh';
+                container.style.padding = '0';
+                container.style.margin = '0';
+            }
+            
+            // Always use fullscreen approach on mobile
+            canvas.style.width = '100vw';
+            canvas.style.height = '100vh';
+            canvas.style.position = 'fixed';
+            canvas.style.top = '0';
+            canvas.style.left = '0';
+            canvas.style.zIndex = '9999';
+            canvas.style.borderRadius = '0'; // Remove rounded corners for full-screen
+            
+            // Preserve aspect ratio by adding black bars if needed (letterboxing)
+            const gameAspectRatio = 720 / 480; // Original game aspect ratio
+            const screenAspectRatio = viewportWidth / viewportHeight;
+            
+            if (screenAspectRatio > gameAspectRatio) {
+                // Screen is wider than game - add horizontal bars
+                const gameHeight = viewportHeight;
+                const gameWidth = gameHeight * gameAspectRatio;
+                const horizontalPadding = (viewportWidth - gameWidth) / 2;
+                
+                canvas.style.width = gameWidth + 'px';
                 canvas.style.height = viewportHeight + 'px';
-                canvas.style.position = 'fixed';
-                canvas.style.top = '0';
-                canvas.style.left = '0';
-                canvas.style.zIndex = '9999';
-            } else if (isLandscape) {
-                // Mobile landscape: maximize canvas use
-                const titleHeight = 0; // Hide title in landscape
-                const availableHeight = viewportHeight - titleHeight;
-                
-                // Calculate aspect ratio preserving dimensions
-                const gameAspectRatio = 720 / 480;
-                let newWidth = viewportWidth;
-                let newHeight = newWidth / gameAspectRatio;
-                
-                // If height is too large, scale down
-                if (newHeight > availableHeight) {
-                    newHeight = availableHeight;
-                    newWidth = newHeight * gameAspectRatio;
-                }
-                
-                canvas.style.width = newWidth + 'px';
-                canvas.style.height = newHeight + 'px';
-                canvas.style.position = 'fixed';
-                canvas.style.top = '50%';
-                canvas.style.left = '50%';
-                canvas.style.transform = 'translate(-50%, -50%)';
-                canvas.style.zIndex = '100';
+                canvas.style.left = horizontalPadding + 'px';
             } else {
-                // Mobile portrait: fit to width
-                const containerWidth = viewportWidth * 0.95;
-                const gameAspectRatio = 720 / 480;
-                const newWidth = containerWidth;
-                const newHeight = newWidth / gameAspectRatio;
+                // Screen is taller than game - add vertical bars
+                const gameWidth = viewportWidth;
+                const gameHeight = gameWidth / gameAspectRatio;
+                const verticalPadding = (viewportHeight - gameHeight) / 2;
                 
-                canvas.style.width = newWidth + 'px';
-                canvas.style.height = newHeight + 'px';
-                canvas.style.position = 'relative';
-                canvas.style.transform = 'none';
+                canvas.style.width = viewportWidth + 'px';
+                canvas.style.height = gameHeight + 'px';
+                canvas.style.top = verticalPadding + 'px';
             }
             
             // Update mobile controls layout
             if (mobileControls) {
                 mobileControls.updateLayout();
+            }
+            
+            // Automatically request fullscreen on mobile
+            if (!document.fullscreenElement && 
+                !document.webkitFullscreenElement && 
+                !document.msFullscreenElement) {
+                requestFullscreen();
             }
         } else {
             // Desktop: use original size
@@ -135,6 +165,11 @@ function setupResponsiveCanvas() {
             canvas.style.height = '480px';
             canvas.style.position = 'relative';
             canvas.style.transform = 'none';
+            canvas.style.borderRadius = '20px'; // Restore rounded corners
+            
+            // Show the title on desktop
+            if (mexicanTitle) mexicanTitle.style.display = 'block';
+            if (brownGround) brownGround.style.display = 'block';
         }
     }
     
@@ -230,6 +265,20 @@ function restartGame() {
 function enableAudio() {
     if (world && world.backgroundMusic) {
         world.startBackgroundMusic();
+    }
+}
+
+// Enable fullscreen on touch for mobile devices
+function enableFullscreen() {
+    if (isMobileDevice()) {
+        setTimeout(() => {
+            requestFullscreen();
+            // Also call setupResponsiveCanvas to ensure proper sizing
+            setupResponsiveCanvas();
+        }, 300);
+        
+        // Enable audio at the same time
+        enableAudio();
     }
 }
 
