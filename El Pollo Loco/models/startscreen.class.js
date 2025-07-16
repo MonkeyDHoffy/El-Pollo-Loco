@@ -36,7 +36,7 @@ class StartScreen {
     }
     
     /**
-     * Set up mouse and keyboard event listeners
+     * Set up mouse, touch and keyboard event listeners
      */
     setupEventListeners() {
         // Mouse move for button hover
@@ -46,6 +46,10 @@ class StartScreen {
             let rect = this.canvas.getBoundingClientRect();
             let mouseX = event.clientX - rect.left;
             let mouseY = event.clientY - rect.top;
+            
+            // Scale mouse position based on canvas scaling
+            mouseX = mouseX * (this.canvas.width / rect.width);
+            mouseY = mouseY * (this.canvas.height / rect.height);
             
             // Check if mouse is over play button
             this.playButtonHovered = (
@@ -67,11 +71,45 @@ class StartScreen {
             let mouseX = event.clientX - rect.left;
             let mouseY = event.clientY - rect.top;
             
+            // Scale mouse position based on canvas scaling
+            mouseX = mouseX * (this.canvas.width / rect.width);
+            mouseY = mouseY * (this.canvas.height / rect.height);
+            
             // Check if click is on play button
             if (mouseX >= this.playButtonX &&
                 mouseX <= this.playButtonX + this.playButtonWidth &&
                 mouseY >= this.playButtonY &&
                 mouseY <= this.playButtonY + this.playButtonHeight) {
+                this.startGame();
+            }
+        };
+        
+        // Touch event for button tap
+        this.onTouchStart = (event) => {
+            if (!this.isActive) return;
+            
+            // Prevent default to stop scrolling/zooming
+            event.preventDefault();
+            
+            let rect = this.canvas.getBoundingClientRect();
+            let touch = event.touches[0];
+            let touchX = touch.clientX - rect.left;
+            let touchY = touch.clientY - rect.top;
+            
+            // Scale touch position based on canvas scaling
+            touchX = touchX * (this.canvas.width / rect.width);
+            touchY = touchY * (this.canvas.height / rect.height);
+            
+            console.log('[StartScreen] Touch at:', touchX, touchY);
+            console.log('[StartScreen] Button:', this.playButtonX, this.playButtonY, 
+                       this.playButtonWidth, this.playButtonHeight);
+            
+            // Check if touch is on play button
+            if (touchX >= this.playButtonX &&
+                touchX <= this.playButtonX + this.playButtonWidth &&
+                touchY >= this.playButtonY &&
+                touchY <= this.playButtonY + this.playButtonHeight) {
+                console.log('[StartScreen] Play button touched!');
                 this.startGame();
             }
         };
@@ -89,6 +127,7 @@ class StartScreen {
         // Add event listeners
         this.canvas.addEventListener('mousemove', this.onMouseMove);
         this.canvas.addEventListener('click', this.onMouseClick);
+        this.canvas.addEventListener('touchstart', this.onTouchStart, { passive: false });
         document.addEventListener('keydown', this.onKeyDown);
     }
     
@@ -98,6 +137,7 @@ class StartScreen {
     removeEventListeners() {
         this.canvas.removeEventListener('mousemove', this.onMouseMove);
         this.canvas.removeEventListener('click', this.onMouseClick);
+        this.canvas.removeEventListener('touchstart', this.onTouchStart);
         document.removeEventListener('keydown', this.onKeyDown);
         this.canvas.style.cursor = 'default';
     }
