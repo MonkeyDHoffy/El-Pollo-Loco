@@ -501,7 +501,7 @@ canvas:hover {
     justify-content: center;
     align-items: center;
     z-index: 9999;
-    font-family: 'Bangers', cursive;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .orientation-content {
@@ -557,38 +557,14 @@ canvas:hover {
         transform: rotate(0deg);
     }
     to {
-        transform: rotate(360deg);
+        transform: rotate(-360deg);
     }
 }
 
 /* Responsive design for controls */
 @media (max-width: 768px) {
     .controls-info {
-        gap: 15px;
-        padding: 10px;
-        margin: 5px auto;
-        flex-wrap: wrap;
-    }
-    
-    .control-item {
-        font-size: 14px;
-        gap: 6px;
-    }
-    
-    .control-key {
-        padding: 4px 8px;
-        font-size: 12px;
-        min-width: 20px;
-    }
-    
-    .info-button {
-        margin-left: 10px;
-    }
-    
-    .info-icon {
-        width: 25px;
-        height: 25px;
-        font-size: 14px;
+        display: none;
     }
     
     .info-tooltip {
