@@ -35,13 +35,12 @@
     <script src="./models/endlessmode.class.js"></script>
     <script src="./models/mobile-controls.class.js"></script>
     <script src="./levels/level1.class.js"></script>
-    <script src="./models/world.class.js"></script> <!-- NACH level1.class.js! -->
+    <script src="./models/world.class.js"></script>
     <script src="./js/game.js" defer></script>
     <script src="./rotationMessage.js"></script>
 </head>
 
-<body onload="checkOrientation()">
-    <!-- Mobile orientation message - Full screen overlay -->
+<body onload="checkOrientation(); init();">
     <div id="orientation-message" class="orientation-overlay">
         <div class="orientation-content">
             <div class="phone-rotate-icon">📱 ↻</div>
