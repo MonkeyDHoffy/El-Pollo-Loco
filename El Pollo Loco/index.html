@@ -37,80 +37,22 @@
     <script src="./levels/level1.class.js"></script>
     <script src="./models/world.class.js"></script> <!-- NACH level1.class.js! -->
     <script src="./js/game.js" defer></script>
-
-    <script>
-        let gameInitialized = false;
-
-        function checkOrientation() {
-            const isMobile = window.innerWidth <= 768;
-            const isPortrait = window.innerHeight > window.innerWidth;
-            const orientationOverlay = document.getElementById('orientation-message');
-            const gameSection = document.querySelector('.mexican-section');
-            const brownGround = document.getElementById('brownGround');
-
-            if (isMobile && isPortrait) {
-                // Mobile in portrait - show orientation message
-                orientationOverlay.style.display = 'flex';
-                gameSection.style.display = 'none';
-                brownGround.style.display = 'none';
-                gameInitialized = false;
-            } else {
-                // Desktop or mobile in landscape - show game
-                orientationOverlay.style.display = 'none';
-                gameSection.style.display = 'block';
-                brownGround.style.display = 'block';
-
-                // Initialize game only once when orientation is correct
-                if (isMobile && !gameInitialized) {
-                    gameInitialized = true;
-                    // Small delay to ensure DOM is ready
-                    setTimeout(() => {
-                        if (typeof init === 'function') {
-                            init();
-                        }
-                    }, 100);
-                }
-            }
-        }
-
-        // Check orientation on load and resize
-        document.addEventListener('DOMContentLoaded', checkOrientation);
-        window.addEventListener('resize', checkOrientation);
-        window.addEventListener('orientationchange', () => {
-            setTimeout(checkOrientation, 100); // Small delay for orientation change
-        });
-
-        // Override init function for mobile
-        const originalInit = window.init;
-        window.init = function () {
-            const isMobile = window.innerWidth <= 768;
-            const isPortrait = window.innerHeight > window.innerWidth;
-
-            if (isMobile && isPortrait) {
-                // Don't initialize game in portrait mode
-                return;
-            }
-
-            if (typeof originalInit === 'function') {
-                originalInit();
-            }
-        };
-    </script>
+    <script src="./rotationMessage.js"></script>
 </head>
 
 <body onload="checkOrientation()">
+    <!-- Mobile orientation message - Full screen overlay -->
+    <div id="orientation-message" class="orientation-overlay">
+        <div class="orientation-content">
+            <div class="phone-rotate-icon">📱 ↻</div>
+            <h2>Please rotate your phone!</h2>
+            <p>For the best gaming experience,<br>please rotate your device horizontally</p>
+            <div class="rotate-animation">🔄</div>
+        </div>
+    </div>
+
     <section class="mexican-section">
         <h1 class="mexican-title">El pollo loco</h1>
-
-        <!-- Mobile orientation message -->
-        <div id="orientation-message" class="orientation-overlay">
-            <div class="orientation-content">
-                <div class="phone-rotate-icon">📱 ↻</div>
-                <h2>¡Gira tu teléfono!</h2>
-                <p>For the best gaming experience,<br>please rotate your device horizontally</p>
-                <div class="rotate-animation">🔄</div>
-            </div>
-        </div>
 
         <canvas id="canvas" width="720" height="480"></canvas>
 
