@@ -1,7 +1,7 @@
 function checkOrientation() {
-    const isMobile = window.innerWidth <= 768;
-    const isPortrait = window.innerHeight > window.innerWidth;
-    const orientationOverlay = document.getElementById('orientation-message');
+    let isMobile = window.innerWidth <= 768;
+    let isPortrait = window.innerHeight > window.innerWidth;
+    let orientationOverlay = document.getElementById('orientation-message');
 
     if (isMobile && isPortrait) {
         // Mobile in portrait - show orientation message

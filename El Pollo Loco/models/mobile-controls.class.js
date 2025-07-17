@@ -41,7 +41,7 @@ class MobileControls {
      * Updates mobile detection state on resize
      */
     updateMobileDetection() {
-        const wasMobile = this.isMobile;
+    let wasMobile = this.isMobile;
         this.isMobile = this.detectMobile();
         
         if (!wasMobile && this.isMobile) {
@@ -57,8 +57,8 @@ class MobileControls {
      * @returns {boolean} True if mobile controls should be shown
      */
     detectMobile() {
-        const isMobileDevice = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        const isSmallScreen = window.innerWidth <= 1024;
+    let isMobileDevice = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    let isSmallScreen = window.innerWidth <= 1024;
         
         return isMobileDevice || isSmallScreen;
     }
@@ -67,11 +67,11 @@ class MobileControls {
      * Sets up button layout and styling
      */
     setupButtons() {
-        const canvasWidth = this.canvas.width;
-        const canvasHeight = this.canvas.height;
+    let canvasWidth = this.canvas.width;
+    let canvasHeight = this.canvas.height;
         
-        const styling = this.getButtonStyling();
-        const positions = this.calculateButtonPositions(canvasWidth, canvasHeight, styling);
+    let styling = this.getButtonStyling();
+    let positions = this.calculateButtonPositions(canvasWidth, canvasHeight, styling);
         
         this.createMovementButtons(positions, styling);
         this.createActionButtons(positions, styling, canvasWidth, canvasHeight);
@@ -82,7 +82,7 @@ class MobileControls {
      * @returns {Object} Button styling configuration
      */
     getButtonStyling() {
-        const isTabletSize = window.innerWidth >= 768 && window.innerWidth <= 1024;
+    let isTabletSize = window.innerWidth >= 768 && window.innerWidth <= 1024;
         
         return {
             isTabletSize,
@@ -115,7 +115,7 @@ class MobileControls {
      * @returns {Object} Position configuration
      */
     calculateButtonPositions(canvasWidth, canvasHeight, styling) {
-        const { isTabletSize } = styling;
+    let { isTabletSize } = styling;
         
         return {
             margin: isTabletSize ? 40 : 30,
@@ -132,8 +132,8 @@ class MobileControls {
      * @param {Object} styling - Button styling
      */
     createMovementButtons(positions, styling) {
-        const { margin, buttonSpacing } = positions;
-        const { buttonStyle } = styling;
+    let { margin, buttonSpacing } = positions;
+    let { buttonStyle } = styling;
         
         this.buttons.push({
             id: 'left',
@@ -162,8 +162,8 @@ class MobileControls {
      * @param {number} canvasHeight - Canvas height
      */
     createActionButtons(positions, styling, canvasWidth, canvasHeight) {
-        const { margin, actionButtonOffset, actionTopOffset, actionBottomOffset } = positions;
-        const { actionButtonStyle } = styling;
+    let { margin, actionButtonOffset, actionTopOffset, actionBottomOffset } = positions;
+    let { actionButtonStyle } = styling;
 
         this.buttons.push({
             id: 'jump',
@@ -202,19 +202,19 @@ class MobileControls {
 
     handleTouchStart(e) {
         e.preventDefault();
-        const touches = e.touches;
+    let touches = e.touches;
         
         for (let i = 0; i < touches.length; i++) {
-            const touch = touches[i];
-            const rect = this.canvas.getBoundingClientRect();
-            const scaleX = this.canvas.width / rect.width;
-            const scaleY = this.canvas.height / rect.height;
+    let touch = touches[i];
+    let rect = this.canvas.getBoundingClientRect();
+    let scaleX = this.canvas.width / rect.width;
+    let scaleY = this.canvas.height / rect.height;
             
-            const x = (touch.clientX - rect.left) * scaleX;
-            const y = (touch.clientY - rect.top) * scaleY;
+    let x = (touch.clientX - rect.left) * scaleX;
+    let y = (touch.clientY - rect.top) * scaleY;
             
             // Store this touch with its pressed button
-            const pressedButton = this.getButtonAtPosition(x, y);
+    let pressedButton = this.getButtonAtPosition(x, y);
             if (pressedButton) {
                 this.activeTouches.set(touch.identifier, pressedButton);
                 this.handleButtonPress(x, y, true);
@@ -224,10 +224,10 @@ class MobileControls {
 
     handleTouchMove(e) {
         e.preventDefault();
-        const touches = e.touches;
+    let touches = e.touches;
         
         // First, check which touches are still active
-        const currentTouchIds = new Set();
+    let currentTouchIds = new Set();
         for (let i = 0; i < touches.length; i++) {
             currentTouchIds.add(touches[i].identifier);
         }
@@ -245,16 +245,16 @@ class MobileControls {
         
         // Process current touches
         for (let i = 0; i < touches.length; i++) {
-            const touch = touches[i];
-            const rect = this.canvas.getBoundingClientRect();
-            const scaleX = this.canvas.width / rect.width;
-            const scaleY = this.canvas.height / rect.height;
+    let touch = touches[i];
+    let rect = this.canvas.getBoundingClientRect();
+    let scaleX = this.canvas.width / rect.width;
+    let scaleY = this.canvas.height / rect.height;
             
-            const x = (touch.clientX - rect.left) * scaleX;
-            const y = (touch.clientY - rect.top) * scaleY;
+    let x = (touch.clientX - rect.left) * scaleX;
+    let y = (touch.clientY - rect.top) * scaleY;
             
-            const currentButton = this.getButtonAtPosition(x, y);
-            const previousButton = this.activeTouches.get(touch.identifier);
+    let currentButton = this.getButtonAtPosition(x, y);
+    let previousButton = this.activeTouches.get(touch.identifier);
             
             // If touch moved to a different button
             if (currentButton !== previousButton) {
@@ -282,10 +282,10 @@ class MobileControls {
 
     handleTouchEnd(e) {
         e.preventDefault();
-        const touches = e.touches;
+    let touches = e.touches;
         
         // Get remaining touch IDs
-        const remainingTouchIds = new Set();
+    let remainingTouchIds = new Set();
         for (let i = 0; i < touches.length; i++) {
             remainingTouchIds.add(touches[i].identifier);
         }
@@ -303,12 +303,12 @@ class MobileControls {
     }
 
     handleMouseDown(e) {
-        const rect = this.canvas.getBoundingClientRect();
-        const scaleX = this.canvas.width / rect.width;
-        const scaleY = this.canvas.height / rect.height;
+    let rect = this.canvas.getBoundingClientRect();
+    let scaleX = this.canvas.width / rect.width;
+    let scaleY = this.canvas.height / rect.height;
         
-        const x = (e.clientX - rect.left) * scaleX;
-        const y = (e.clientY - rect.top) * scaleY;
+    let x = (e.clientX - rect.left) * scaleX;
+    let y = (e.clientY - rect.top) * scaleY;
         
         this.isMouseDown = true;
         this.handleButtonPress(x, y, true);
@@ -317,12 +317,12 @@ class MobileControls {
     handleMouseMove(e) {
         if (!this.isMouseDown) return;
         
-        const rect = this.canvas.getBoundingClientRect();
-        const scaleX = this.canvas.width / rect.width;
-        const scaleY = this.canvas.height / rect.height;
+    let rect = this.canvas.getBoundingClientRect();
+    let scaleX = this.canvas.width / rect.width;
+    let scaleY = this.canvas.height / rect.height;
         
-        const x = (e.clientX - rect.left) * scaleX;
-        const y = (e.clientY - rect.top) * scaleY;
+    let x = (e.clientX - rect.left) * scaleX;
+    let y = (e.clientY - rect.top) * scaleY;
         
         // Release all buttons first
         this.buttons.forEach(button => {
@@ -379,7 +379,7 @@ class MobileControls {
     }
 
     drawButton(button) {
-        const ctx = this.ctx;
+    let ctx = this.ctx;
         
         // Save context
         ctx.save();
@@ -388,7 +388,7 @@ class MobileControls {
         ctx.globalAlpha = 0.25;
         
         // Button background
-        const gradient = ctx.createLinearGradient(
+    let gradient = ctx.createLinearGradient(
             button.x, button.y, 
             button.x, button.y + button.height
         );
@@ -423,8 +423,8 @@ class MobileControls {
         ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
         ctx.shadowBlur = 2;
         
-        const centerX = button.x + button.width / 2;
-        const centerY = button.y + button.height / 2;
+    let centerX = button.x + button.width / 2;
+    let centerY = button.y + button.height / 2;
         
         ctx.fillText(button.text, centerX, centerY);
         
@@ -450,13 +450,13 @@ class MobileControls {
         if (!this.isMobile) return;
         
         // Update button positions based on canvas size
-        const canvasWidth = this.canvas.width;
-        const canvasHeight = this.canvas.height;
-        const isTabletSize = window.innerWidth >= 768 && window.innerWidth <= 1024;
+    let canvasWidth = this.canvas.width;
+    let canvasHeight = this.canvas.height;
+    let isTabletSize = window.innerWidth >= 768 && window.innerWidth <= 1024;
         
         // Adjust margins based on screen size
-        const margin = isTabletSize ? 40 : 30;
-        const buttonSpacing = isTabletSize ? 100 : 80;
+    let margin = isTabletSize ? 40 : 30;
+    let buttonSpacing = isTabletSize ? 100 : 80;
         
         // Update positions
         this.buttons.forEach(button => {

@@ -229,7 +229,7 @@ class GameOver {
         this.onMouseClick = (event) => {
             if (!this.isActive || !this.showReplayScreen) return;
 
-            const coordinates = this.getMouseCoordinates(event);
+    let coordinates = this.getMouseCoordinates(event);
             if (this.isPointInReplayButton(coordinates.x, coordinates.y)) {
                 this.restartGame();
             }
@@ -242,9 +242,9 @@ class GameOver {
      * @returns {Object} Scaled coordinates
      */
     getMouseCoordinates(event) {
-        const rect = this.canvas.getBoundingClientRect();
-        const scaleX = this.canvas.width / rect.width;
-        const scaleY = this.canvas.height / rect.height;
+    let rect = this.canvas.getBoundingClientRect();
+    let scaleX = this.canvas.width / rect.width;
+    let scaleY = this.canvas.height / rect.height;
         
         return {
             x: (event.clientX - rect.left) * scaleX,
@@ -259,7 +259,7 @@ class GameOver {
             if (!this.isActive || !this.showReplayScreen) return;
             
             event.preventDefault();
-            const coordinates = this.getTouchCoordinates(event);
+    let coordinates = this.getTouchCoordinates(event);
             this.logTouchInfo(coordinates);
             
             if (this.isPointInReplayButton(coordinates.x, coordinates.y)) {
@@ -275,10 +275,10 @@ class GameOver {
      * @returns {Object} Scaled coordinates
      */
     getTouchCoordinates(event) {
-        const rect = this.canvas.getBoundingClientRect();
-        const touch = event.touches[0];
-        const scaleX = this.canvas.width / rect.width;
-        const scaleY = this.canvas.height / rect.height;
+    let rect = this.canvas.getBoundingClientRect();
+    let touch = event.touches[0];
+    let scaleX = this.canvas.width / rect.width;
+    let scaleY = this.canvas.height / rect.height;
         
         return {
             x: (touch.clientX - rect.left) * scaleX,

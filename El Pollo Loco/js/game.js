@@ -77,7 +77,7 @@ function isMobileDevice() {
  * Requests fullscreen mode for the game
  */
 function requestFullscreen() {
-    const canvas = document.getElementById('canvas');
+    let canvas = document.getElementById('canvas');
     
     try {
         tryDocumentFullscreen() || tryCanvasFullscreen(canvas);
@@ -138,10 +138,10 @@ function tryCanvasFullscreen(canvas) {
  */
 function setupResponsiveCanvas() {
     function resizeCanvas() {
-        const canvas = document.getElementById('canvas');
-        const viewportWidth = window.innerWidth;
-        const viewportHeight = window.innerHeight;
-        const isMobile = isMobileDevice();
+    let canvas = document.getElementById('canvas');
+    let viewportWidth = window.innerWidth;
+    let viewportHeight = window.innerHeight;
+    let isMobile = isMobileDevice();
         
         if (isMobile) {
             setupMobileCanvas(canvas, viewportWidth, viewportHeight);
@@ -173,8 +173,8 @@ function setupMobileCanvas(canvas, viewportWidth, viewportHeight) {
  * Hides UI elements on mobile for fullscreen experience
  */
 function hideMobileElements() {
-    const mexicanTitle = document.querySelector('.mexican-title');
-    const brownGround = document.getElementById('brownGround');
+    let mexicanTitle = document.querySelector('.mexican-title');
+    let brownGround = document.getElementById('brownGround');
     
     if (mexicanTitle) mexicanTitle.style.display = 'none';
     if (brownGround) brownGround.style.display = 'none';
@@ -184,7 +184,7 @@ function hideMobileElements() {
  * Sets up container styling for mobile fullscreen
  */
 function setupMobileContainer() {
-    const container = document.querySelector('.mexican-section');
+    let container = document.querySelector('.mexican-section');
     if (container) {
         container.style.width = '100vw';
         container.style.height = '100vh';
@@ -213,8 +213,8 @@ function applyMobileCanvasStyles(canvas) {
  * @param {number} viewportHeight - Current viewport height
  */
 function handleAspectRatio(canvas, viewportWidth, viewportHeight) {
-    const gameAspectRatio = 720 / 480;
-    const screenAspectRatio = viewportWidth / viewportHeight;
+    let gameAspectRatio = 720 / 480;
+    let screenAspectRatio = viewportWidth / viewportHeight;
     
     if (screenAspectRatio > gameAspectRatio) {
         applyHorizontalLetterboxing(canvas, viewportWidth, viewportHeight, gameAspectRatio);
@@ -231,9 +231,9 @@ function handleAspectRatio(canvas, viewportWidth, viewportHeight) {
  * @param {number} gameAspectRatio - The game's aspect ratio
  */
 function applyHorizontalLetterboxing(canvas, viewportWidth, viewportHeight, gameAspectRatio) {
-    const gameHeight = viewportHeight;
-    const gameWidth = gameHeight * gameAspectRatio;
-    const horizontalPadding = (viewportWidth - gameWidth) / 2;
+    let gameHeight = viewportHeight;
+    let gameWidth = gameHeight * gameAspectRatio;
+    let horizontalPadding = (viewportWidth - gameWidth) / 2;
     
     canvas.style.width = gameWidth + 'px';
     canvas.style.height = viewportHeight + 'px';
@@ -248,9 +248,9 @@ function applyHorizontalLetterboxing(canvas, viewportWidth, viewportHeight, game
  * @param {number} gameAspectRatio - The game's aspect ratio
  */
 function applyVerticalLetterboxing(canvas, viewportWidth, viewportHeight, gameAspectRatio) {
-    const gameWidth = viewportWidth;
-    const gameHeight = gameWidth / gameAspectRatio;
-    const verticalPadding = (viewportHeight - gameHeight) / 2;
+    let gameWidth = viewportWidth;
+    let gameHeight = gameWidth / gameAspectRatio;
+    let verticalPadding = (viewportHeight - gameHeight) / 2;
     
     canvas.style.width = viewportWidth + 'px';
     canvas.style.height = gameHeight + 'px';
@@ -295,8 +295,8 @@ function setupDesktopCanvas(canvas) {
  * Shows UI elements that are hidden on mobile
  */
 function showDesktopElements() {
-    const mexicanTitle = document.querySelector('.mexican-title');
-    const brownGround = document.getElementById('brownGround');
+    let mexicanTitle = document.querySelector('.mexican-title');
+    let brownGround = document.getElementById('brownGround');
     
     if (mexicanTitle) mexicanTitle.style.display = 'block';
     if (brownGround) brownGround.style.display = 'block';

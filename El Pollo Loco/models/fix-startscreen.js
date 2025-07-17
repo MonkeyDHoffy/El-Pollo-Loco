@@ -6,7 +6,7 @@
  * Adds touch event handling to StartScreen for mobile compatibility
  */
 function addTouchSupportToStartScreen() {
-    const startScreen = window.startScreen;
+    let startScreen = window.startScreen;
     
     if (!validateStartScreen(startScreen)) {
         return;
@@ -35,7 +35,7 @@ function validateStartScreen(startScreen) {
  * @param {Object} startScreen - StartScreen object reference
  */
 function attachTouchHandler(startScreen) {
-    const touchHandler = createTouchHandler(startScreen);
+    let touchHandler = createTouchHandler(startScreen);
     startScreen.canvas.addEventListener('touchstart', touchHandler, { passive: false });
 }
 
@@ -49,7 +49,7 @@ function createTouchHandler(startScreen) {
         if (!startScreen.isActive) return;
         event.preventDefault();
         
-        const coordinates = calculateTouchCoordinates(event, startScreen);
+    let coordinates = calculateTouchCoordinates(event, startScreen);
         logTouchInfo(coordinates, startScreen);
         
         if (isTouchOnPlayButton(coordinates, startScreen)) {
@@ -65,13 +65,13 @@ function createTouchHandler(startScreen) {
  * @returns {Object} Scaled coordinates
  */
 function calculateTouchCoordinates(event, startScreen) {
-    const rect = startScreen.canvas.getBoundingClientRect();
-    const touch = event.touches[0];
-    const touchX = touch.clientX - rect.left;
-    const touchY = touch.clientY - rect.top;
+    let rect = startScreen.canvas.getBoundingClientRect();
+    let touch = event.touches[0];
+    let touchX = touch.clientX - rect.left;
+    let touchY = touch.clientY - rect.top;
     
-    const scaleX = startScreen.canvas.width / rect.width;
-    const scaleY = startScreen.canvas.height / rect.height;
+    let scaleX = startScreen.canvas.width / rect.width;
+    let scaleY = startScreen.canvas.height / rect.height;
     
     return {
         x: touchX * scaleX,

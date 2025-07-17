@@ -597,15 +597,15 @@ class UIManager {
      */
     setupButtonEventListeners() {
         this.onCanvasClick = (event) => {
-            const rect = this.world.canvas.getBoundingClientRect();
+    let rect = this.world.canvas.getBoundingClientRect();
             
             // Calculate scale factors for fullscreen mode
-            const scaleX = this.world.canvas.width / rect.width;
-            const scaleY = this.world.canvas.height / rect.height;
+    let scaleX = this.world.canvas.width / rect.width;
+    let scaleY = this.world.canvas.height / rect.height;
             
             // Convert mouse coordinates to canvas coordinates
-            const x = (event.clientX - rect.left) * scaleX;
-            const y = (event.clientY - rect.top) * scaleY;
+    let x = (event.clientX - rect.left) * scaleX;
+    let y = (event.clientY - rect.top) * scaleY;
             
             // Check button clicks
             if (this.isPointInButton(x, y, this.buttons.pause)) {
@@ -621,16 +621,16 @@ class UIManager {
             // Prevent default to avoid scrolling/zooming
             event.preventDefault();
             
-            const rect = this.world.canvas.getBoundingClientRect();
-            const touch = event.touches[0];
+    let rect = this.world.canvas.getBoundingClientRect();
+    let touch = event.touches[0];
             
             // Calculate scale factors for proper coordinate conversion
-            const scaleX = this.world.canvas.width / rect.width;
-            const scaleY = this.world.canvas.height / rect.height;
+    let scaleX = this.world.canvas.width / rect.width;
+    let scaleY = this.world.canvas.height / rect.height;
             
             // Convert touch coordinates to canvas coordinates
-            const x = (touch.clientX - rect.left) * scaleX;
-            const y = (touch.clientY - rect.top) * scaleY;
+    let x = (touch.clientX - rect.left) * scaleX;
+    let y = (touch.clientY - rect.top) * scaleY;
             
             // Check button touches
             if (this.isPointInButton(x, y, this.buttons.pause)) {
