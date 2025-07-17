@@ -20,7 +20,7 @@ class UIManager {
     initializeButtons() {
         this.buttons = {
             pause: this.createButtonConfig(180, 'PAUSE'),
-            fullscreen: this.createButtonConfig(120, 'FULL'),
+            fullscreen: this.createButtonConfig(120, 'SCREEN'),
             mute: this.createButtonConfig(60, 'MUTE')
         };
     }
@@ -318,7 +318,6 @@ class UIManager {
      */
     drawWaveIndicatorText(config, waveInfo) {
         this.drawWaveTitle(config, waveInfo);
-        this.drawWaveInfoLine(config, waveInfo);
     }
 
     /**
@@ -545,32 +544,6 @@ class UIManager {
         // Main text
         this.world.ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
         this.world.ctx.fillText(`WAVE ${this.waveChangeNotification.wave}`, centerX, centerY);
-        
-        // Subtitle with enhanced info
-        this.world.ctx.font = 'bold 18px Comic Sans MS';
-        this.world.ctx.fillStyle = `rgba(255, 255, 255, ${alpha * 0.8})`;
-        
-        // Get wave info for enhanced subtitle
-        if (this.world.waveManager) {
-            let waveInfo = this.world.waveManager.getWaveInfo();
-            let subtitleText = `${waveInfo.speedPercentage}% Speed`;
-            if (waveInfo.extraChickens > 0) {
-                subtitleText += ` | +${waveInfo.extraChickens} 🐔`;
-            }
-            if (waveInfo.extraEndbosses > 0) {
-                subtitleText += ` | +${waveInfo.extraEndbosses} 👑`;
-            }
-            
-            // Add scaling info for wave 35+
-            if (waveInfo.isDamageScaling) {
-                subtitleText += ` | ⚔️${waveInfo.damagePercentage}%`;
-                subtitleText += ` | ❤️${waveInfo.healthPercentage}%`;
-            }
-            
-            this.world.ctx.fillText(subtitleText, centerX, centerY + 25);
-        } else {
-            this.world.ctx.fillText('Enemies are faster!', centerX, centerY + 25);
-        }
         
         this.world.ctx.restore();
     }
