@@ -367,12 +367,109 @@ canvas:hover {
     text-align: center;
 }
 
+/* Info button styling */
+.info-button {
+    position: relative;
+    margin-left: 20px;
+}
+
+.info-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    background: #FF6B35;
+    color: white;
+    border-radius: 50%;
+    border: 2px solid #D2691E;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4);
+    transition: all 0.3s ease;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+}
+
+.info-icon:hover {
+    background: #FF8C42;
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.info-tooltip {
+    position: absolute;
+    bottom: 45px;
+    right: -150px;
+    width: 350px;
+    background: linear-gradient(135deg, #8B4513, #A0522D);
+    color: #FFF8DC;
+    padding: 20px;
+    border-radius: 15px;
+    border: 3px solid #654321;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: all 0.4s ease;
+    z-index: 1000;
+    font-family: 'Bangers', cursive;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.info-button:hover .info-tooltip {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.info-tooltip h3 {
+    margin: 0 0 15px 0;
+    color: #FFD700;
+    text-align: center;
+    font-size: 18px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.info-tooltip p {
+    margin: 10px 0;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+.info-tooltip strong {
+    color: #FFD700;
+}
+
+.info-tooltip em {
+    color: #FF6B35;
+    font-style: italic;
+    text-align: center;
+    display: block;
+    margin-top: 15px;
+    font-size: 16px;
+}
+
+/* Arrow for tooltip */
+.info-tooltip::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    right: 170px;
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid #654321;
+}
+
 /* Responsive design for controls */
 @media (max-width: 768px) {
     .controls-info {
         gap: 15px;
         padding: 10px;
         margin: 5px auto;
+        flex-wrap: wrap;
     }
     
     .control-item {
@@ -384,6 +481,31 @@ canvas:hover {
         padding: 4px 8px;
         font-size: 12px;
         min-width: 20px;
+    }
+    
+    .info-button {
+        margin-left: 10px;
+    }
+    
+    .info-icon {
+        width: 25px;
+        height: 25px;
+        font-size: 14px;
+    }
+    
+    .info-tooltip {
+        width: 280px;
+        right: -120px;
+        font-size: 12px;
+        padding: 15px;
+    }
+    
+    .info-tooltip h3 {
+        font-size: 16px;
+    }
+    
+    .info-tooltip::after {
+        right: 140px;
     }
 }
 
