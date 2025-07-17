@@ -87,22 +87,22 @@ class MobileControls {
         return {
             isTabletSize,
             buttonStyle: {
-                width: isTabletSize ? 70 : 60,
-                height: isTabletSize ? 70 : 60,
+                width: isTabletSize ? 90 : 80,
+                height: isTabletSize ? 90 : 80,
+                radius: 15,
+                color: '#FF6B35',
+                borderColor: '#FFF700',
+                textColor: 'white',
+                font: isTabletSize ? 'bold 18px Comic Sans MS' : 'bold 16px Comic Sans MS'
+            },
+            actionButtonStyle: {
+                width: isTabletSize ? 110 : 100,
+                height: isTabletSize ? 80 : 70,
                 radius: 15,
                 color: '#FF6B35',
                 borderColor: '#FFF700',
                 textColor: 'white',
                 font: isTabletSize ? 'bold 16px Comic Sans MS' : 'bold 14px Comic Sans MS'
-            },
-            actionButtonStyle: {
-                width: isTabletSize ? 90 : 80,
-                height: isTabletSize ? 60 : 50,
-                radius: 15,
-                color: '#FF6B35',
-                borderColor: '#FFF700',
-                textColor: 'white',
-                font: isTabletSize ? 'bold 14px Comic Sans MS' : 'bold 12px Comic Sans MS'
             }
         };
     }
@@ -279,8 +279,8 @@ class MobileControls {
         // Save context
         ctx.save();
         
-        // Set global alpha for 60% transparency
-        ctx.globalAlpha = 0.6;
+        // Set global alpha for 75% transparency
+        ctx.globalAlpha = 0.25;
         
         // Button background
         const gradient = ctx.createLinearGradient(
