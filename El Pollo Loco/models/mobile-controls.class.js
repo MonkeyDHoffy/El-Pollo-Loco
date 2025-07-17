@@ -121,7 +121,7 @@ class MobileControls {
             margin: isTabletSize ? 40 : 30,
             buttonSpacing: isTabletSize ? 100 : 80,
             actionButtonOffset: isTabletSize ? 90 : 80,
-            actionTopOffset: isTabletSize ? 140 : 120,
+            actionTopOffset: isTabletSize ? 160 : 140, // Increased spacing between buttons
             actionBottomOffset: isTabletSize ? 70 : 60
         };
     }
@@ -188,11 +188,16 @@ class MobileControls {
         // Touch events
         this.canvas.addEventListener('touchstart', (e) => this.handleTouchStart(e), { passive: false });
         this.canvas.addEventListener('touchend', (e) => this.handleTouchEnd(e), { passive: false });
-        this.canvas.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
+        this.canvas.addEventListener('touchmove', (e) => this.handleTouchMove(e), { passive: false });
         
         // Mouse events for testing
         this.canvas.addEventListener('mousedown', (e) => this.handleMouseDown(e));
         this.canvas.addEventListener('mouseup', (e) => this.handleMouseUp(e));
+        this.canvas.addEventListener('mousemove', (e) => this.handleMouseMove(e));
+        
+        // Track active touches
+        this.activeTouches = new Map();
+        this.isMouseDown = false;
     }
 
     handleTouchStart(e) {
@@ -208,21 +213,93 @@ class MobileControls {
             const x = (touch.clientX - rect.left) * scaleX;
             const y = (touch.clientY - rect.top) * scaleY;
             
-            this.handleButtonPress(x, y, true);
+            // Store this touch with its pressed button
+            const pressedButton = this.getButtonAtPosition(x, y);
+            if (pressedButton) {
+                this.activeTouches.set(touch.identifier, pressedButton);
+                this.handleButtonPress(x, y, true);
+            }
+        }
+    }
+
+    handleTouchMove(e) {
+        e.preventDefault();
+        const touches = e.touches;
+        
+        // First, check which touches are still active
+        const currentTouchIds = new Set();
+        for (let i = 0; i < touches.length; i++) {
+            currentTouchIds.add(touches[i].identifier);
+        }
+        
+        // Release buttons for touches that are no longer active
+        for (let [touchId, button] of this.activeTouches) {
+            if (!currentTouchIds.has(touchId)) {
+                button.pressed = false;
+                if (window.keyboard) {
+                    window.keyboard[button.key] = false;
+                }
+                this.activeTouches.delete(touchId);
+            }
+        }
+        
+        // Process current touches
+        for (let i = 0; i < touches.length; i++) {
+            const touch = touches[i];
+            const rect = this.canvas.getBoundingClientRect();
+            const scaleX = this.canvas.width / rect.width;
+            const scaleY = this.canvas.height / rect.height;
+            
+            const x = (touch.clientX - rect.left) * scaleX;
+            const y = (touch.clientY - rect.top) * scaleY;
+            
+            const currentButton = this.getButtonAtPosition(x, y);
+            const previousButton = this.activeTouches.get(touch.identifier);
+            
+            // If touch moved to a different button
+            if (currentButton !== previousButton) {
+                // Release previous button
+                if (previousButton) {
+                    previousButton.pressed = false;
+                    if (window.keyboard) {
+                        window.keyboard[previousButton.key] = false;
+                    }
+                }
+                
+                // Press new button
+                if (currentButton) {
+                    currentButton.pressed = true;
+                    if (window.keyboard) {
+                        window.keyboard[currentButton.key] = true;
+                    }
+                    this.activeTouches.set(touch.identifier, currentButton);
+                } else {
+                    this.activeTouches.delete(touch.identifier);
+                }
+            }
         }
     }
 
     handleTouchEnd(e) {
         e.preventDefault();
-        // Release all buttons on touch end
-        this.buttons.forEach(button => {
-            if (button.pressed) {
+        const touches = e.touches;
+        
+        // Get remaining touch IDs
+        const remainingTouchIds = new Set();
+        for (let i = 0; i < touches.length; i++) {
+            remainingTouchIds.add(touches[i].identifier);
+        }
+        
+        // Release buttons for touches that ended
+        for (let [touchId, button] of this.activeTouches) {
+            if (!remainingTouchIds.has(touchId)) {
                 button.pressed = false;
                 if (window.keyboard) {
                     window.keyboard[button.key] = false;
                 }
+                this.activeTouches.delete(touchId);
             }
-        });
+        }
     }
 
     handleMouseDown(e) {
@@ -233,10 +310,34 @@ class MobileControls {
         const x = (e.clientX - rect.left) * scaleX;
         const y = (e.clientY - rect.top) * scaleY;
         
+        this.isMouseDown = true;
+        this.handleButtonPress(x, y, true);
+    }
+
+    handleMouseMove(e) {
+        if (!this.isMouseDown) return;
+        
+        const rect = this.canvas.getBoundingClientRect();
+        const scaleX = this.canvas.width / rect.width;
+        const scaleY = this.canvas.height / rect.height;
+        
+        const x = (e.clientX - rect.left) * scaleX;
+        const y = (e.clientY - rect.top) * scaleY;
+        
+        // Release all buttons first
+        this.buttons.forEach(button => {
+            button.pressed = false;
+            if (window.keyboard) {
+                window.keyboard[button.key] = false;
+            }
+        });
+        
+        // Press button at current position
         this.handleButtonPress(x, y, true);
     }
 
     handleMouseUp(e) {
+        this.isMouseDown = false;
         this.buttons.forEach(button => {
             if (button.pressed) {
                 button.pressed = false;
@@ -245,6 +346,10 @@ class MobileControls {
                 }
             }
         });
+    }
+
+    getButtonAtPosition(x, y) {
+        return this.buttons.find(button => this.isPointInButton(x, y, button));
     }
 
     handleButtonPress(x, y, isPress) {
