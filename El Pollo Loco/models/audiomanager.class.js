@@ -1,31 +1,84 @@
+/**
+ * Manages all audio elements including sound effects and background music
+ */
 class AudioManager {
+    /**
+     * Initialize audio manager with all sound systems
+     */
     constructor() {
+        this.initializeAudioState();
+        this.initializeSoundArrays();
+        this.initializeAudioSources();
+    }
+
+    /**
+     * Initialize audio state variables
+     */
+    initializeAudioState() {
         this.backgroundMusic = null;
         this.isMusicPlaying = false;
-        this.isMuted = false; // Add mute state
-        this.walkingSound = null; // Walking sound reference
-        
+        this.isMuted = false;
+        this.walkingSound = null;
+    }
+
+    /**
+     * Initialize audio source objects
+     */
+    initializeAudioSources() {
+        this.initBackgroundMusic();
+        this.initWalkingSound();
+    }
+
+    /**
+     * Initializes all sound effect arrays
+     */
+    initializeSoundArrays() {
+        this.initializeCoinSounds();
+        this.initializeBottleSounds();
+        this.initializeJumpSounds();
+        this.initializeChickenAttackSounds();
+        this.initializeHurtSounds();
+    }
+
+    /**
+     * Initialize coin collecting sound effects
+     */
+    initializeCoinSounds() {
         this.coinCollectingSounds = [
             'audio/sounds/coincollecting(1).mp3',
             'audio/sounds/coincollecting(1).wav',
             'audio/sounds/coincollecting(2).wav',
             'audio/sounds/coincollecting(3).wav'
         ];
+    }
 
+    /**
+     * Initialize bottle collecting sound effects
+     */
+    initializeBottleSounds() {
         this.bottleCollectingSounds = [
             'audio/sounds/collect1.wav',
             'audio/sounds/collect2.mp3',
             'audio/sounds/collectbottle.wav'
         ];
+    }
 
-        // Character sounds
+    /**
+     * Initialize jump sound effects
+     */
+    initializeJumpSounds() {
         this.jumpSounds = [
             'audio/sounds/jump1.wav',
             'audio/sounds/jumpfart1.wav',
             'audio/sounds/jumpfart2.wav',
             'audio/sounds/jumpfart3.mp3'
         ];
+    }
 
+    /**
+     * Initialize chicken attack sound effects
+     */
+    initializeChickenAttackSounds() {
         this.chickenAttackSounds = [
             'audio/sounds/chickenattack/chicken1.wav',
             'audio/sounds/chickenattack/chicken2.wav',
@@ -35,16 +88,18 @@ class AudioManager {
             'audio/sounds/chickenattack/poppp.flac',
             'audio/sounds/chickenattack/poppp.wav'
         ];
+    }
 
+    /**
+     * Initialize hurt sound effects
+     */
+    initializeHurtSounds() {
         this.hurtSounds = [
             'audio/sounds/ouch1.wav',
             'audio/sounds/ouch2.wav',
             'audio/sounds/ouch3.wav',
             'audio/sounds/ouch4.wav'
         ];
-        
-        this.initBackgroundMusic();
-        this.initWalkingSound();
     }
 
     /**
@@ -209,29 +264,44 @@ class AudioManager {
     }
 
     /**
-     * Set mute state for all audio
+     * Sets mute state for all audio components
+     * @param {boolean} muted - Whether to mute all audio
      */
     setMuted(muted) {
         this.isMuted = muted;
-        
-        // Mute/unmute background music
-        if (this.backgroundMusic) {
-            this.backgroundMusic.muted = muted;
-        }
-        
-        // Mute/unmute walking sound
-        if (this.walkingSound) {
-            this.walkingSound.muted = muted;
-        }
+        this.muteBackgroundMusic(muted);
+        this.muteWalkingSound(muted);
         
         console.log(`[AudioManager] Audio ${muted ? 'muted' : 'unmuted'}`);
     }
 
     /**
-     * Play sound with mute check
+     * Mutes or unmutes background music
+     * @param {boolean} muted - Whether to mute background music
+     */
+    muteBackgroundMusic(muted) {
+        if (this.backgroundMusic) {
+            this.backgroundMusic.muted = muted;
+        }
+    }
+
+    /**
+     * Mutes or unmutes walking sound
+     * @param {boolean} muted - Whether to mute walking sound
+     */
+    muteWalkingSound(muted) {
+        if (this.walkingSound) {
+            this.walkingSound.muted = muted;
+        }
+    }
+
+    /**
+     * Plays a sound file with mute check and volume control
+     * @param {string} soundPath - Path to the sound file
+     * @param {number} volume - Volume level (0.0 to 1.0)
      */
     playSound(soundPath, volume = 1.0) {
-        if (this.isMuted) return; // Don't play if muted
+        if (this.isMuted) return;
         
         try {
             let audio = new Audio(soundPath);
@@ -243,7 +313,9 @@ class AudioManager {
     }
 
     /**
-     * Play random sound from array with mute check
+     * Plays a random sound from an array with mute check
+     * @param {Array} soundArray - Array of sound file paths
+     * @param {number} volume - Volume level (0.0 to 1.0)
      */
     playRandomSound(soundArray, volume = 1.0) {
         if (this.isMuted || !soundArray || soundArray.length === 0) return;

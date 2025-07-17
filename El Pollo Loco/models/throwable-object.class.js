@@ -1,3 +1,7 @@
+/**
+ * Throwable bottle object with physics and splash animation
+ * @extends MovableObject
+ */
 class ThrowableObject extends MovableObject {
     speedY = 10;
     speedX = 10;
@@ -22,22 +26,48 @@ class ThrowableObject extends MovableObject {
         'img/img_pollo_locco/img/6_salsa_bottle/bottle_rotation/bottle_splash/6_bottle_splash.png'
     ];
 
+    /**
+     * Creates a new throwable bottle
+     * @param {number} x - Starting x position
+     * @param {number} y - Starting y position
+     * @param {number} direction - Throw direction (1 or -1)
+     */
     constructor(x, y, direction = 1) {
         super().loadImage('img/img_pollo_locco/img/6_salsa_bottle/salsa_bottle.png');
         this.loadImages(this.IMAGES_ROTATION);
         this.loadImages(this.IMAGES_SPLASH);
+        this.initializeProperties(x, y, direction);
+        this.throw();
+    }
+
+    /**
+     * Sets up bottle properties and position
+     * @param {number} x - Starting x position
+     * @param {number} y - Starting y position
+     * @param {number} direction - Throw direction
+     */
+    initializeProperties(x, y, direction) {
         this.x = x;
         this.y = y;
         this.height = 60;
         this.width = 50;
         this.direction = direction;
         this.hasHit = false;
-        this.throw();
     }
 
+    /**
+     * Initiates bottle throwing with physics and animation
+     */
     throw() {
         this.speedY = 15;
         this.applyGravity();
+        this.startThrowAnimation();
+    }
+
+    /**
+     * Starts the throwing animation and movement loop
+     */
+    startThrowAnimation() {
         setInterval(() => {
             if (!this.isSplashing) {
                 this.x += 12 * this.direction;
@@ -46,11 +76,21 @@ class ThrowableObject extends MovableObject {
         }, 28);
     }
 
+    /**
+     * Triggers splash animation when bottle hits something
+     */
     splash() {
         this.isSplashing = true;
         this.hasHit = true;
+        this.stopMovement();
+        this.playAnimation(this.IMAGES_SPLASH);
+    }
+
+    /**
+     * Stops bottle movement when splashing
+     */
+    stopMovement() {
         this.speedY = 0;
         this.speedX = 0;
-        this.playAnimation(this.IMAGES_SPLASH);
     }
 }

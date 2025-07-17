@@ -1,43 +1,104 @@
+/**
+ * Manages collection of coins and bottles with respawn functionality
+ */
 class ItemCollector {
+    /**
+     * Initialize item collector with world reference
+     * @param {World} world - Game world instance
+     */
     constructor(world) {
         this.world = world;
+        this.initializeConfiguration();
+    }
+
+    /**
+     * Initialize collector configuration
+     */
+    initializeConfiguration() {
         this.config = {
-            enableBottleRespawn: true,  // Automatically spawn new bottles
-            enableCoinRespawn: false,   // Disable coin respawn by default
-            maxBottlesInLevel: 25,      // Maximum bottles at any time
-            maxCoinsInLevel: 30         // Maximum coins at any time
+            enableBottleRespawn: true,
+            enableCoinRespawn: false,
+            maxBottlesInLevel: 25,
+            maxCoinsInLevel: 30
         };
     }
 
     /**
-     * Collect a coin
+     * Collect a coin and update game state
+     * @param {Coin} coin - Coin object
+     * @param {number} index - Index in coins array
      */
     collectCoin(coin, index) {
+        this.removeCoinFromLevel(index);
+        this.updateCoinScores();
+        this.updateCoinStatusBar();
+        this.playCoinSound();
+        this.logCoinCollection();
+        this.checkCoinCollectionComplete();
+    }
+
+    /**
+     * Remove coin from level
+     * @param {number} index - Index in coins array
+     */
+    removeCoinFromLevel(index) {
         this.world.level.coins.splice(index, 1);
+    }
+
+    /**
+     * Update coin-related scores
+     */
+    updateCoinScores() {
         this.world.coinScore += 1;
         this.world.character.coins += 1;
         this.world.totalScore += 5;
-        
-        let collectedPercentage = (this.world.character.coins / this.world.totalCoinsInLevel) * 100;    
+    }
+
+    /**
+     * Update coin status bar display
+     */
+    updateCoinStatusBar() {
+        let collectedPercentage = (this.world.character.coins / this.world.totalCoinsInLevel) * 100;
         this.world.coinstatusbar.setPercentage(collectedPercentage);
         this.world.coinstatusbar.setCoinCount(this.world.character.coins);
-        
+    }
+
+    /**
+     * Play coin collection sound
+     */
+    playCoinSound() {
         this.world.audioManager.playRandomCoinCollectingSound();
-        
+    }
+
+    /**
+     * Log coin collection information
+     */
+    logCoinCollection() {
+        let collectedPercentage = (this.world.character.coins / this.world.totalCoinsInLevel) * 100;
         console.log('Münze gesammelt! Score:', this.world.coinScore);
         console.log(`Coins gesammelt: ${this.world.character.coins}/${this.world.totalCoinsInLevel} (${Math.round(collectedPercentage)}%)`);
-        
-        // Special bonus: restore full energy when all coins collected
+    }
+
+    /**
+     * Check if all coins collected and handle completion
+     */
+    checkCoinCollectionComplete() {
         if (this.world.character.coins === this.world.totalCoinsInLevel) {
-            this.world.character.energy = 100;
-            this.world.statusbar.setPercentage(this.world.character.energy);
-            console.log('Alle Münzen gesammelt! Energie vollständig wiederhergestellt!');
-            
-            // Respawn all coins after short delay
-            setTimeout(() => {
-                this.respawnAllCoins();
-            }, 1000); // 1 second delay
+            this.handleAllCoinsCollected();
         }
+    }
+
+    /**
+     * Handle completion of coin collection
+     */
+    handleAllCoinsCollected() {
+        this.world.character.energy = 100;
+        this.world.statusbar.setPercentage(this.world.character.energy);
+        console.log('Alle Münzen gesammelt! Energie vollständig wiederhergestellt!');
+        
+        setTimeout(() => {
+            this.respawnAllCoins();
+        }, 1000);
     }
 
     /**

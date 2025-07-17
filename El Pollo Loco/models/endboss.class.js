@@ -1,3 +1,7 @@
+/**
+ * Boss enemy class with multiple animation states and health scaling
+ * @extends MovableObject
+ */
 class Endboss extends MovableObject {
     height = 300;
     width = 200;
@@ -46,48 +50,72 @@ class Endboss extends MovableObject {
         'img/img_pollo_locco/img/4_enemie_boss_chicken/5_dead/G26.png'
     ];
 
+    /**
+     * Creates a new endboss instance
+     * @param {number} index - Endboss index for positioning
+     */
     constructor(index = 0) {
         super().loadImage(this.IMAGES_WALKING[0]);
+        this.loadAllImages();
+        this.initializeAnimationStates();
+        this.initializeHealthScaling();
+        this.initializeDetection();
+        this.x = 3800 - (index * 600);
+        this.animate();
+    }
+
+    /**
+     * Loads all endboss animation images
+     */
+    loadAllImages() {
         this.loadImages(this.IMAGES_WALKING);
         this.loadImages(this.IMAGES_HURT);
         this.loadImages(this.IMAGES_ALERT);
         this.loadImages(this.IMAGES_ATTACK);
         this.loadImages(this.IMAGES_DEAD);
-        
-        // Animation states
+    }
+
+    /**
+     * Initializes all animation state variables
+     */
+    initializeAnimationStates() {
         this.isHurt = false;
         this.hurtAnimationTimer = 0;
         this.isDying = false;
         this.deathAnimationTimer = 0;
-        this.deathFrameIndex = 0; // Track death animation frame
+        this.deathFrameIndex = 0;
         this.deathAnimationComplete = false;
         this.fallSpeed = 0;
         this.startedFalling = false;
-        this.originalY = 175; // Store original Y position
+        this.originalY = 175;
         
-        // Attack animation states
         this.isAttacking = false;
         this.attackAnimationTimer = 0;
         this.attackFrameIndex = 0;
         this.attackAnimationComplete = false;
         
-        // Alert animation states
         this.isAlert = false;
         this.alertAnimationTimer = 0;
         this.alertFrameIndex = 0;
         this.alertAnimationComplete = false;
-        this.alertCycleCount = 0; // Track how many times alert animation has played
-        this.maxAlertCycles = 2; // Play alert animation twice
-        this.hasSeenCharacter = false; // Track if character has been spotted
-        this.detectionRange = 400; // Distance to detect character
-        
-        // Health scaling - will be set when world reference is available
-        this.baseEnergy = 50; // Store base energy for scaling
-        this.maxEnergy = 50; // Will be updated based on wave
-        
-        // Default spawn position - can be overridden after creation
-        this.x = 3800 - (index * 600);
-        this.animate();
+        this.alertCycleCount = 0;
+        this.maxAlertCycles = 2;
+    }
+
+    /**
+     * Initializes health scaling properties
+     */
+    initializeHealthScaling() {
+        this.baseEnergy = 50;
+        this.maxEnergy = 50;
+    }
+
+    /**
+     * Initializes character detection properties
+     */
+    initializeDetection() {
+        this.hasSeenCharacter = false;
+        this.detectionRange = 400;
     }
 
     /**
@@ -109,83 +137,120 @@ class Endboss extends MovableObject {
         }
     }
 
-    // Controls boss movement and animation
+    /**
+     * Starts all animation loops for endboss behavior
+     */
     animate() {
+        this.startMovementLoop();
+        this.startAnimationLoop();
+    }
+
+    /**
+     * Handles endboss movement and character detection
+     */
+    startMovementLoop() {
         setInterval(() => {
             if (!this.world || !this.world.isPaused) {
-                // Check for character detection
                 this.checkCharacterDetection();
-                
-                // Only move if not dead and not alerting
-                if (!this.isDead && !this.isAlert) {
-                    this.moveLeft(false);
-                }
+                this.handleMovement();
             }
         }, 1000 / 60);
-        
+    }
+
+    /**
+     * Handles endboss movement based on current state
+     */
+    handleMovement() {
+        if (!this.isDead && !this.isAlert) {
+            this.moveLeft(false);
+        }
+    }
+
+    /**
+     * Handles all animation states and transitions
+     */
+    startAnimationLoop() {
         setInterval(() => {
             if (!this.world || !this.world.isPaused) {
-                // Handle death animation and falling
-                if (this.isDying) {
-                    // Play death animation only once
-                    if (!this.deathAnimationComplete) {
-                        this.playDeathAnimationOnce();
-                    } else {
-                        // Animation complete, start falling
-                        if (!this.startedFalling) {
-                            this.startedFalling = true;
-                            console.log("Death animation complete, starting to fall");
-                        }
-                        
-                        // Make endboss fall down
-                        this.fallSpeed += 1.2; // Stronger gravity
-                        this.y += this.fallSpeed;
-                        
-                        // Remove from game when falls very far off screen (let him fall deep)
-                        if (this.y > 1500) {
-                            this.removeFromGame();
-                        }
-                    }
-                } else if (!this.isDead) {
-                    // Check if alert animation should play (highest priority for living boss)
-                    if (this.isAlert) {
-                        this.playAlertAnimationOnce();
-                    }
-                    // Check if attack animation should play (second priority)
-                    else if (this.isAttacking) {
-                        this.playAttackAnimationOnce();
-                    }
-                    // Check if hurt animation should play (third priority)
-                    else if (this.isHurt) {
-                        this.playAnimation(this.IMAGES_HURT);
-                        
-                        // Decrease hurt timer
-                        this.hurtAnimationTimer -= 1000 / 10; // Decrease by interval time
-                        
-                        // End hurt animation when timer expires
-                        if (this.hurtAnimationTimer <= 0) {
-                            this.isHurt = false;
-                            console.log("Endboss hurt animation ended");
-                        }
-                    } else {
-                        // Normal walking animation (lowest priority)
-                        this.playAnimation(this.IMAGES_WALKING);
-                    }
-                }
+                this.handleAnimationStates();
             }
         }, 1000 / 10);
     }
 
-    // Override hit method to handle death and hurt animation
+    /**
+     * Manages animation state priorities and transitions
+     */
+    handleAnimationStates() {
+        if (this.isDying) {
+            this.handleDeathAnimation();
+        } else if (!this.isDead) {
+            this.handleLivingAnimations();
+        }
+    }
+
+    /**
+     * Handles death animation and falling behavior
+     */
+    handleDeathAnimation() {
+        if (!this.deathAnimationComplete) {
+            this.playDeathAnimationOnce();
+        } else {
+            this.handleFalling();
+        }
+    }
+
+    /**
+     * Handles falling behavior after death animation
+     */
+    handleFalling() {
+        if (!this.startedFalling) {
+            this.startedFalling = true;
+            console.log("Death animation complete, starting to fall");
+        }
+        
+        this.fallSpeed += 1.2;
+        this.y += this.fallSpeed;
+        
+        if (this.y > 1500) {
+            this.removeFromGame();
+        }
+    }
+
+    /**
+     * Handles animations for living endboss based on priority
+     */
+    handleLivingAnimations() {
+        if (this.isAlert) {
+            this.playAlertAnimationOnce();
+        } else if (this.isAttacking) {
+            this.playAttackAnimationOnce();
+        } else if (this.isHurt) {
+            this.handleHurtAnimation();
+        } else {
+            this.playAnimation(this.IMAGES_WALKING);
+        }
+    }
+
+    /**
+     * Handles hurt animation and timer management
+     */
+    handleHurtAnimation() {
+        this.playAnimation(this.IMAGES_HURT);
+        this.hurtAnimationTimer -= 1000 / 10;
+        
+        if (this.hurtAnimationTimer <= 0) {
+            this.isHurt = false;
+            console.log("Endboss hurt animation ended");
+        }
+    }
+
+    /**
+     * Handles damage taken by endboss
+     * @param {number} damage - Amount of damage to apply
+     */
     hit(damage) {
         this.energy -= damage;
-        
-        // Trigger hurt animation (only if not already dead)
-        if (this.energy > 0) {
-            this.isHurt = true;
-            this.hurtAnimationTimer = 500; // 500ms hurt animation duration
-            console.log("Endboss hurt animation started");
-        }
+        this.handleHitEffects();
         
         if (this.energy <= 0) {
             this.energy = 0;
@@ -194,19 +259,39 @@ class Endboss extends MovableObject {
         console.log(`Endboss getroffen! Energy: ${this.energy}/50`);
     }
 
-    // Handle endboss death
+    /**
+     * Handles visual and audio effects when hit
+     */
+    handleHitEffects() {
+        if (this.energy > 0) {
+            this.isHurt = true;
+            this.hurtAnimationTimer = 500;
+            console.log("Endboss hurt animation started");
+        }
+    }
+
+    /**
+     * Initiates endboss death sequence
+     */
     die() {
         if (!this.isDead) {
             this.isDead = true;
-            this.isDying = true; // Start death animation
-            this.deathAnimationTimer = 1000; // 1 second for death animation frames
-            this.deathFrameIndex = 0; // Start at first frame
-            this.deathAnimationComplete = false;
-            this.fallSpeed = 0; // Start with no falling speed
-            this.startedFalling = false;
-            this.speed = 0; // Stop horizontal movement
+            this.initializeDeathAnimation();
             console.log("Endboss death animation started!");
         }
+    }
+
+    /**
+     * Sets up death animation parameters
+     */
+    initializeDeathAnimation() {
+        this.isDying = true;
+        this.deathAnimationTimer = 1000;
+        this.deathFrameIndex = 0;
+        this.deathAnimationComplete = false;
+        this.fallSpeed = 0;
+        this.startedFalling = false;
+        this.speed = 0;
     }
 
     /**

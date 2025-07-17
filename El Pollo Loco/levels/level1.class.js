@@ -1,4 +1,8 @@
-let level1 
+let level1;
+
+/**
+ * Initializes level 1 with all game objects including enemies, backgrounds, collectibles and obstacles
+ */
 function initLevel1() {
 
 level1 = new Level(

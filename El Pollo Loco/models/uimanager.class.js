@@ -1,38 +1,52 @@
+/**
+ * Manages all UI elements including score display, wave indicators, and buttons
+ */
 class UIManager {
+    /**
+     * Initialize UI manager with world reference
+     * @param {World} world - Game world instance
+     */
     constructor(world) {
         this.world = world;
         
-        // Canvas button definitions
+        this.initializeButtons();
+        this.initializeMuteState();
+        this.setupButtonEventListeners();
+    }
+
+    /**
+     * Initialize button definitions with positions and styles
+     */
+    initializeButtons() {
         this.buttons = {
-            pause: {
-                x: this.world.canvas.width - 180,
-                y: 50,
-                width: 50,
-                height: 25,
-                text: 'PAUSE'
-            },
-            fullscreen: {
-                x: this.world.canvas.width - 120,
-                y: 50,
-                width: 50,
-                height: 25,
-                text: 'FULL'
-            },
-            mute: {
-                x: this.world.canvas.width - 60,
-                y: 50,
-                width: 50,
-                height: 25,
-                text: 'MUTE'
-            }
+            pause: this.createButtonConfig(180, 'PAUSE'),
+            fullscreen: this.createButtonConfig(120, 'FULL'),
+            mute: this.createButtonConfig(60, 'MUTE')
         };
-        
-        // Load mute state from localStorage
+    }
+
+    /**
+     * Creates button configuration object
+     * @param {number} rightOffset - Offset from right edge of canvas
+     * @param {string} text - Button text
+     * @returns {Object} Button configuration
+     */
+    createButtonConfig(rightOffset, text) {
+        return {
+            x: this.world.canvas.width - rightOffset,
+            y: 50,
+            width: 50,
+            height: 25,
+            text: text
+        };
+    }
+
+    /**
+     * Initialize mute state from localStorage
+     */
+    initializeMuteState() {
         this.isMuted = localStorage.getItem('elPolloLocoMuted') === 'true';
         this.updateMuteState();
-        
-        // Setup click event listener
-        this.setupButtonEventListeners();
     }
 
     /**
@@ -64,35 +78,54 @@ class UIManager {
     drawMexicanScore() {
         this.world.ctx.save();
         
-        let scoreX = this.world.canvas.width - 120;
-        let scoreY = 30;
-        let boxWidth = 100;
-        let boxHeight = 35;
+        let scorePosition = this.calculateScorePosition();
+        this.drawScoreBackground(scorePosition);
+        this.drawScoreText(scorePosition);
         
-        // Simple rounded background
+        this.world.ctx.restore();
+    }
+
+    /**
+     * Calculate score display position and dimensions
+     * @returns {Object} Position and size information
+     */
+    calculateScorePosition() {
+        return {
+            x: this.world.canvas.width - 120,
+            y: 30,
+            width: 100,
+            height: 35
+        };
+    }
+
+    /**
+     * Draw background and border for score display
+     * @param {Object} pos - Position and size information
+     */
+    drawScoreBackground(pos) {
         this.world.ctx.fillStyle = '#FF6B35';
-        this.roundRect(this.world.ctx, scoreX - 10, scoreY - 20, boxWidth, boxHeight, 8);
+        this.roundRect(this.world.ctx, pos.x - 10, pos.y - 20, pos.width, pos.height, 8);
         this.world.ctx.fill();
         
-        // Simple border
         this.world.ctx.strokeStyle = '#E63946';
         this.world.ctx.lineWidth = 2;
-        this.roundRect(this.world.ctx, scoreX - 10, scoreY - 20, boxWidth, boxHeight, 8);
+        this.roundRect(this.world.ctx, pos.x - 10, pos.y - 20, pos.width, pos.height, 8);
         this.world.ctx.stroke();
-        
-        // Clean text
+    }
+
+    /**
+     * Draw score text with shadow effect
+     * @param {Object} pos - Position information
+     */
+    drawScoreText(pos) {
         this.world.ctx.font = 'bold 24px Comic Sans MS';
         this.world.ctx.textAlign = 'center';
         
-        // Text shadow
         this.world.ctx.fillStyle = '#8B1538';
-        this.world.ctx.fillText(`${this.world.totalScore}`, scoreX + 40 + 2, scoreY + 2);
+        this.world.ctx.fillText(`${this.world.totalScore}`, pos.x + 40 + 2, pos.y + 2);
         
-        // Main text
         this.world.ctx.fillStyle = '#FFFFFF';
-        this.world.ctx.fillText(`${this.world.totalScore}`, scoreX + 40, scoreY);
-        
-        this.world.ctx.restore();
+        this.world.ctx.fillText(`${this.world.totalScore}`, pos.x + 40, pos.y);
     }
 
     /**
@@ -241,57 +274,103 @@ class UIManager {
         let waveInfo = this.world.waveManager.getWaveInfo();
         this.world.ctx.save();
         
-        // Position at center top
-        let indicatorX = this.world.canvas.width / 2;
-        let indicatorY = 50;
-        let boxWidth = 200; // Increased width for more info
-        let boxHeight = 50; // Increased height for two lines
+        let indicatorConfig = this.calculateWaveIndicatorPosition();
+        this.drawWaveIndicatorBackground(indicatorConfig, waveInfo);
+        this.drawWaveIndicatorText(indicatorConfig, waveInfo);
         
-        // Background with gradient effect
+        this.world.ctx.restore();
+    }
+
+    /**
+     * Calculate wave indicator position and dimensions
+     * @returns {Object} Indicator configuration
+     */
+    calculateWaveIndicatorPosition() {
+        return {
+            x: this.world.canvas.width / 2,
+            y: 50,
+            width: 200,
+            height: 50
+        };
+    }
+
+    /**
+     * Draw background and border for wave indicator
+     * @param {Object} config - Indicator configuration
+     * @param {Object} waveInfo - Wave information
+     */
+    drawWaveIndicatorBackground(config, waveInfo) {
         this.world.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-        this.roundRect(this.world.ctx, indicatorX - boxWidth/2, indicatorY - 30, boxWidth, boxHeight, 10);
+        this.roundRect(this.world.ctx, config.x - config.width/2, config.y - 30, config.width, config.height, 10);
         this.world.ctx.fill();
         
-        // Border with wave-based color
         let borderColor = (waveInfo.maxWaveReached && waveInfo.maxChickensReached) ? '#FF6B35' : '#4ECDC4';
         this.world.ctx.strokeStyle = borderColor;
         this.world.ctx.lineWidth = 3;
-        this.roundRect(this.world.ctx, indicatorX - boxWidth/2, indicatorY - 30, boxWidth, boxHeight, 10);
+        this.roundRect(this.world.ctx, config.x - config.width/2, config.y - 30, config.width, config.height, 10);
         this.world.ctx.stroke();
-        
-        // Wave text
+    }
+
+    /**
+     * Draw wave indicator text content
+     * @param {Object} config - Indicator configuration
+     * @param {Object} waveInfo - Wave information
+     */
+    drawWaveIndicatorText(config, waveInfo) {
+        this.drawWaveTitle(config, waveInfo);
+        this.drawWaveInfoLine(config, waveInfo);
+    }
+
+    /**
+     * Draw wave title with shadow effect
+     * @param {Object} config - Indicator configuration
+     * @param {Object} waveInfo - Wave information
+     */
+    drawWaveTitle(config, waveInfo) {
         this.world.ctx.font = 'bold 20px Comic Sans MS';
         this.world.ctx.textAlign = 'center';
         
-        // Text shadow
         this.world.ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
-        this.world.ctx.fillText(`WAVE ${waveInfo.currentWave}`, indicatorX + 1, indicatorY - 5 + 1);
+        this.world.ctx.fillText(`WAVE ${waveInfo.currentWave}`, config.x + 1, config.y - 5 + 1);
         
-        // Main text
         this.world.ctx.fillStyle = '#FFFFFF';
-        this.world.ctx.fillText(`WAVE ${waveInfo.currentWave}`, indicatorX, indicatorY - 5);
-        
-        // Info line: Speed, Chicken count, Endboss count, and scaling info
+        this.world.ctx.fillText(`WAVE ${waveInfo.currentWave}`, config.x, config.y - 5);
+    }
+
+    /**
+     * Draw wave information line with stats
+     * @param {Object} config - Indicator configuration
+     * @param {Object} waveInfo - Wave information
+     */
+    drawWaveInfoLine(config, waveInfo) {
         this.world.ctx.font = 'bold 11px Comic Sans MS';
+        let borderColor = (waveInfo.maxWaveReached && waveInfo.maxChickensReached) ? '#FF6B35' : '#4ECDC4';
         this.world.ctx.fillStyle = borderColor;
         
+        let infoText = this.buildWaveInfoText(waveInfo);
+        this.world.ctx.fillText(infoText, config.x, config.y + 12);
+    }
+
+    /**
+     * Build wave information text string
+     * @param {Object} waveInfo - Wave information
+     * @returns {string} Formatted info text
+     */
+    buildWaveInfoText(waveInfo) {
         let infoText = `${waveInfo.speedPercentage}% Speed`;
+        
         if (waveInfo.extraChickens > 0) {
             infoText += ` | +${waveInfo.extraChickens} 🐔`;
         }
         if (waveInfo.extraEndbosses > 0) {
             infoText += ` | +${waveInfo.extraEndbosses} 👑`;
         }
-        
-        // Add damage/health scaling info for wave 35+
         if (waveInfo.isDamageScaling) {
             infoText += ` | ⚔️${waveInfo.damagePercentage}%`;
             infoText += ` | ❤️${waveInfo.healthPercentage}%`;
         }
         
-        this.world.ctx.fillText(infoText, indicatorX, indicatorY + 12);
-        
-        this.world.ctx.restore();
+        return infoText;
     }
 
     /**

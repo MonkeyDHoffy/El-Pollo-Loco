@@ -1,3 +1,7 @@
+/**
+ * Base class for all movable game objects with physics and collision detection
+ * @extends DrawableObject
+ */
 class MovableObject extends DrawableObject {
     speed = 0.9;
     otherDirection = false;
@@ -6,7 +10,9 @@ class MovableObject extends DrawableObject {
     lastHit = 0;
     energy = 100;
 
-    // Applies gravity to make objects fall
+    /**
+     * Applies gravity physics to make objects fall naturally
+     */
     applyGravity() {
         setInterval(() => {
             if (this.isAboveGround() || this.speedY > 0) {
@@ -18,7 +24,10 @@ class MovableObject extends DrawableObject {
         }, 1000 / 60);
     }
 
-    // Checks if the object is above the ground
+    /**
+     * Checks if the object is above the ground level
+     * @returns {boolean} True if above ground, false otherwise
+     */
     isAboveGround() {
         if (this instanceof ThrowableObject) {
             return true; 
@@ -27,19 +36,27 @@ class MovableObject extends DrawableObject {
         }
     }
 
-    // Moves object right
+    /**
+     * Moves the object to the right
+     */
     moveRight() {
         this.otherDirection = false;
         this.x += this.speed;
     }
 
-    // Moves object left
+    /**
+     * Moves the object to the left
+     * @param {boolean} direction - Direction flag for image flipping
+     */
     moveLeft(direction) {
         this.otherDirection = direction;
         this.x -= this.speed;
     }
     
-    // Flips image for direction change
+    /**
+     * Flips the image horizontally for directional movement
+     * @param {Object} mobject - The object to flip
+     */
     flipImage(mobject) {
         this.ctx.save();
         this.ctx.translate(mobject.width, 0);
@@ -47,13 +64,20 @@ class MovableObject extends DrawableObject {
         mobject.x = -mobject.x;
     }
 
-    // Restores image after flipping
+    /**
+     * Restores the image to its original orientation
+     * @param {Object} mobject - The object to restore
+     */
     flipImageBack(mobject) {
         mobject.x = -mobject.x;
         this.ctx.restore();
     }
 
-    // Checks if this object collides with another
+    /**
+     * Checks if this object is colliding with another object
+     * @param {Object} mobject - The object to check collision with
+     * @returns {boolean} True if colliding, false otherwise
+     */
     isColliding(mobject) {
         return this.x + this.width > mobject.x &&
                this.x < mobject.x + mobject.width &&
@@ -61,24 +85,50 @@ class MovableObject extends DrawableObject {
                this.y < mobject.y + mobject.height;
     }
 
-    // Checks if this object is above another object (for jump attacks)
+    /**
+     * Checks if this object is positioned above another object
+     * @param {Object} mobject - The object to check position against
+     * @returns {boolean} True if above the object, false otherwise
+     */
     isAboveObject(mobject) {
-        return this.y + this.height <= mobject.y + 50; // 50px tolerance
+        return this.y + this.height <= mobject.y + 50;
     }
 
-    // Enhanced collision detection for jump attacks
+    /**
+     * Enhanced collision detection specifically for jump attacks
+     * @param {Object} mobject - The object to check jump attack against
+     * @returns {boolean} True if performing jump attack, false otherwise
+     */
     isJumpingOn(mobject) {
         return this.isColliding(mobject) && 
                this.speedY < 0 && 
                this.isAboveObject(mobject);
     }
 
-    // Reduces energy when hit
+    /**
+     * Reduces object energy when taking damage
+     * @param {number} damage - Amount of damage to apply
+     */
     hit(damage) {
         this.energy -= damage;
+        this.clampEnergyToZero();
+        this.handleHitEffects();
+    }
+
+    /**
+     * Ensures energy doesn't go below zero
+     */
+    clampEnergyToZero() {
         if (this.energy < 0) {
             this.energy = 0;
-        } else {
+        }
+    }
+
+    /**
+     * Handles effects when object is hit but not killed
+     */
+    handleHitEffects() {
+        if (this.energy > 0) {
             this.lastHit = new Date().getTime();
             
             if (this instanceof Character) {
@@ -87,14 +137,20 @@ class MovableObject extends DrawableObject {
         }
     }
 
-    // Returns true if object was recently hit (1 second invincibility)
+    /**
+     * Checks if object was recently hit and has temporary invincibility
+     * @returns {boolean} True if currently hurt, false otherwise
+     */
     isHurt() {
         let timepassed = new Date().getTime() - this.lastHit;
         timepassed = timepassed / 1000;
-        return timepassed < 1.0; // 1 second invincibility
+        return timepassed < 1.0;
     }
 
-    // Returns true if object has no energy left
+    /**
+     * Checks if object has no energy remaining
+     * @returns {boolean} True if dead, false otherwise
+     */
     isDead() {
         return this.energy == 0;
     }

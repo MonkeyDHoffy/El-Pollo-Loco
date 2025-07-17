@@ -1,6 +1,21 @@
+/**
+ * Manages endless mode functionality including enemy spawning and cleanup
+ */
 class EndlessMode {
+    /**
+     * Initialize endless mode with world reference and configuration
+     * @param {World} world - Game world instance
+     */
     constructor(world) {
         this.world = world;
+        this.initializeConfiguration();
+        this.isActive = true;
+    }
+
+    /**
+     * Initialize endless mode configuration
+     */
+    initializeConfiguration() {
         this.config = {
             minEnemies: 5,
             minEndbosses: 2,
@@ -10,7 +25,6 @@ class EndlessMode {
             cleanupRightBound: 4900,
             enemyTypes: [Chicken, MiniChicken]
         };
-        this.isActive = true;
     }
 
     /**
@@ -31,14 +45,31 @@ class EndlessMode {
     cleanupDistantEnemies() {
         let beforeCount = this.world.level.enemies.length;
         this.world.level.enemies = this.world.level.enemies.filter(enemy => {
-            // Remove enemies that are too far left or right
-            if (enemy.x < this.config.cleanupLeftBound || 
-                enemy.x > this.config.cleanupRightBound) {
-                console.log(`[EndlessMode] Removing distant enemy at x: ${Math.round(enemy.x)}`);
-                return false; // Remove this enemy
-            }
-            return true; // Keep this enemy
+            return this.shouldKeepEnemy(enemy);
         });
+        
+        this.logEnemyCleanup(beforeCount);
+    }
+
+    /**
+     * Determines if enemy should be kept based on position
+     * @param {Object} enemy - Enemy object
+     * @returns {boolean} True if enemy should be kept
+     */
+    shouldKeepEnemy(enemy) {
+        if (enemy.x < this.config.cleanupLeftBound || 
+            enemy.x > this.config.cleanupRightBound) {
+            console.log(`[EndlessMode] Removing distant enemy at x: ${Math.round(enemy.x)}`);
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Log enemy cleanup results
+     * @param {number} beforeCount - Count before cleanup
+     */
+    logEnemyCleanup(beforeCount) {
         let afterCount = this.world.level.enemies.length;
         if (beforeCount !== afterCount) {
             console.log(`[EndlessMode] Cleaned up ${beforeCount - afterCount} distant enemies`);
@@ -97,56 +128,98 @@ class EndlessMode {
      * Spawns a new enemy outside the current level area
      */
     spawnNewEnemy() {
-        // Randomly choose enemy type
-        let randomType = this.config.enemyTypes[
+        let enemyType = this.selectRandomEnemyType();
+        let newEnemy = this.createAndPositionEnemy(enemyType);
+        this.configureNewEnemy(newEnemy);
+        this.addEnemyToLevel(newEnemy);
+    }
+
+    /**
+     * Select random enemy type from available types
+     * @returns {Function} Enemy constructor
+     */
+    selectRandomEnemyType() {
+        return this.config.enemyTypes[
             Math.floor(Math.random() * this.config.enemyTypes.length)
         ];
-        
-        // Create new enemy
-        let newEnemy = new randomType();
-        
-        // Position enemy outside level end
+    }
+
+    /**
+     * Create and position new enemy
+     * @param {Function} enemyType - Enemy constructor
+     * @returns {Object} New enemy instance
+     */
+    createAndPositionEnemy(enemyType) {
+        let newEnemy = new enemyType();
         let spawnRange = this.config.spawnAreaEnd - this.config.spawnAreaStart;
-        newEnemy.x = this.config.spawnAreaStart + Math.random() * spawnRange;
-        newEnemy.y = randomType === MiniChicken ? 385 : 376;
         
-        // Set world reference
+        newEnemy.x = this.config.spawnAreaStart + Math.random() * spawnRange;
+        newEnemy.y = enemyType === MiniChicken ? 385 : 376;
+        
+        return newEnemy;
+    }
+
+    /**
+     * Configure new enemy with world reference and speed
+     * @param {Object} newEnemy - Enemy instance
+     */
+    configureNewEnemy(newEnemy) {
         newEnemy.world = this.world;
         
-        // Apply current wave speed multiplier
         if (this.world.waveManager) {
             this.world.waveManager.applySpeedToEnemy(newEnemy);
         }
-        
-        // Add to enemies array
+    }
+
+    /**
+     * Add enemy to level enemies array
+     * @param {Object} newEnemy - Enemy instance
+     */
+    addEnemyToLevel(newEnemy) {
         this.world.level.enemies.push(newEnemy);
-        
-       
     }
 
     /**
      * Spawns a new endboss outside the current level area
      */
     spawnNewEndboss() {
-        // Create new endboss
-        let newEndboss = new Endboss();
+        let newEndboss = this.createAndPositionEndboss();
+        this.configureNewEndboss(newEndboss);
+        this.addEndbossToLevel(newEndboss);
         
-        // Position endboss outside level end
+        console.log(`[EndlessMode] Spawned new endboss with ${newEndboss.maxEnergy} health at x: ${Math.round(newEndboss.x)}`);
+    }
+
+    /**
+     * Create and position new endboss
+     * @returns {Endboss} New endboss instance
+     */
+    createAndPositionEndboss() {
+        let newEndboss = new Endboss();
         let spawnRange = this.config.spawnAreaEnd - this.config.spawnAreaStart;
         newEndboss.x = this.config.spawnAreaStart + Math.random() * spawnRange;
         
-        // Set world reference and apply health scaling
+        return newEndboss;
+    }
+
+    /**
+     * Configure new endboss with world reference and speed
+     * @param {Endboss} newEndboss - Endboss instance
+     */
+    configureNewEndboss(newEndboss) {
         newEndboss.setWorld(this.world);
         
-        // Apply current wave speed multiplier
         if (this.world.waveManager) {
             this.world.waveManager.applySpeedToEnemy(newEndboss);
         }
-        
-        // Add to endboss array
+    }
+
+    /**
+     * Add endboss to level endboss array
+     * @param {Endboss} newEndboss - Endboss instance
+     */
+    addEndbossToLevel(newEndboss) {
         this.world.level.endboss.push(newEndboss);
-        
-        console.log(`[EndlessMode] Spawned new endboss with ${newEndboss.maxEnergy} health at x: ${Math.round(newEndboss.x)}`);
     }
 
     /**

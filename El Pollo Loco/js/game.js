@@ -6,192 +6,324 @@ let keyboard = new Keyboard();
 let gameStarted = false;
 let mobileControls;
 
-// Initialize the game
+/**
+ * Initializes the game and sets up all necessary components
+ */
 function init() {
     canvas = document.getElementById("canvas");
     let ctx = canvas.getContext('2d');
     
-    // Setup responsive canvas and auto-fullscreen for mobile
     setupResponsiveCanvas();
-    
-    // Initialize mobile controls
-    mobileControls = new MobileControls(canvas, ctx);
-    window.keyboard = keyboard; // Make keyboard globally accessible for mobile controls
-    window.mobileControls = mobileControls; // Make mobile controls globally accessible
-    
-    // Setup handling for user touch interactions to enable fullscreen
-    if (isMobileDevice()) {
-        // Add touch listener to go fullscreen on first touch
-        document.addEventListener('touchstart', enableFullscreen, { once: true });
-    }
-    
-    // Create start screen first
-    startScreen = new StartScreen(canvas, ctx);
-    
-    // Create game over screen
-    gameOver = new GameOver(canvas, ctx);
-    
-    // Set up start game callback
-    window.onStartGame = function() {
-        startGame();
-    };
-    
-    // Set up game restart callback
-    window.onGameRestart = function() {
-        restartGame();
-    };
-    
-    // Start the start screen loop
+    initializeMobileControls(ctx);
+    setupMobileFullscreen();
+    initializeScreens(ctx);
+    setupGameCallbacks();
     startScreenLoop();
     
     console.log('[Game] Start screen initialized');
 }
 
-// Detect if device is mobile
+/**
+ * Initializes mobile controls and makes necessary objects globally accessible
+ * @param {CanvasRenderingContext2D} ctx - The canvas context
+ */
+function initializeMobileControls(ctx) {
+    mobileControls = new MobileControls(canvas, ctx);
+    window.keyboard = keyboard;
+    window.mobileControls = mobileControls;
+}
+
+/**
+ * Sets up fullscreen handling for mobile devices
+ */
+function setupMobileFullscreen() {
+    if (isMobileDevice()) {
+        document.addEventListener('touchstart', enableFullscreen, { once: true });
+    }
+}
+
+/**
+ * Initializes start screen and game over screen
+ * @param {CanvasRenderingContext2D} ctx - The canvas context
+ */
+function initializeScreens(ctx) {
+    startScreen = new StartScreen(canvas, ctx);
+    gameOver = new GameOver(canvas, ctx);
+}
+
+/**
+ * Sets up game callback functions
+ */
+function setupGameCallbacks() {
+    window.onStartGame = function() {
+        startGame();
+    };
+    
+    window.onGameRestart = function() {
+        restartGame();
+    };
+}
+
+/**
+ * Detects if the current device is a mobile device
+ * @returns {boolean} True if device is mobile, false otherwise
+ */
 function isMobileDevice() {
     return /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
            window.innerWidth <= 768;
 }
 
-// Request fullscreen function
+/**
+ * Requests fullscreen mode for the game
+ */
 function requestFullscreen() {
     const canvas = document.getElementById('canvas');
-    const body = document.body;
     
     try {
-        // Try document element first for better browser compatibility
-        if (document.documentElement.requestFullscreen) {
-            document.documentElement.requestFullscreen()
-                .catch(err => console.log('Fullscreen failed: ', err));
-        } else if (document.documentElement.webkitRequestFullscreen) {
-            document.documentElement.webkitRequestFullscreen();
-        } else if (document.documentElement.mozRequestFullScreen) {
-            document.documentElement.mozRequestFullScreen();
-        } else if (document.documentElement.msRequestFullscreen) {
-            document.documentElement.msRequestFullscreen();
-        } 
-        // If document element doesn't work, try canvas
-        else if (canvas.requestFullscreen) {
-            canvas.requestFullscreen()
-                .catch(err => console.log('Canvas fullscreen failed: ', err));
-        } else if (canvas.webkitRequestFullscreen) {
-            canvas.webkitRequestFullscreen();
-        } else if (canvas.mozRequestFullScreen) {
-            canvas.mozRequestFullScreen();
-        } else if (canvas.msRequestFullscreen) {
-            canvas.msRequestFullscreen();
-        } else {
-            console.log('Fullscreen API not supported');
-        }
+        tryDocumentFullscreen() || tryCanvasFullscreen(canvas);
     } catch (error) {
         console.log('Error trying to enter fullscreen: ', error);
     }
 }
 
-// Setup responsive canvas for different mobile sizes
+/**
+ * Attempts to enable fullscreen on the document element
+ * @returns {boolean} True if attempt was made, false if not supported
+ */
+function tryDocumentFullscreen() {
+    if (document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen()
+            .catch(err => console.log('Fullscreen failed: ', err));
+        return true;
+    } else if (document.documentElement.webkitRequestFullscreen) {
+        document.documentElement.webkitRequestFullscreen();
+        return true;
+    } else if (document.documentElement.mozRequestFullScreen) {
+        document.documentElement.mozRequestFullScreen();
+        return true;
+    } else if (document.documentElement.msRequestFullscreen) {
+        document.documentElement.msRequestFullscreen();
+        return true;
+    }
+    return false;
+}
+
+/**
+ * Attempts to enable fullscreen on the canvas element
+ * @param {HTMLCanvasElement} canvas - The canvas element
+ * @returns {boolean} True if attempt was made, false if not supported
+ */
+function tryCanvasFullscreen(canvas) {
+    if (canvas.requestFullscreen) {
+        canvas.requestFullscreen()
+            .catch(err => console.log('Canvas fullscreen failed: ', err));
+        return true;
+    } else if (canvas.webkitRequestFullscreen) {
+        canvas.webkitRequestFullscreen();
+        return true;
+    } else if (canvas.mozRequestFullScreen) {
+        canvas.mozRequestFullScreen();
+        return true;
+    } else if (canvas.msRequestFullscreen) {
+        canvas.msRequestFullscreen();
+        return true;
+    } else {
+        console.log('Fullscreen API not supported');
+        return false;
+    }
+}
+
+/**
+ * Sets up responsive canvas for different screen sizes and mobile devices
+ */
 function setupResponsiveCanvas() {
     function resizeCanvas() {
         const canvas = document.getElementById('canvas');
-        const container = document.querySelector('.mexican-section');
-        const mexicanTitle = document.querySelector('.mexican-title');
-        const brownGround = document.getElementById('brownGround');
-        
-        // Get current viewport dimensions
         const viewportWidth = window.innerWidth;
         const viewportHeight = window.innerHeight;
-        const isLandscape = viewportWidth > viewportHeight;
         const isMobile = isMobileDevice();
         
         if (isMobile) {
-            // Hide the title and other elements on mobile for fullscreen experience
-            if (mexicanTitle) mexicanTitle.style.display = 'none';
-            if (brownGround) brownGround.style.display = 'none';
-            
-            // Make container full viewport
-            if (container) {
-                container.style.width = '100vw';
-                container.style.height = '100vh';
-                container.style.padding = '0';
-                container.style.margin = '0';
-            }
-            
-            // Always use fullscreen approach on mobile
-            canvas.style.width = '100vw';
-            canvas.style.height = '100vh';
-            canvas.style.position = 'fixed';
-            canvas.style.top = '0';
-            canvas.style.left = '0';
-            canvas.style.zIndex = '9999';
-            canvas.style.borderRadius = '0'; // Remove rounded corners for full-screen
-            
-            // Preserve aspect ratio by adding black bars if needed (letterboxing)
-            const gameAspectRatio = 720 / 480; // Original game aspect ratio
-            const screenAspectRatio = viewportWidth / viewportHeight;
-            
-            if (screenAspectRatio > gameAspectRatio) {
-                // Screen is wider than game - add horizontal bars
-                const gameHeight = viewportHeight;
-                const gameWidth = gameHeight * gameAspectRatio;
-                const horizontalPadding = (viewportWidth - gameWidth) / 2;
-                
-                canvas.style.width = gameWidth + 'px';
-                canvas.style.height = viewportHeight + 'px';
-                canvas.style.left = horizontalPadding + 'px';
-            } else {
-                // Screen is taller than game - add vertical bars
-                const gameWidth = viewportWidth;
-                const gameHeight = gameWidth / gameAspectRatio;
-                const verticalPadding = (viewportHeight - gameHeight) / 2;
-                
-                canvas.style.width = viewportWidth + 'px';
-                canvas.style.height = gameHeight + 'px';
-                canvas.style.top = verticalPadding + 'px';
-            }
-            
-            // Update mobile controls layout
-            if (mobileControls) {
-                mobileControls.updateLayout();
-            }
-            
-            // Automatically request fullscreen on mobile
-            if (!document.fullscreenElement && 
-                !document.webkitFullscreenElement && 
-                !document.msFullscreenElement) {
-                requestFullscreen();
-            }
+            setupMobileCanvas(canvas, viewportWidth, viewportHeight);
         } else {
-            // Desktop: use original size
-            canvas.style.width = '720px';
-            canvas.style.height = '480px';
-            canvas.style.position = 'relative';
-            canvas.style.transform = 'none';
-            canvas.style.borderRadius = '20px'; // Restore rounded corners
-            
-            // Show the title on desktop
-            if (mexicanTitle) mexicanTitle.style.display = 'block';
-            if (brownGround) brownGround.style.display = 'block';
+            setupDesktopCanvas(canvas);
         }
     }
     
-    // Initial resize
+    setupCanvasEventListeners(resizeCanvas);
+    resizeCanvas();
+}
+
+/**
+ * Configures canvas for mobile devices with fullscreen capabilities
+ * @param {HTMLCanvasElement} canvas - The canvas element
+ * @param {number} viewportWidth - Current viewport width
+ * @param {number} viewportHeight - Current viewport height
+ */
+function setupMobileCanvas(canvas, viewportWidth, viewportHeight) {
+    hideMobileElements();
+    setupMobileContainer();
+    applyMobileCanvasStyles(canvas);
+    handleAspectRatio(canvas, viewportWidth, viewportHeight);
+    updateMobileControlsLayout();
+    requestMobileFullscreen();
+}
+
+/**
+ * Hides UI elements on mobile for fullscreen experience
+ */
+function hideMobileElements() {
+    const mexicanTitle = document.querySelector('.mexican-title');
+    const brownGround = document.getElementById('brownGround');
+    
+    if (mexicanTitle) mexicanTitle.style.display = 'none';
+    if (brownGround) brownGround.style.display = 'none';
+}
+
+/**
+ * Sets up container styling for mobile fullscreen
+ */
+function setupMobileContainer() {
+    const container = document.querySelector('.mexican-section');
+    if (container) {
+        container.style.width = '100vw';
+        container.style.height = '100vh';
+        container.style.padding = '0';
+        container.style.margin = '0';
+    }
+}
+
+/**
+ * Applies fullscreen styles to canvas for mobile
+ * @param {HTMLCanvasElement} canvas - The canvas element
+ */
+function applyMobileCanvasStyles(canvas) {
+    canvas.style.width = '100vw';
+    canvas.style.height = '100vh';
+    canvas.style.position = 'fixed';
+    canvas.style.top = '0';
+    canvas.style.left = '0';
+    canvas.style.zIndex = '9999';
+    canvas.style.borderRadius = '0';
+}
+/**
+ * Handles aspect ratio preservation for mobile canvas
+ * @param {HTMLCanvasElement} canvas - The canvas element
+ * @param {number} viewportWidth - Current viewport width
+ * @param {number} viewportHeight - Current viewport height
+ */
+function handleAspectRatio(canvas, viewportWidth, viewportHeight) {
+    const gameAspectRatio = 720 / 480;
+    const screenAspectRatio = viewportWidth / viewportHeight;
+    
+    if (screenAspectRatio > gameAspectRatio) {
+        applyHorizontalLetterboxing(canvas, viewportWidth, viewportHeight, gameAspectRatio);
+    } else {
+        applyVerticalLetterboxing(canvas, viewportWidth, viewportHeight, gameAspectRatio);
+    }
+}
+
+/**
+ * Applies horizontal letterboxing for wider screens
+ * @param {HTMLCanvasElement} canvas - The canvas element
+ * @param {number} viewportWidth - Current viewport width
+ * @param {number} viewportHeight - Current viewport height
+ * @param {number} gameAspectRatio - The game's aspect ratio
+ */
+function applyHorizontalLetterboxing(canvas, viewportWidth, viewportHeight, gameAspectRatio) {
+    const gameHeight = viewportHeight;
+    const gameWidth = gameHeight * gameAspectRatio;
+    const horizontalPadding = (viewportWidth - gameWidth) / 2;
+    
+    canvas.style.width = gameWidth + 'px';
+    canvas.style.height = viewportHeight + 'px';
+    canvas.style.left = horizontalPadding + 'px';
+}
+
+/**
+ * Applies vertical letterboxing for taller screens
+ * @param {HTMLCanvasElement} canvas - The canvas element
+ * @param {number} viewportWidth - Current viewport width
+ * @param {number} viewportHeight - Current viewport height
+ * @param {number} gameAspectRatio - The game's aspect ratio
+ */
+function applyVerticalLetterboxing(canvas, viewportWidth, viewportHeight, gameAspectRatio) {
+    const gameWidth = viewportWidth;
+    const gameHeight = gameWidth / gameAspectRatio;
+    const verticalPadding = (viewportHeight - gameHeight) / 2;
+    
+    canvas.style.width = viewportWidth + 'px';
+    canvas.style.height = gameHeight + 'px';
+    canvas.style.top = verticalPadding + 'px';
+}
+
+/**
+ * Updates mobile controls layout if available
+ */
+function updateMobileControlsLayout() {
+    if (mobileControls) {
+        mobileControls.updateLayout();
+    }
+}
+
+/**
+ * Requests fullscreen if not already active on mobile
+ */
+function requestMobileFullscreen() {
+    if (!document.fullscreenElement && 
+        !document.webkitFullscreenElement && 
+        !document.msFullscreenElement) {
+        requestFullscreen();
+    }
+}
+
+/**
+ * Configures canvas for desktop with standard dimensions
+ * @param {HTMLCanvasElement} canvas - The canvas element
+ */
+function setupDesktopCanvas(canvas) {
+    canvas.style.width = '720px';
+    canvas.style.height = '480px';
+    canvas.style.position = 'relative';
+    canvas.style.transform = 'none';
+    canvas.style.borderRadius = '20px';
+    
+    showDesktopElements();
+}
+
+/**
+ * Shows UI elements that are hidden on mobile
+ */
+function showDesktopElements() {
+    const mexicanTitle = document.querySelector('.mexican-title');
+    const brownGround = document.getElementById('brownGround');
+    
+    if (mexicanTitle) mexicanTitle.style.display = 'block';
+    if (brownGround) brownGround.style.display = 'block';
+}
+
+/**
+ * Sets up event listeners for canvas resizing
+ * @param {Function} resizeCanvas - The resize function to call
+ */
+function setupCanvasEventListeners(resizeCanvas) {
     resizeCanvas();
     
-    // Resize on window resize and orientation change
     window.addEventListener('resize', () => {
         setTimeout(resizeCanvas, 100);
     });
     window.addEventListener('orientationchange', () => {
-        // Delay to ensure orientation change is complete
         setTimeout(resizeCanvas, 300);
     });
     
-    // Handle fullscreen changes
     document.addEventListener('fullscreenchange', resizeCanvas);
     document.addEventListener('webkitfullscreenchange', resizeCanvas);
     document.addEventListener('msfullscreenchange', resizeCanvas);
 }
 
-// Start screen animation loop
+/**
+ * Runs the start screen animation loop
+ */
 function startScreenLoop() {
     if (startScreen && startScreen.isStartScreenActive()) {
         startScreen.update();
@@ -200,189 +332,302 @@ function startScreenLoop() {
     }
 }
 
-// Start the actual game
+/**
+ * Starts the main game after initialization
+ */
 function startGame() {
     if (gameStarted) return;
     
     gameStarted = true;
     console.log('[Game] Starting main game...');
     
-    // Hide start screen
+    hideStartScreen();
+    initializeLevel();
+    createWorld();
+    setupAudioListeners();
+}
+
+/**
+ * Hides the start screen when game begins
+ */
+function hideStartScreen() {
     if (startScreen) {
         startScreen.hide();
     }
-    
-    // Initialize level first
+}
+
+/**
+ * Initializes the game level
+ */
+function initializeLevel() {
     initLevel1();
     console.log('[Game] Level initialized');
-    
-    // Initialize world and start game
+}
+
+/**
+ * Creates the game world and starts drawing
+ */
+function createWorld() {
     world = new World(canvas);
     world.draw();
-    
-    // Add click listener to enable audio on first user interaction
+}
+
+/**
+ * Sets up audio activation listeners for first user interaction
+ */
+function setupAudioListeners() {
     document.addEventListener('click', enableAudio, { once: true });
     document.addEventListener('keydown', enableAudio, { once: true });
 }
 
-// Restart the game
+/**
+ * Restarts the game by resetting all game state and creating new instances
+ */
 function restartGame() {
     console.log('[Game] Restarting game...');
     
-    // Reset game state completely
-    gameStarted = false;
+    resetGameState();
+    clearExistingGame();
     
-    // Clear existing world and intervals
-    if (world) {
-        world.isPaused = true; // Stop any ongoing processes
-        world = null;
-    }
-    
-    // Clear any existing level data
-    if (typeof level1 !== 'undefined') {
-        level1 = null;
-    }
-    
-    // Small delay to ensure cleanup
     setTimeout(() => {
-        // Re-initialize level completely
-        initLevel1();
-        console.log('[Game] Level re-initialized');
-        
-        // Create completely new world instance
-        world = new World(canvas);
-        world.isPaused = false; // Ensure game is not paused
-        world.draw();
-        
-        // Set game as started
-        gameStarted = true;
-        
-        console.log('[Game] Game restarted successfully');
+        reinitializeGame();
     }, 100);
 }
 
-// Enable audio on first user interaction
+/**
+ * Resets the core game state variables
+ */
+function resetGameState() {
+    gameStarted = false;
+}
+
+/**
+ * Clears existing world and level data
+ */
+function clearExistingGame() {
+    if (world) {
+        world.isPaused = true;
+        world = null;
+    }
+    
+    if (typeof level1 !== 'undefined') {
+        level1 = null;
+    }
+}
+
+/**
+ * Reinitializes the game with fresh instances
+ */
+function reinitializeGame() {
+    initLevel1();
+    console.log('[Game] Level re-initialized');
+    
+    world = new World(canvas);
+    world.isPaused = false;
+    world.draw();
+    
+    gameStarted = true;
+    
+    console.log('[Game] Game restarted successfully');
+}
+
+/**
+ * Enables audio on first user interaction
+ */
 function enableAudio() {
     if (world && world.backgroundMusic) {
         world.startBackgroundMusic();
     }
 }
 
-// Enable fullscreen on touch for mobile devices
+/**
+ * Enables fullscreen on touch for mobile devices
+ */
 function enableFullscreen() {
     if (isMobileDevice()) {
         setTimeout(() => {
             requestFullscreen();
-            // Also call setupResponsiveCanvas to ensure proper sizing
             setupResponsiveCanvas();
         }, 300);
         
-        // Enable audio at the same time
         enableAudio();
     }
 }
 
-// Toggle pause function
+/**
+ * Toggles game pause state and updates UI accordingly
+ */
 function togglePause() {
-    // Don't allow pause if game hasn't started yet
     if (!gameStarted || !world) return;
     
     if (world) {
         world.togglePause();
-        
-        // Update button text and style
-        let pauseButton = document.getElementById('pauseButton');
-        if (world.isPaused) {
-            pauseButton.textContent = 'RESUME';
-            pauseButton.classList.add('paused');
-        } else {
-            pauseButton.textContent = 'PAUSE';
-            pauseButton.classList.remove('paused');
-        }
+        updatePauseButton();
     }
 }
 
-// Toggle fullscreen function
+/**
+ * Updates the pause button text and styling based on game state
+ */
+function updatePauseButton() {
+    let pauseButton = document.getElementById('pauseButton');
+    if (world.isPaused) {
+        pauseButton.textContent = 'RESUME';
+        pauseButton.classList.add('paused');
+    } else {
+        pauseButton.textContent = 'PAUSE';
+        pauseButton.classList.remove('paused');
+    }
+}
+
+/**
+ * Toggles fullscreen mode for the game
+ */
 function toggleFullscreen() {
     let canvas = document.getElementById('canvas');
     let fullscreenButton = document.getElementById('fullscreenButton');
     let body = document.body;
     
     if (!document.fullscreenElement) {
-        // Enter fullscreen
-        if (document.documentElement.requestFullscreen) {
-            document.documentElement.requestFullscreen();
-        } else if (document.documentElement.webkitRequestFullscreen) {
-            document.documentElement.webkitRequestFullscreen();
-        } else if (document.documentElement.msRequestFullscreen) {
-            document.documentElement.msRequestFullscreen();
-        }
-        
-        // Calculate scale factor based on screen size
-        let scaleX = window.screen.width / 720;
-        let scaleY = window.screen.height / 480;
-        let scaleFactor = Math.min(scaleX, scaleY) * 0.9; // 0.9 for some padding
-        
-        // Set CSS custom property for scale
-        document.documentElement.style.setProperty('--scale-factor', scaleFactor);
-        
-        // Add fullscreen classes
-        canvas.classList.add('fullscreen');
-        body.classList.add('fullscreen-active');
-        fullscreenButton.textContent = 'EXIT FULLSCREEN';
-        fullscreenButton.classList.add('active');
-        
+        enterFullscreenMode(canvas, fullscreenButton, body);
     } else {
-        // Exit fullscreen
-        if (document.exitFullscreen) {
-            document.exitFullscreen();
-        } else if (document.webkitExitFullscreen) {
-            document.webkitExitFullscreen();
-        } else if (document.msExitFullscreen) {
-            document.msExitFullscreen();
-        }
-        
-        // Remove fullscreen classes
-        canvas.classList.remove('fullscreen');
-        body.classList.remove('fullscreen-active');
-        fullscreenButton.textContent = 'FULLSCREEN';
-        fullscreenButton.classList.remove('active');
-        
-        // Reset scale factor
-        document.documentElement.style.setProperty('--scale-factor', '1');
+        exitFullscreenMode(canvas, fullscreenButton, body);
     }
 }
 
-// Handle fullscreen change events
+/**
+ * Enters fullscreen mode with proper scaling and styling
+ * @param {HTMLCanvasElement} canvas - The canvas element
+ * @param {HTMLElement} fullscreenButton - The fullscreen toggle button
+ * @param {HTMLElement} body - The document body
+ */
+function enterFullscreenMode(canvas, fullscreenButton, body) {
+    requestDocumentFullscreen();
+    
+    let scaleFactor = calculateScaleFactor();
+    document.documentElement.style.setProperty('--scale-factor', scaleFactor);
+    
+    applyFullscreenStyles(canvas, body, fullscreenButton);
+}
+
+/**
+ * Requests fullscreen for the document using available API
+ */
+function requestDocumentFullscreen() {
+    if (document.documentElement.requestFullscreen) {
+        document.documentElement.requestFullscreen();
+    } else if (document.documentElement.webkitRequestFullscreen) {
+        document.documentElement.webkitRequestFullscreen();
+    } else if (document.documentElement.msRequestFullscreen) {
+        document.documentElement.msRequestFullscreen();
+    }
+}
+
+/**
+ * Calculates appropriate scale factor for fullscreen
+ * @returns {number} The calculated scale factor
+ */
+function calculateScaleFactor() {
+    let scaleX = window.screen.width / 720;
+    let scaleY = window.screen.height / 480;
+    return Math.min(scaleX, scaleY) * 0.9;
+}
+
+/**
+ * Applies styling for fullscreen mode
+ * @param {HTMLCanvasElement} canvas - The canvas element
+ * @param {HTMLElement} body - The document body
+ * @param {HTMLElement} fullscreenButton - The fullscreen toggle button
+ */
+function applyFullscreenStyles(canvas, body, fullscreenButton) {
+    canvas.classList.add('fullscreen');
+    body.classList.add('fullscreen-active');
+    fullscreenButton.textContent = 'EXIT FULLSCREEN';
+    fullscreenButton.classList.add('active');
+}
+
+/**
+ * Exits fullscreen mode and resets styling
+ * @param {HTMLCanvasElement} canvas - The canvas element
+ * @param {HTMLElement} fullscreenButton - The fullscreen toggle button
+ * @param {HTMLElement} body - The document body
+ */
+function exitFullscreenMode(canvas, fullscreenButton, body) {
+    exitDocumentFullscreen();
+    removeFullscreenStyles(canvas, body, fullscreenButton);
+    document.documentElement.style.setProperty('--scale-factor', '1');
+}
+
+/**
+ * Exits fullscreen using available API
+ */
+function exitDocumentFullscreen() {
+    if (document.exitFullscreen) {
+        document.exitFullscreen();
+    } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+    } else if (document.msExitFullscreen) {
+        document.msExitFullscreen();
+    }
+}
+
+/**
+ * Removes fullscreen styling classes
+ * @param {HTMLCanvasElement} canvas - The canvas element
+ * @param {HTMLElement} body - The document body
+ * @param {HTMLElement} fullscreenButton - The fullscreen toggle button
+ */
+function removeFullscreenStyles(canvas, body, fullscreenButton) {
+    canvas.classList.remove('fullscreen');
+    body.classList.remove('fullscreen-active');
+    fullscreenButton.textContent = 'FULLSCREEN';
+    fullscreenButton.classList.remove('active');
+}
+
 document.addEventListener('fullscreenchange', handleFullscreenChange);
 document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
 document.addEventListener('msfullscreenchange', handleFullscreenChange);
 
+/**
+ * Handles fullscreen change events and updates UI accordingly
+ */
 function handleFullscreenChange() {
     let canvas = document.getElementById('canvas');
     let fullscreenButton = document.getElementById('fullscreenButton');
     let body = document.body;
     
     if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) {
-        // Exited fullscreen
-        canvas.classList.remove('fullscreen');
-        body.classList.remove('fullscreen-active');
-        fullscreenButton.textContent = 'FULLSCREEN';
-        fullscreenButton.classList.remove('active');
-        
-        // Reset scale factor
-        document.documentElement.style.setProperty('--scale-factor', '1');
+        resetFullscreenUI(canvas, body, fullscreenButton);
     }
 }
 
-// Handle escape key to exit fullscreen
+/**
+ * Resets UI elements when exiting fullscreen
+ * @param {HTMLCanvasElement} canvas - The canvas element
+ * @param {HTMLElement} body - The document body
+ * @param {HTMLElement} fullscreenButton - The fullscreen toggle button
+ */
+function resetFullscreenUI(canvas, body, fullscreenButton) {
+    canvas.classList.remove('fullscreen');
+    body.classList.remove('fullscreen-active');
+    fullscreenButton.textContent = 'FULLSCREEN';
+    fullscreenButton.classList.remove('active');
+    
+    document.documentElement.style.setProperty('--scale-factor', '1');
+}
+
+/**
+ * Handles escape key to exit fullscreen
+ */
 document.addEventListener('keydown', function(event) {
     if (event.key === 'Escape' && document.fullscreenElement) {
         toggleFullscreen();
     }
 });
 
-// Event listener for debugging keyboard events
+/**
+ * Event listener for debugging keyboard events
+ */
 window.addEventListener('keypress', (event) => {
     console.log(event);
 });

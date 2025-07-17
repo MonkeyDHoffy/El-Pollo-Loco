@@ -1,45 +1,90 @@
+/**
+ * Manages game over screen display and replay functionality
+ */
 class GameOver {
+    /**
+     * Initialize game over manager
+     * @param {HTMLCanvasElement} canvas - Game canvas element
+     * @param {CanvasRenderingContext2D} ctx - Canvas rendering context
+     */
     constructor(canvas, ctx) {
         this.canvas = canvas;
         this.ctx = ctx;
+        
+        this.initializeGameOverState();
+        this.initializeReplayButton();
+        this.loadGameOverImage();
+        this.setupEventListeners();
+    }
+
+    /**
+     * Initialize game over state variables
+     */
+    initializeGameOverState() {
         this.isActive = false;
         this.showGameOverImage = false;
         this.showReplayScreen = false;
         this.finalScore = 0;
-        
-        // Load game over image
-        this.gameOverImage = new Image();
-        this.gameOverImage.src = 'img/img_pollo_locco/img/9_intro_outro_screens/game_over/game over.png';
-        
         this.gameOverStartTime = 0;
+    }
+
+    /**
+     * Initialize replay button configuration
+     */
+    initializeReplayButton() {
         this.replayButton = {
             x: 0,
             y: 0,
             width: 200,
             height: 50
         };
-        
-        this.setupEventListeners();
+    }
+
+    /**
+     * Load game over image asset
+     */
+    loadGameOverImage() {
+        this.gameOverImage = new Image();
+        this.gameOverImage.src = 'img/img_pollo_locco/img/9_intro_outro_screens/game_over/game over.png';
     }
 
     /**
      * Start the game over sequence
+     * @param {number} finalScore - Player's final score
      */
     startGameOver(finalScore) {
+        this.initializeGameOverSequence(finalScore);
+        this.pauseGame();
+        this.scheduleReplayScreen();
+        
+        console.log('[GameOver] Game Over started with score:', finalScore);
+    }
+
+    /**
+     * Initialize game over sequence state
+     * @param {number} finalScore - Player's final score
+     */
+    initializeGameOverSequence(finalScore) {
         this.isActive = true;
         this.showGameOverImage = true;
         this.showReplayScreen = false;
         this.finalScore = finalScore;
         this.gameOverStartTime = Date.now();
-        
-        // Pause the game immediately
+    }
+
+    /**
+     * Pause the game immediately
+     */
+    pauseGame() {
         if (world) {
             world.isPaused = true;
         }
-        
-        console.log('[GameOver] Game Over started with score:', finalScore);
-        
-        // After 2 seconds, show orange screen with replay button
+    }
+
+    /**
+     * Schedule transition to replay screen after delay
+     */
+    scheduleReplayScreen() {
         setTimeout(() => {
             this.showGameOverImage = false;
             this.showReplayScreen = true;
@@ -87,22 +132,32 @@ class GameOver {
      * Draw orange replay screen
      */
     drawReplayScreen() {
-        // Fill entire canvas with orange
+        this.drawReplayBackground();
+        this.drawReplayText();
+        this.drawReplayButton();
+    }
+
+    /**
+     * Draw orange background for replay screen
+     */
+    drawReplayBackground() {
         this.ctx.fillStyle = '#FF8C00';
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    }
 
-        // Draw final score
+    /**
+     * Draw game over and score text
+     */
+    drawReplayText() {
         this.ctx.save();
         this.ctx.fillStyle = 'white';
-        this.ctx.font = 'bold 48px Arial';
         this.ctx.textAlign = 'center';
+        
+        this.ctx.font = 'bold 48px Arial';
         this.ctx.fillText('GAME OVER', this.canvas.width / 2, this.canvas.height / 2 - 100);
         
         this.ctx.font = 'bold 32px Arial';
         this.ctx.fillText('Final Score: ' + this.finalScore, this.canvas.width / 2, this.canvas.height / 2 - 50);
-
-        // Draw replay button
-        this.drawReplayButton();
         
         this.ctx.restore();
     }
@@ -111,7 +166,15 @@ class GameOver {
      * Draw replay button
      */
     drawReplayButton() {
-        // Button background
+        this.drawButtonBackground();
+        this.drawButtonBorder();
+        this.drawButtonText();
+    }
+
+    /**
+     * Draw button background
+     */
+    drawButtonBackground() {
         this.ctx.fillStyle = '#FF4500';
         this.ctx.fillRect(
             this.replayButton.x,
@@ -119,8 +182,12 @@ class GameOver {
             this.replayButton.width,
             this.replayButton.height
         );
+    }
 
-        // Button border
+    /**
+     * Draw button border
+     */
+    drawButtonBorder() {
         this.ctx.strokeStyle = 'white';
         this.ctx.lineWidth = 3;
         this.ctx.strokeRect(
@@ -129,8 +196,12 @@ class GameOver {
             this.replayButton.width,
             this.replayButton.height
         );
+    }
 
-        // Button text
+    /**
+     * Draw button text
+     */
+    drawButtonText() {
         this.ctx.fillStyle = 'white';
         this.ctx.font = 'bold 20px Arial';
         this.ctx.textAlign = 'center';
@@ -142,62 +213,93 @@ class GameOver {
     }
 
     /**
-     * Setup event listeners
+     * Setup event listeners for user interactions
      */
     setupEventListeners() {
+        this.createMouseClickHandler();
+        this.createTouchHandler();
+        this.createKeyboardHandler();
+        this.attachEventListeners();
+    }
+
+    /**
+     * Create mouse click event handler
+     */
+    createMouseClickHandler() {
         this.onMouseClick = (event) => {
             if (!this.isActive || !this.showReplayScreen) return;
 
-            const rect = this.canvas.getBoundingClientRect();
-            
-            // Calculate scale factors for fullscreen mode
-            const scaleX = this.canvas.width / rect.width;
-            const scaleY = this.canvas.height / rect.height;
-            
-            // Convert mouse coordinates to canvas coordinates
-            const x = (event.clientX - rect.left) * scaleX;
-            const y = (event.clientY - rect.top) * scaleY;
-
-            // Check if click is on replay button
-            if (x >= this.replayButton.x && 
-                x <= this.replayButton.x + this.replayButton.width &&
-                y >= this.replayButton.y && 
-                y <= this.replayButton.y + this.replayButton.height) {
+            const coordinates = this.getMouseCoordinates(event);
+            if (this.isPointInReplayButton(coordinates.x, coordinates.y)) {
                 this.restartGame();
             }
         };
+    }
+
+    /**
+     * Get mouse coordinates scaled to canvas
+     * @param {MouseEvent} event - Mouse event
+     * @returns {Object} Scaled coordinates
+     */
+    getMouseCoordinates(event) {
+        const rect = this.canvas.getBoundingClientRect();
+        const scaleX = this.canvas.width / rect.width;
+        const scaleY = this.canvas.height / rect.height;
         
+        return {
+            x: (event.clientX - rect.left) * scaleX,
+            y: (event.clientY - rect.top) * scaleY
+        };
+    }
+    /**
+     * Create touch event handler
+     */
+    createTouchHandler() {
         this.onTouchStart = (event) => {
             if (!this.isActive || !this.showReplayScreen) return;
             
-            // Prevent default to avoid scrolling/zooming
             event.preventDefault();
+            const coordinates = this.getTouchCoordinates(event);
+            this.logTouchInfo(coordinates);
             
-            const rect = this.canvas.getBoundingClientRect();
-            const touch = event.touches[0];
-            
-            // Calculate scale factors for proper coordinate conversion
-            const scaleX = this.canvas.width / rect.width;
-            const scaleY = this.canvas.height / rect.height;
-            
-            // Convert touch coordinates to canvas coordinates
-            const x = (touch.clientX - rect.left) * scaleX;
-            const y = (touch.clientY - rect.top) * scaleY;
-            
-            console.log('[GameOver] Touch at:', x, y);
-            console.log('[GameOver] Button:', this.replayButton.x, this.replayButton.y, 
-                       this.replayButton.width, this.replayButton.height);
-
-            // Check if touch is on replay button
-            if (x >= this.replayButton.x && 
-                x <= this.replayButton.x + this.replayButton.width &&
-                y >= this.replayButton.y && 
-                y <= this.replayButton.y + this.replayButton.height) {
+            if (this.isPointInReplayButton(coordinates.x, coordinates.y)) {
                 console.log('[GameOver] Replay button touched!');
                 this.restartGame();
             }
         };
+    }
 
+    /**
+     * Get touch coordinates scaled to canvas
+     * @param {TouchEvent} event - Touch event
+     * @returns {Object} Scaled coordinates
+     */
+    getTouchCoordinates(event) {
+        const rect = this.canvas.getBoundingClientRect();
+        const touch = event.touches[0];
+        const scaleX = this.canvas.width / rect.width;
+        const scaleY = this.canvas.height / rect.height;
+        
+        return {
+            x: (touch.clientX - rect.left) * scaleX,
+            y: (touch.clientY - rect.top) * scaleY
+        };
+    }
+
+    /**
+     * Log touch information for debugging
+     * @param {Object} coordinates - Touch coordinates
+     */
+    logTouchInfo(coordinates) {
+        console.log('[GameOver] Touch at:', coordinates.x, coordinates.y);
+        console.log('[GameOver] Button:', this.replayButton.x, this.replayButton.y, 
+                   this.replayButton.width, this.replayButton.height);
+    }
+
+    /**
+     * Create keyboard event handler
+     */
+    createKeyboardHandler() {
         this.onKeyDown = (event) => {
             if (!this.isActive || !this.showReplayScreen) return;
             
@@ -206,10 +308,28 @@ class GameOver {
                 this.restartGame();
             }
         };
+    }
 
+    /**
+     * Attach all event listeners to their respective elements
+     */
+    attachEventListeners() {
         this.canvas.addEventListener('click', this.onMouseClick);
         this.canvas.addEventListener('touchstart', this.onTouchStart, { passive: false });
         document.addEventListener('keydown', this.onKeyDown);
+    }
+
+    /**
+     * Check if point is within replay button bounds
+     * @param {number} x - X coordinate
+     * @param {number} y - Y coordinate
+     * @returns {boolean} True if point is in button
+     */
+    isPointInReplayButton(x, y) {
+        return x >= this.replayButton.x && 
+               x <= this.replayButton.x + this.replayButton.width &&
+               y >= this.replayButton.y && 
+               y <= this.replayButton.y + this.replayButton.height;
     }
 
     /**

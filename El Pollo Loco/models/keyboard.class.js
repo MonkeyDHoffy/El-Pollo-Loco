@@ -1,3 +1,6 @@
+/**
+ * Manages keyboard input state for game controls
+ */
 class Keyboard {
     LEFT = false;
     RIGHT = false;
@@ -5,46 +8,71 @@ class Keyboard {
     DOWN = false;
     SPACE = false;
 
+    /**
+     * Initialize keyboard input handler
+     */
     constructor() {
         this.bindKeyPressEvents();
     }
 
-    // Sets up event listeners for keyboard input
+    /**
+     * Sets up event listeners for keyboard input handling
+     */
     bindKeyPressEvents() {
         document.addEventListener('keydown', (event) => {
-            if (event.code === 'ArrowRight') {
-                this.RIGHT = true;
-            }
-            if (event.code === 'ArrowLeft') {
-                this.LEFT = true;
-            }
-            if (event.code === 'ArrowUp') {
-                this.UP = true;
-            }
-            if (event.code === 'ArrowDown') {
-                this.DOWN = true;
-            }
-            if (event.code === 'Space') {
-                this.SPACE = true;
-            }
+            this.handleKeyDown(event);
         });
 
         document.addEventListener('keyup', (event) => {
-            if (event.code === 'ArrowRight') {
-                this.RIGHT = false;
-            }
-            if (event.code === 'ArrowLeft') {
-                this.LEFT = false;
-            }
-            if (event.code === 'ArrowUp') {
-                this.UP = false;
-            }
-            if (event.code === 'ArrowDown') {
-                this.DOWN = false;
-            }
-            if (event.code === 'Space') {
-                this.SPACE = false;
-            }
+            this.handleKeyUp(event);
         });
+    }
+
+    /**
+     * Handles keydown events and sets appropriate flags
+     * @param {KeyboardEvent} event - The keyboard event
+     */
+    handleKeyDown(event) {
+        switch(event.code) {
+            case 'ArrowRight':
+                this.RIGHT = true;
+                break;
+            case 'ArrowLeft':
+                this.LEFT = true;
+                break;
+            case 'ArrowUp':
+                this.UP = true;
+                break;
+            case 'ArrowDown':
+                this.DOWN = true;
+                break;
+            case 'Space':
+                this.SPACE = true;
+                break;
+        }
+    }
+
+    /**
+     * Handles keyup events and resets appropriate flags
+     * @param {KeyboardEvent} event - The keyboard event
+     */
+    handleKeyUp(event) {
+        switch(event.code) {
+            case 'ArrowRight':
+                this.RIGHT = false;
+                break;
+            case 'ArrowLeft':
+                this.LEFT = false;
+                break;
+            case 'ArrowUp':
+                this.UP = false;
+                break;
+            case 'ArrowDown':
+                this.DOWN = false;
+                break;
+            case 'Space':
+                this.SPACE = false;
+                break;
+        }
     }
 }

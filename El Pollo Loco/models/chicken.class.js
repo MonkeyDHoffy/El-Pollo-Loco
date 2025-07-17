@@ -17,48 +17,113 @@ class Chicken extends MovableObject {
 
     constructor() {
         super().loadImage('img/img_pollo_locco/img/3_enemies_chicken/chicken_normal/1_walk/1_w.png');
-        // Default spawn position - can be overridden after creation
-        this.x = 400 + Math.random() * 3600;
-        this.y = 376;
-        this.originalHeight = this.height;
-        this.loadImages(this.IMAGES_WALKING);
-        this.loadImages(this.IMAGES_DEAD);
+        this.initializePosition();
+        this.loadChickenImages();
         this.animate();
     }
 
-    // Controls chicken movement and animation
+    /**
+     * Sets initial spawn position and properties
+     */
+    initializePosition() {
+        this.x = 400 + Math.random() * 3600;
+        this.y = 376;
+        this.originalHeight = this.height;
+    }
+
+    /**
+     * Loads all chicken animation images
+     */
+    loadChickenImages() {
+        this.loadImages(this.IMAGES_WALKING);
+        this.loadImages(this.IMAGES_DEAD);
+    }
+
+    /**
+     * Controls chicken movement and animation loops
+     */
     animate() {
+        this.startMovementLoop();
+        this.startAnimationLoop();
+    }
+
+    /**
+     * Starts the movement animation loop
+     */
+    startMovementLoop() {
         setInterval(() => {
-            if (!this.world || !this.world.isPaused) {
-                if (!this.isDead) {
-                    this.moveLeft(false);
-                }
+            if (this.canMove()) {
+                this.moveLeft(false);
             }
         }, 1000 / 60);
-        
+    }
+
+    /**
+     * Starts the visual animation loop
+     */
+    startAnimationLoop() {
         setInterval(() => {
-            if (!this.world || !this.world.isPaused) {
-                if (!this.isDead) {
-                    this.playAnimation(this.IMAGES_WALKING);
-                } else {
-                    // Show dead image when chicken is dead
-                    this.img = this.imageCache[this.IMAGES_DEAD[0]];
-                }
+            if (this.canAnimate()) {
+                this.updateAnimation();
             }
         }, 333);
     }
 
-    // Kills the chicken
+    /**
+     * Checks if chicken can move
+     * @returns {boolean} True if movement is allowed
+     */
+    canMove() {
+        return (!this.world || !this.world.isPaused) && !this.isDead;
+    }
+
+    /**
+     * Checks if chicken can animate
+     * @returns {boolean} True if animation is allowed
+     */
+    canAnimate() {
+        return !this.world || !this.world.isPaused;
+    }
+
+    /**
+     * Updates the current animation frame
+     */
+    updateAnimation() {
+        if (!this.isDead) {
+            this.playAnimation(this.IMAGES_WALKING);
+        } else {
+            this.img = this.imageCache[this.IMAGES_DEAD[0]];
+        }
+    }
+
+    /**
+     * Kills the chicken and adjusts its collision properties
+     */
     die() {
         this.isDead = true;
         this.speed = 0;
-        // Reduce collision box height for dead chicken
-        this.height = this.originalHeight * 0.4; // Make collision box 40% of original height
-        this.y += this.originalHeight * 0.6; // Adjust Y position to keep chicken on ground
-        // Immediately show dead image
+        this.adjustDeadCollisionBox();
+        this.showDeadImage();
+    }
+
+    /**
+     * Adjusts collision box for dead chicken
+     */
+    adjustDeadCollisionBox() {
+        this.height = this.originalHeight * 0.4;
+        this.y += this.originalHeight * 0.6;
+    }
+
+    /**
+     * Immediately displays the dead chicken image
+     */
+    showDeadImage() {
         this.img = this.imageCache[this.IMAGES_DEAD[0]];
     }
 
+    /**
+     * Makes the chicken perform eating action
+     */
     eat() {
         console.log("chicken is eating");
     }

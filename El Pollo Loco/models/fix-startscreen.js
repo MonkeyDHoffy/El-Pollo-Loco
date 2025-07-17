@@ -1,60 +1,127 @@
-// Touch event handler für StartScreen
+/**
+ * Adds touch support functionality to the start screen for mobile devices
+ */
+
+/**
+ * Adds touch event handling to StartScreen for mobile compatibility
+ */
 function addTouchSupportToStartScreen() {
-    // Referenz zum StartScreen-Objekt
     const startScreen = window.startScreen;
     
-    if (!startScreen) {
-        console.error('StartScreen object not found');
+    if (!validateStartScreen(startScreen)) {
         return;
     }
     
     console.log('Adding touch support to StartScreen');
-    
-    // Touch-Handler hinzufügen
-    const touchHandler = function(event) {
-        if (!startScreen.isActive) return;
-        event.preventDefault();
-        
-        const rect = startScreen.canvas.getBoundingClientRect();
-        const touch = event.touches[0];
-        const touchX = touch.clientX - rect.left;
-        const touchY = touch.clientY - rect.top;
-        
-        // Koordinaten skalieren, wenn Canvas skaliert ist
-        const scaleX = startScreen.canvas.width / rect.width;
-        const scaleY = startScreen.canvas.height / rect.height;
-        const scaledX = touchX * scaleX;
-        const scaledY = touchY * scaleY;
-        
-        console.log('Touch at:', scaledX, scaledY);
-        console.log('Button:', startScreen.playButtonX, startScreen.playButtonY, 
-                   startScreen.playButtonWidth, startScreen.playButtonHeight);
-        
-        // Prüfen, ob Touch auf dem Play-Button ist
-        if (scaledX >= startScreen.playButtonX && 
-            scaledX <= startScreen.playButtonX + startScreen.playButtonWidth &&
-            scaledY >= startScreen.playButtonY && 
-            scaledY <= startScreen.playButtonY + startScreen.playButtonHeight) {
-            console.log('Play Button touched! Starting game...');
-            
-            // Original startGame-Methode aufrufen
-            if (typeof startScreen.startGame === 'function') {
-                startScreen.startGame();
-            } else if (window.onStartGame) {
-                // Falls startGame nicht existiert, direkt onStartGame aufrufen
-                window.onStartGame();
-            }
-        }
-    };
-    
-    // Event-Listener für Touch hinzufügen
-    startScreen.canvas.addEventListener('touchstart', touchHandler, { passive: false });
-    
+    attachTouchHandler(startScreen);
     console.log('Touch support added successfully');
 }
 
-// Funktion beim Laden ausführen
-document.addEventListener('DOMContentLoaded', function() {
-    // Kurze Verzögerung, um sicherzustellen, dass StartScreen geladen wurde
+/**
+ * Validates if StartScreen object exists and is accessible
+ * @param {Object} startScreen - StartScreen object reference
+ * @returns {boolean} True if valid, false otherwise
+ */
+function validateStartScreen(startScreen) {
+    if (!startScreen) {
+        console.error('StartScreen object not found');
+        return false;
+    }
+    return true;
+}
+
+/**
+ * Attaches touch event handler to StartScreen canvas
+ * @param {Object} startScreen - StartScreen object reference
+ */
+function attachTouchHandler(startScreen) {
+    const touchHandler = createTouchHandler(startScreen);
+    startScreen.canvas.addEventListener('touchstart', touchHandler, { passive: false });
+}
+
+/**
+ * Creates touch event handler function for StartScreen
+ * @param {Object} startScreen - StartScreen object reference
+ * @returns {Function} Touch event handler
+ */
+function createTouchHandler(startScreen) {
+    return function(event) {
+        if (!startScreen.isActive) return;
+        event.preventDefault();
+        
+        const coordinates = calculateTouchCoordinates(event, startScreen);
+        logTouchInfo(coordinates, startScreen);
+        
+        if (isTouchOnPlayButton(coordinates, startScreen)) {
+            handlePlayButtonTouch(startScreen);
+        }
+    };
+}
+
+/**
+ * Calculates scaled touch coordinates relative to canvas
+ * @param {TouchEvent} event - Touch event
+ * @param {Object} startScreen - StartScreen object reference
+ * @returns {Object} Scaled coordinates
+ */
+function calculateTouchCoordinates(event, startScreen) {
+    const rect = startScreen.canvas.getBoundingClientRect();
+    const touch = event.touches[0];
+    const touchX = touch.clientX - rect.left;
+    const touchY = touch.clientY - rect.top;
+    
+    const scaleX = startScreen.canvas.width / rect.width;
+    const scaleY = startScreen.canvas.height / rect.height;
+    
+    return {
+        x: touchX * scaleX,
+        y: touchY * scaleY
+    };
+}
+
+/**
+ * Logs touch information for debugging
+ * @param {Object} coordinates - Touch coordinates
+ * @param {Object} startScreen - StartScreen object reference
+ */
+function logTouchInfo(coordinates, startScreen) {
+    console.log('Touch at:', coordinates.x, coordinates.y);
+    console.log('Button:', startScreen.playButtonX, startScreen.playButtonY, 
+               startScreen.playButtonWidth, startScreen.playButtonHeight);
+}
+
+/**
+ * Checks if touch coordinates are within play button bounds
+ * @param {Object} coordinates - Touch coordinates
+ * @param {Object} startScreen - StartScreen object reference
+ * @returns {boolean} True if touch is on play button
+ */
+function isTouchOnPlayButton(coordinates, startScreen) {
+    return coordinates.x >= startScreen.playButtonX && 
+           coordinates.x <= startScreen.playButtonX + startScreen.playButtonWidth &&
+           coordinates.y >= startScreen.playButtonY && 
+           coordinates.y <= startScreen.playButtonY + startScreen.playButtonHeight;
+}
+
+/**
+ * Handles play button touch event and starts game
+ * @param {Object} startScreen - StartScreen object reference
+ */
+function handlePlayButtonTouch(startScreen) {
+    console.log('Play Button touched! Starting game...');
+    
+    if (typeof startScreen.startGame === 'function') {
+        startScreen.startGame();
+    } else if (window.onStartGame) {
+        window.onStartGame();
+    }
+}
+
+/**
+ * Initialize touch support when DOM is loaded
+ */
+function initializeTouchSupport() {
     setTimeout(addTouchSupportToStartScreen, 500);
-});
+}
+
+document.addEventListener('DOMContentLoaded', initializeTouchSupport);

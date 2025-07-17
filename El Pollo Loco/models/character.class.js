@@ -8,15 +8,13 @@ class Character extends MovableObject {
     showWrongDirectionWarning = false;
     warningStartTime = 0;
     
-    // Combo system
     combo = 0;
-    lastGroundTouch = 0; // Timestamp when character last touched ground
-    wasOnGround = true; // Track if character was on ground
+    lastGroundTouch = 0;
+    wasOnGround = true;
     
-    // Combo grace period system
-    lastComboValue = 0; // Store the last combo value after it ends
-    comboEndTime = 0; // Timestamp when combo ended
-    comboGracePeriod = 2000; // 2 seconds grace period in milliseconds
+    lastComboValue = 0;
+    comboEndTime = 0;
+    comboGracePeriod = 2000;
 
     IMAGES_JUMPING = [
         'img/img_pollo_locco/img/2_character_pepe/3_jump/J-31.png',
@@ -77,95 +75,168 @@ class Character extends MovableObject {
         'img/img_pollo_locco/img/2_character_pepe/5_dead/D-57.png'
     ];
 
-    // Sound management now handled by AudioManager
     isWalkingSoundPlaying = false;
 
     constructor() {
         super().loadImage('img/img_pollo_locco/img/2_character_pepe/1_idle/idle/I-1.png');
         
         console.log('Verifying image loading...');
+        this.loadAllImages();
+        this.applyGravity();
+        this.animate();
+    }
+
+    /**
+     * Loads all character animation images
+     */
+    loadAllImages() {
         this.loadImages(this.IMAGES_IDLE);
         this.loadImages(this.IMAGES_WALKING);
         this.loadImages(this.IMAGES_JUMPING);
         this.loadImages(this.IMAGES_DEAD);
         this.loadImages(this.IMAGES_HURT);
-        
-        this.applyGravity();
-        this.animate();
     }
 
+    /**
+     * Starts all animation loops for character movement and visual updates
+     */
     animate() {
+        this.startMovementLoop();
+        this.startAnimationLoop();
+        this.startIdleAnimationLoop();
+    }
+
+    /**
+     * Handles character movement and input processing
+     */
+    startMovementLoop() {
         setInterval(() => {
             if (!this.world.isPaused && !this.isDead()) {
-                if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
-                    this.moveRight();
-                    this.playWalkingSound();
-                } else if (this.world.keyboard.LEFT && this.x > 0) {
-                    this.moveLeft(true);
-                    this.playWalkingSound();
-                } else if (this.world.keyboard.LEFT && this.x <= 0) {
-                    this.showWrongDirectionWarning = true;
-                    this.warningStartTime = Date.now();
-                    this.stopWalkingSound();
-                } else {
-                    this.stopWalkingSound();
-                }
-                
-                if (this.world.keyboard.UP && !this.isAboveGround()) {
-                    if (this.bottles === 0) {
-                        // Super jump: lower height but faster horizontal movement
-                        this.jump(28); // Reduced from 35 to 28
-                        this.activateSuperJumpSpeed();
-                        console.log("Super jump activated! (no bottles) - lower but faster");
-                    } else {
-                        // Regular jump
-                        this.jump(20);
-                    }
-                }
-
-                this.world.camera_x = -this.x + this.world.canvas.width / 2 - this.width / 2;
+                this.handleHorizontalMovement();
+                this.handleJumping();
+                this.updateCameraPosition();
             } else {
                 this.stopWalkingSound();
             }
         }, 1000 / 32);
+    }
 
+    /**
+     * Handles horizontal movement input and sound effects
+     */
+    handleHorizontalMovement() {
+        if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
+            this.moveRight();
+            this.playWalkingSound();
+        } else if (this.world.keyboard.LEFT && this.x > 0) {
+            this.moveLeft(true);
+            this.playWalkingSound();
+        } else if (this.world.keyboard.LEFT && this.x <= 0) {
+            this.showWrongDirectionWarning = true;
+            this.warningStartTime = Date.now();
+            this.stopWalkingSound();
+        } else {
+            this.stopWalkingSound();
+        }
+    }
+
+    /**
+     * Handles jumping input and jump types
+     */
+    handleJumping() {
+        if (this.world.keyboard.UP && !this.isAboveGround()) {
+            if (this.bottles === 0) {
+                this.jump(28);
+                this.activateSuperJumpSpeed();
+                console.log("Super jump activated! (no bottles) - lower but faster");
+            } else {
+                this.jump(20);
+            }
+        }
+    }
+
+    /**
+     * Updates camera position to follow character
+     */
+    updateCameraPosition() {
+        this.world.camera_x = -this.x + this.world.canvas.width / 2 - this.width / 2;
+    }
+
+    /**
+     * Handles state-based animation playback
+     */
+    startAnimationLoop() {
         setInterval(() => {
             if (!this.world.isPaused) {
-                // Update combo tracking
                 this.updateComboTracking();
-                
-                if (this.isDead()) {
-                    this.playAnimation(this.IMAGES_DEAD);
-                } else if (this.isHurt()) {
-                    this.playAnimation(this.IMAGES_HURT);
-                } else if (this.isAboveGround()) {
-                    this.playAnimation(this.IMAGES_JUMPING);
-                } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
-                    this.playAnimation(this.IMAGES_WALKING);
-                }
+                this.playStateBasedAnimation();
             }
         }, 100);
+    }
 
+    /**
+     * Plays animation based on character state
+     */
+    playStateBasedAnimation() {
+        if (this.isDead()) {
+            this.playAnimation(this.IMAGES_DEAD);
+        } else if (this.isHurt()) {
+            this.playAnimation(this.IMAGES_HURT);
+        } else if (this.isAboveGround()) {
+            this.playAnimation(this.IMAGES_JUMPING);
+        } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
+            this.playAnimation(this.IMAGES_WALKING);
+        }
+    }
+
+    /**
+     * Handles idle animation when no input is detected
+     */
+    startIdleAnimationLoop() {
         setInterval(() => {
-            if (!this.world.isPaused && !this.world.keyboard.RIGHT && !this.world.keyboard.LEFT && 
-                !this.world.keyboard.UP && !this.world.keyboard.DOWN) {
-                
-                let idlePath = this.IMAGES_IDLE[this.currentImage];
-                this.img = this.imageCache[idlePath];
-                this.currentImage++;
-                if (this.currentImage >= this.IMAGES_IDLE.length) {
-                    this.currentImage = 0;
-                }
+            if (this.shouldPlayIdleAnimation()) {
+                this.playIdleFrame();
             }
         }, 1000 / 5);
     }
 
+    /**
+     * Checks if idle animation should be played
+     * @returns {boolean} True if character should play idle animation
+     */
+    shouldPlayIdleAnimation() {
+        return !this.world.isPaused && 
+               !this.world.keyboard.RIGHT && 
+               !this.world.keyboard.LEFT && 
+               !this.world.keyboard.UP && 
+               !this.world.keyboard.DOWN;
+    }
+
+    /**
+     * Plays a single frame of idle animation
+     */
+    playIdleFrame() {
+        let idlePath = this.IMAGES_IDLE[this.currentImage];
+        this.img = this.imageCache[idlePath];
+        this.currentImage++;
+        if (this.currentImage >= this.IMAGES_IDLE.length) {
+            this.currentImage = 0;
+        }
+    }
+
+    /**
+     * Updates and manages wrong direction warning display
+     */
     updateWarning() {
         if (this.showWrongDirectionWarning && Date.now() - this.warningStartTime > 2000) {
             this.showWrongDirectionWarning = false;
         }
     }
 
+    /**
+     * Makes character jump with specified height
+     * @param {number} howhigh - Jump height/speed
+     */
     jump(howhigh) {
         this.speedY = howhigh;
         this.playRandomJumpSound();
@@ -191,10 +262,18 @@ class Character extends MovableObject {
         console.log("Super jump speed boost activated!");
     }
 
+    /**
+     * Checks if character can throw a bottle
+     * @returns {boolean} True if character has bottles available
+     */
     canThrowBottle() {
         return this.bottles > 0;
     }
 
+    /**
+     * Uses a bottle from inventory
+     * @returns {boolean} True if bottle was successfully used
+     */
     useBottle() {
         if (this.bottles > 0) {
             this.bottles--;
@@ -204,24 +283,36 @@ class Character extends MovableObject {
         return false;
     }
 
+    /**
+     * Plays a random jump sound effect
+     */
     playRandomJumpSound() {
         if (this.world && this.world.audioManager) {
             this.world.audioManager.playRandomJumpSound();
         }
     }
 
+    /**
+     * Plays a random chicken attack sound effect
+     */
     playRandomChickenAttackSound() {
         if (this.world && this.world.audioManager) {
             this.world.audioManager.playRandomChickenAttackSound();
         }
     }
 
+    /**
+     * Plays a random hurt sound effect
+     */
     playRandomHurtSound() {
         if (this.world && this.world.audioManager) {
             this.world.audioManager.playRandomHurtSound();
         }
     }
 
+    /**
+     * Plays walking sound if character is on ground and not already playing
+     */
     playWalkingSound() {
         if (!this.isAboveGround() && !this.isWalkingSoundPlaying) {
             if (this.world && this.world.audioManager) {
@@ -235,6 +326,9 @@ class Character extends MovableObject {
         }
     }
 
+    /**
+     * Stops walking sound if currently playing
+     */
     stopWalkingSound() {
         if (this.isWalkingSoundPlaying) {
             if (this.world && this.world.audioManager) {
@@ -244,30 +338,85 @@ class Character extends MovableObject {
         }
     }
 
+    /**
+     * Checks collision with another object
+     * @param {Object} mobject - Object to check collision with
+     * @returns {boolean} True if collision detected
+     */
     isColliding(mobject) {
-        let charLeft = this.x + 20;
-        let charRight = this.x + this.width - 30;
-        let charTop = this.y + 90;
-        let charBottom = this.y + this.height - 10;
-
+        let charBounds = this.getCharacterBounds();
+        
         if (mobject instanceof Coin || mobject instanceof Bottle) {
-            if (mobject instanceof Coin) {
-                return (mobject.x + 60) + (mobject.width - 120) > charLeft &&
-                       (mobject.x + 60) < charRight &&
-                       (mobject.y + 60) + (mobject.height - 120) > charTop &&
-                       (mobject.y + 60) < charBottom;
-            } else if (mobject instanceof Bottle) {
-                return (mobject.x + 15) + (mobject.width - 30) > charLeft &&
-                       (mobject.x + 15) < charRight &&
-                       (mobject.y + 15) + (mobject.height - 30) > charTop &&
-                       (mobject.y + 15) < charBottom;
-            }
+            return this.checkItemCollision(mobject, charBounds);
         }
 
-        return charLeft + (charRight - charLeft) > mobject.x &&
-               charLeft < mobject.x + mobject.width &&
-               charTop + (charBottom - charTop) > mobject.y &&
-               charTop < mobject.y + mobject.height;
+        return this.checkStandardCollision(mobject, charBounds);
+    }
+
+    /**
+     * Gets character collision bounds
+     * @returns {Object} Character bounds object
+     */
+    getCharacterBounds() {
+        return {
+            left: this.x + 20,
+            right: this.x + this.width - 30,
+            top: this.y + 90,
+            bottom: this.y + this.height - 10
+        };
+    }
+
+    /**
+     * Checks collision with collectible items (coins/bottles)
+     * @param {Object} mobject - Item to check collision with
+     * @param {Object} charBounds - Character bounds
+     * @returns {boolean} True if collision detected
+     */
+    checkItemCollision(mobject, charBounds) {
+        if (mobject instanceof Coin) {
+            return this.checkCoinCollision(mobject, charBounds);
+        } else if (mobject instanceof Bottle) {
+            return this.checkBottleCollision(mobject, charBounds);
+        }
+    }
+
+    /**
+     * Checks collision with coin
+     * @param {Coin} coin - Coin to check collision with
+     * @param {Object} charBounds - Character bounds
+     * @returns {boolean} True if collision detected
+     */
+    checkCoinCollision(coin, charBounds) {
+        return (coin.x + 60) + (coin.width - 120) > charBounds.left &&
+               (coin.x + 60) < charBounds.right &&
+               (coin.y + 60) + (coin.height - 120) > charBounds.top &&
+               (coin.y + 60) < charBounds.bottom;
+    }
+
+    /**
+     * Checks collision with bottle
+     * @param {Bottle} bottle - Bottle to check collision with
+     * @param {Object} charBounds - Character bounds
+     * @returns {boolean} True if collision detected
+     */
+    checkBottleCollision(bottle, charBounds) {
+        return (bottle.x + 15) + (bottle.width - 30) > charBounds.left &&
+               (bottle.x + 15) < charBounds.right &&
+               (bottle.y + 15) + (bottle.height - 30) > charBounds.top &&
+               (bottle.y + 15) < charBounds.bottom;
+    }
+
+    /**
+     * Checks standard collision with other objects
+     * @param {Object} mobject - Object to check collision with
+     * @param {Object} charBounds - Character bounds
+     * @returns {boolean} True if collision detected
+     */
+    checkStandardCollision(mobject, charBounds) {
+        return charBounds.left + (charBounds.right - charBounds.left) > mobject.x &&
+               charBounds.left < mobject.x + mobject.width &&
+               charBounds.top + (charBounds.bottom - charBounds.top) > mobject.y &&
+               charBounds.top < mobject.y + mobject.height;
     }
 
     /**

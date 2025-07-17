@@ -1,7 +1,11 @@
+/**
+ * Mini chicken enemy class - smaller and faster variant of regular chicken
+ * @extends Chicken
+ */
 class MiniChicken extends Chicken {
-    speed = 1.5; // Faster than normal chicken
-    height = 50;  // Smaller than normal chicken (80)
-    width = 45;   // Smaller than normal chicken (70)
+    speed = 1.5; 
+    height = 50;  
+    width = 45;   
     originalHeight = 50;
 
     IMAGES_WALKING = [
@@ -14,12 +18,14 @@ class MiniChicken extends Chicken {
         'img/img_pollo_locco/img/3_enemies_chicken/chicken_small/2_dead/dead.png'
     ];
 
+    /**
+     * Creates a new mini chicken instance
+     */
     constructor() {
         super();
         this.loadImage('img/img_pollo_locco/img/3_enemies_chicken/chicken_small/1_walk/1_w.png');
-        // Default spawn position - can be overridden after creation
         this.x = 500 + Math.random() * 3400;
-        this.y = 385; // Slightly lower position for mini chicken
+        this.y = 385; 
         this.originalHeight = this.height;
         this.loadImages(this.IMAGES_WALKING);
         this.loadImages(this.IMAGES_DEAD);

@@ -1,61 +1,98 @@
+/**
+ * Manages particle effects and their lifecycle
+ */
 class ParticleManager {
+    /**
+     * Creates a new particle manager
+     * @param {World} world - Reference to game world
+     */
     constructor(world) {
         this.world = world;
         this.particles = [];
     }
 
     /**
-     * Create damage particles at character position
+     * Creates damage particles at specified position
+     * @param {number} x - X position for particles
+     * @param {number} y - Y position for particles
+     * @param {number} count - Number of particles to create
      */
     createDamageParticles(x, y, count = 8) {
-        for (let i = 0; i < count; i++) {
-            // Add some randomness to spawn position
-            let particleX = x + (Math.random() - 0.5) * 60;
-            let particleY = y + (Math.random() - 0.5) * 40;
-            
-            this.particles.push(new Particle(particleX, particleY, 'damage'));
-        }
+        this.createParticlesOfType(x, y, count, 'damage', 60, 40);
         console.log(`Created ${count} damage particles at (${x}, ${y})`);
     }
 
     /**
-     * Create combo particles (for future use)
+     * Creates combo particles for special effects
+     * @param {number} x - X position for particles
+     * @param {number} y - Y position for particles
+     * @param {number} count - Number of particles to create
      */
     createComboParticles(x, y, count = 5) {
-        for (let i = 0; i < count; i++) {
-            let particleX = x + (Math.random() - 0.5) * 40;
-            let particleY = y + (Math.random() - 0.5) * 30;
-            
-            this.particles.push(new Particle(particleX, particleY, 'combo'));
-        }
+        this.createParticlesOfType(x, y, count, 'combo', 40, 30);
     }
 
     /**
-     * Create dust particles when enemy is killed
+     * Creates dust particles when enemies are killed
+     * @param {number} x - X position for particles
+     * @param {number} y - Y position for particles
+     * @param {number} count - Number of particles to create
      */
     createDustParticles(x, y, count = 12) {
-        for (let i = 0; i < count; i++) {
-            // Dust spreads more horizontally and starts from ground level
-            let particleX = x + (Math.random() - 0.5) * 80; // Wider spread
-            let particleY = y + Math.random() * 20; // Near ground level
-            
-            this.particles.push(new Particle(particleX, particleY, 'dust'));
-        }
+        this.createParticlesOfType(x, y, count, 'dust', 80, 20);
         console.log(`Created ${count} dust particles at (${x}, ${y})`);
     }
 
     /**
-     * Update all particles
+     * Generic method to create particles of any type
+     * @param {number} x - Base X position
+     * @param {number} y - Base Y position
+     * @param {number} count - Number of particles
+     * @param {string} type - Particle type
+     * @param {number} spreadX - Horizontal spread range
+     * @param {number} spreadY - Vertical spread range
+     */
+    createParticlesOfType(x, y, count, type, spreadX, spreadY) {
+        for (let i = 0; i < count; i++) {
+            let particlePos = this.calculateParticlePosition(x, y, type, spreadX, spreadY);
+            this.particles.push(new Particle(particlePos.x, particlePos.y, type));
+        }
+    }
+
+    /**
+     * Calculates individual particle position with randomness
+     * @param {number} baseX - Base X position
+     * @param {number} baseY - Base Y position
+     * @param {string} type - Particle type
+     * @param {number} spreadX - Horizontal spread
+     * @param {number} spreadY - Vertical spread
+     * @returns {Object} Particle position {x, y}
+     */
+    calculateParticlePosition(baseX, baseY, type, spreadX, spreadY) {
+        if (type === 'dust') {
+            return {
+                x: baseX + (Math.random() - 0.5) * spreadX,
+                y: baseY + Math.random() * spreadY
+            };
+        } else {
+            return {
+                x: baseX + (Math.random() - 0.5) * spreadX,
+                y: baseY + (Math.random() - 0.5) * spreadY
+            };
+        }
+    }
+
+    /**
+     * Updates all particles and removes expired ones
      */
     update() {
-        // Update particles and remove dead ones
         this.particles = this.particles.filter(particle => {
-            return !particle.update(); // Keep particles that return false (still alive)
+            return !particle.update();
         });
     }
 
     /**
-     * Draw all particles
+     * Renders all active particles
      */
     draw() {
         this.particles.forEach(particle => {
@@ -64,14 +101,15 @@ class ParticleManager {
     }
 
     /**
-     * Get particle count (for debugging)
+     * Gets current particle count for debugging
+     * @returns {number} Number of active particles
      */
     getParticleCount() {
         return this.particles.length;
     }
 
     /**
-     * Clear all particles
+     * Removes all particles immediately
      */
     clear() {
         this.particles = [];

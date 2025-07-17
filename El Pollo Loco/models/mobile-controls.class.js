@@ -1,4 +1,12 @@
+/**
+ * Mobile touch controls for game interaction
+ */
 class MobileControls {
+    /**
+     * Creates mobile controls system
+     * @param {HTMLCanvasElement} canvas - Game canvas
+     * @param {CanvasRenderingContext2D} ctx - Canvas rendering context
+     */
     constructor(canvas, ctx) {
         this.canvas = canvas;
         this.ctx = ctx;
@@ -6,81 +14,131 @@ class MobileControls {
         this.isMobile = this.detectMobile();
         this.isLandscape = window.innerWidth > window.innerHeight;
         
+        this.initializeControls();
+        this.setupResizeListener();
+    }
+
+    /**
+     * Initializes mobile controls if on mobile device
+     */
+    initializeControls() {
         if (this.isMobile) {
             this.setupButtons();
             this.setupEventListeners();
         }
-        
-        // Listen for window resize to show/hide controls dynamically
+    }
+
+    /**
+     * Sets up resize listener for dynamic control management
+     */
+    setupResizeListener() {
         window.addEventListener('resize', () => {
             this.updateMobileDetection();
         });
     }
 
+    /**
+     * Updates mobile detection state on resize
+     */
     updateMobileDetection() {
         const wasMobile = this.isMobile;
         this.isMobile = this.detectMobile();
         
-        // If mobile state changed, setup or remove controls
         if (!wasMobile && this.isMobile) {
-            // Controls should now be shown
             this.setupButtons();
             this.setupEventListeners();
         } else if (wasMobile && !this.isMobile) {
-            // Controls should now be hidden
             this.buttons = [];
         }
     }
 
+    /**
+     * Detects if device should show mobile controls
+     * @returns {boolean} True if mobile controls should be shown
+     */
     detectMobile() {
-        // Show controls only on mobile devices OR small screens (tablet/mobile size)
         const isMobileDevice = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        const isSmallScreen = window.innerWidth <= 1024; // Show only on screens smaller than desktop size
+        const isSmallScreen = window.innerWidth <= 1024;
         
         return isMobileDevice || isSmallScreen;
     }
 
+    /**
+     * Sets up button layout and styling
+     */
     setupButtons() {
         const canvasWidth = this.canvas.width;
         const canvasHeight = this.canvas.height;
         
-        // Adjust button size based on screen type
-        const isTabletSize = window.innerWidth >= 768 && window.innerWidth <= 1024;
-        const isActualMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
+        const styling = this.getButtonStyling();
+        const positions = this.calculateButtonPositions(canvasWidth, canvasHeight, styling);
         
-        // Button styling - slightly larger for tablets, standard for mobile
-        const buttonStyle = {
-            width: isTabletSize ? 70 : 60,
-            height: isTabletSize ? 70 : 60,
-            radius: 15,
-            color: '#FF6B35',
-            borderColor: '#FFF700',
-            textColor: 'white',
-            font: isTabletSize ? 'bold 16px Comic Sans MS' : 'bold 14px Comic Sans MS'
+        this.createMovementButtons(positions, styling);
+        this.createActionButtons(positions, styling, canvasWidth, canvasHeight);
+    }
+
+    /**
+     * Gets button styling based on screen size
+     * @returns {Object} Button styling configuration
+     */
+    getButtonStyling() {
+        const isTabletSize = window.innerWidth >= 768 && window.innerWidth <= 1024;
+        
+        return {
+            isTabletSize,
+            buttonStyle: {
+                width: isTabletSize ? 70 : 60,
+                height: isTabletSize ? 70 : 60,
+                radius: 15,
+                color: '#FF6B35',
+                borderColor: '#FFF700',
+                textColor: 'white',
+                font: isTabletSize ? 'bold 16px Comic Sans MS' : 'bold 14px Comic Sans MS'
+            },
+            actionButtonStyle: {
+                width: isTabletSize ? 90 : 80,
+                height: isTabletSize ? 60 : 50,
+                radius: 15,
+                color: '#FF6B35',
+                borderColor: '#FFF700',
+                textColor: 'white',
+                font: isTabletSize ? 'bold 14px Comic Sans MS' : 'bold 12px Comic Sans MS'
+            }
         };
+    }
 
-        const actionButtonStyle = {
-            width: isTabletSize ? 90 : 80,
-            height: isTabletSize ? 60 : 50,
-            radius: 15,
-            color: '#FF6B35',
-            borderColor: '#FFF700',
-            textColor: 'white',
-            font: isTabletSize ? 'bold 14px Comic Sans MS' : 'bold 12px Comic Sans MS'
+    /**
+     * Calculates button positions based on screen size
+     * @param {number} canvasWidth - Canvas width
+     * @param {number} canvasHeight - Canvas height
+     * @param {Object} styling - Button styling configuration
+     * @returns {Object} Position configuration
+     */
+    calculateButtonPositions(canvasWidth, canvasHeight, styling) {
+        const { isTabletSize } = styling;
+        
+        return {
+            margin: isTabletSize ? 40 : 30,
+            buttonSpacing: isTabletSize ? 100 : 80,
+            actionButtonOffset: isTabletSize ? 90 : 80,
+            actionTopOffset: isTabletSize ? 140 : 120,
+            actionBottomOffset: isTabletSize ? 70 : 60
         };
+    }
 
-        // Adjust margins and spacing based on screen size
-        const margin = isTabletSize ? 40 : 30;
-        const buttonSpacing = isTabletSize ? 100 : 80;
-        const actionButtonOffset = isTabletSize ? 90 : 80;
-        const actionTopOffset = isTabletSize ? 140 : 120;
-        const actionBottomOffset = isTabletSize ? 70 : 60;
-
-        // Movement buttons (left side)
+    /**
+     * Creates movement control buttons
+     * @param {Object} positions - Position configuration
+     * @param {Object} styling - Button styling
+     */
+    createMovementButtons(positions, styling) {
+        const { margin, buttonSpacing } = positions;
+        const { buttonStyle } = styling;
+        
         this.buttons.push({
             id: 'left',
             x: margin,
-            y: canvasHeight - buttonSpacing,
+            y: this.canvas.height - buttonSpacing,
             ...buttonStyle,
             text: '◀',
             key: 'LEFT'
@@ -89,13 +147,24 @@ class MobileControls {
         this.buttons.push({
             id: 'right',
             x: margin + buttonSpacing,
-            y: canvasHeight - buttonSpacing,
+            y: this.canvas.height - buttonSpacing,
             ...buttonStyle,
             text: '▶',
             key: 'RIGHT'
         });
+    }
 
-        // Action buttons (right side)
+    /**
+     * Creates action control buttons
+     * @param {Object} positions - Position configuration
+     * @param {Object} styling - Button styling
+     * @param {number} canvasWidth - Canvas width
+     * @param {number} canvasHeight - Canvas height
+     */
+    createActionButtons(positions, styling, canvasWidth, canvasHeight) {
+        const { margin, actionButtonOffset, actionTopOffset, actionBottomOffset } = positions;
+        const { actionButtonStyle } = styling;
+
         this.buttons.push({
             id: 'jump',
             x: canvasWidth - margin - actionButtonOffset,

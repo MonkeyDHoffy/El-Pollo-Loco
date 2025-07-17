@@ -1,24 +1,52 @@
+/**
+ * Start screen with interactive play button and background
+ */
 class StartScreen {
+    /**
+     * Creates a new start screen
+     * @param {HTMLCanvasElement} canvas - Game canvas
+     * @param {CanvasRenderingContext2D} ctx - Canvas rendering context
+     */
     constructor(canvas, ctx) {
         this.canvas = canvas;
         this.ctx = ctx;
         this.isActive = true;
-        this.startImage = new Image();
-        this.startImage.src = 'img/img_pollo_locco/img/9_intro_outro_screens/start/startscreen_1.png';
         this.imageLoaded = false;
         
-        // Play button properties
-        this.playButtonX = canvas.width / 2 - 100; // Center - half button width
-        this.playButtonY = 60; // Moved higher up since no title
+        this.initializeButton();
+        this.initializeAnimation();
+        this.loadBackgroundImage();
+        this.setupEventListeners();
+        
+        console.log('[StartScreen] Initialized');
+    }
+
+    /**
+     * Sets up play button properties
+     */
+    initializeButton() {
+        this.playButtonX = this.canvas.width / 2 - 100;
+        this.playButtonY = 60;
         this.playButtonWidth = 200;
         this.playButtonHeight = 60;
         this.playButtonHovered = false;
-        
-        // Animation properties
+    }
+
+    /**
+     * Sets up animation properties
+     */
+    initializeAnimation() {
         this.pulseValue = 0;
         this.glowIntensity = 0.5;
+    }
+
+    /**
+     * Loads the background image
+     */
+    loadBackgroundImage() {
+        this.startImage = new Image();
+        this.startImage.src = 'img/img_pollo_locco/img/9_intro_outro_screens/start/startscreen_1.png';
         
-        // Load image
         this.startImage.onload = () => {
             this.imageLoaded = true;
             console.log('[StartScreen] Background image loaded');
@@ -28,93 +56,54 @@ class StartScreen {
             console.warn('[StartScreen] Could not load background image');
             this.imageLoaded = false;
         };
-        
-        // Bind event listeners
-        this.setupEventListeners();
-        
-        console.log('[StartScreen] Initialized');
     }
     
     /**
-     * Set up mouse, touch and keyboard event listeners
+     * Sets up all event listeners for user interaction
      */
     setupEventListeners() {
-        // Mouse move for button hover
+        this.createMouseHandlers();
+        this.createTouchHandlers();
+        this.createKeyboardHandlers();
+        this.attachEventListeners();
+    }
+
+    /**
+     * Creates mouse event handlers
+     */
+    createMouseHandlers() {
         this.onMouseMove = (event) => {
             if (!this.isActive) return;
             
-            let rect = this.canvas.getBoundingClientRect();
-            let mouseX = event.clientX - rect.left;
-            let mouseY = event.clientY - rect.top;
-            
-            // Scale mouse position based on canvas scaling
-            mouseX = mouseX * (this.canvas.width / rect.width);
-            mouseY = mouseY * (this.canvas.height / rect.height);
-            
-            // Check if mouse is over play button
-            this.playButtonHovered = (
-                mouseX >= this.playButtonX &&
-                mouseX <= this.playButtonX + this.playButtonWidth &&
-                mouseY >= this.playButtonY &&
-                mouseY <= this.playButtonY + this.playButtonHeight
-            );
-            
-            // Change cursor
-            this.canvas.style.cursor = this.playButtonHovered ? 'pointer' : 'default';
+            let mousePos = this.getMousePosition(event);
+            this.updateButtonHover(mousePos.x, mousePos.y);
         };
         
-        // Mouse click for button
         this.onMouseClick = (event) => {
             if (!this.isActive) return;
             
-            let rect = this.canvas.getBoundingClientRect();
-            let mouseX = event.clientX - rect.left;
-            let mouseY = event.clientY - rect.top;
-            
-            // Scale mouse position based on canvas scaling
-            mouseX = mouseX * (this.canvas.width / rect.width);
-            mouseY = mouseY * (this.canvas.height / rect.height);
-            
-            // Check if click is on play button
-            if (mouseX >= this.playButtonX &&
-                mouseX <= this.playButtonX + this.playButtonWidth &&
-                mouseY >= this.playButtonY &&
-                mouseY <= this.playButtonY + this.playButtonHeight) {
-                this.startGame();
-            }
+            let mousePos = this.getMousePosition(event);
+            this.handleButtonClick(mousePos.x, mousePos.y);
         };
-        
-        // Touch event for button tap
+    }
+
+    /**
+     * Creates touch event handlers
+     */
+    createTouchHandlers() {
         this.onTouchStart = (event) => {
             if (!this.isActive) return;
             
-            // Prevent default to stop scrolling/zooming
             event.preventDefault();
-            
-            let rect = this.canvas.getBoundingClientRect();
-            let touch = event.touches[0];
-            let touchX = touch.clientX - rect.left;
-            let touchY = touch.clientY - rect.top;
-            
-            // Scale touch position based on canvas scaling
-            touchX = touchX * (this.canvas.width / rect.width);
-            touchY = touchY * (this.canvas.height / rect.height);
-            
-            console.log('[StartScreen] Touch at:', touchX, touchY);
-            console.log('[StartScreen] Button:', this.playButtonX, this.playButtonY, 
-                       this.playButtonWidth, this.playButtonHeight);
-            
-            // Check if touch is on play button
-            if (touchX >= this.playButtonX &&
-                touchX <= this.playButtonX + this.playButtonWidth &&
-                touchY >= this.playButtonY &&
-                touchY <= this.playButtonY + this.playButtonHeight) {
-                console.log('[StartScreen] Play button touched!');
-                this.startGame();
-            }
+            let touchPos = this.getTouchPosition(event);
+            this.handleButtonClick(touchPos.x, touchPos.y);
         };
-        
-        // Keyboard event for spacebar
+    }
+
+    /**
+     * Creates keyboard event handlers
+     */
+    createKeyboardHandlers() {
         this.onKeyDown = (event) => {
             if (!this.isActive) return;
             
@@ -123,12 +112,84 @@ class StartScreen {
                 this.startGame();
             }
         };
-        
-        // Add event listeners
+    }
+
+    /**
+     * Attaches all event listeners to DOM elements
+     */
+    attachEventListeners() {
         this.canvas.addEventListener('mousemove', this.onMouseMove);
         this.canvas.addEventListener('click', this.onMouseClick);
         this.canvas.addEventListener('touchstart', this.onTouchStart, { passive: false });
         document.addEventListener('keydown', this.onKeyDown);
+    }
+
+    /**
+     * Gets scaled mouse position relative to canvas
+     * @param {MouseEvent} event - Mouse event
+     * @returns {Object} Scaled mouse coordinates
+     */
+    getMousePosition(event) {
+        let rect = this.canvas.getBoundingClientRect();
+        let mouseX = event.clientX - rect.left;
+        let mouseY = event.clientY - rect.top;
+        
+        return {
+            x: mouseX * (this.canvas.width / rect.width),
+            y: mouseY * (this.canvas.height / rect.height)
+        };
+    }
+
+    /**
+     * Gets scaled touch position relative to canvas
+     * @param {TouchEvent} event - Touch event
+     * @returns {Object} Scaled touch coordinates
+     */
+    getTouchPosition(event) {
+        let rect = this.canvas.getBoundingClientRect();
+        let touch = event.touches[0];
+        let touchX = touch.clientX - rect.left;
+        let touchY = touch.clientY - rect.top;
+        
+        return {
+            x: touchX * (this.canvas.width / rect.width),
+            y: touchY * (this.canvas.height / rect.height)
+        };
+    }
+
+    /**
+     * Updates button hover state based on mouse position
+     * @param {number} x - Mouse x position
+     * @param {number} y - Mouse y position
+     */
+    updateButtonHover(x, y) {
+        this.playButtonHovered = this.isPointInButton(x, y);
+        this.canvas.style.cursor = this.playButtonHovered ? 'pointer' : 'default';
+    }
+
+    /**
+     * Handles button click if click is within button bounds
+     * @param {number} x - Click x position
+     * @param {number} y - Click y position
+     */
+    handleButtonClick(x, y) {
+        if (this.isPointInButton(x, y)) {
+            console.log('[StartScreen] Play button clicked!');
+            this.startGame();
+        }
+    }
+
+    /**
+     * Checks if a point is within button bounds
+     * @param {number} x - Point x position
+     * @param {number} y - Point y position
+     * @returns {boolean} True if point is in button
+     */
+    isPointInButton(x, y) {
+        return x >= this.playButtonX &&
+               x <= this.playButtonX + this.playButtonWidth &&
+               y >= this.playButtonY &&
+               y <= this.playButtonY + this.playButtonHeight;
     }
     
     /**
