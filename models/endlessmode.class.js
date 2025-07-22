@@ -147,7 +147,7 @@ class EndlessMode {
         let spawnRange = this.config.spawnAreaEnd - this.config.spawnAreaStart;
         
         newEnemy.x = this.config.spawnAreaStart + Math.random() * spawnRange;
-        newEnemy.y = enemyType === MiniChicken ? 395 : 376;
+        newEnemy.y = enemyType === MiniChicken ? 395 : 370;
         
         return newEnemy;
     }

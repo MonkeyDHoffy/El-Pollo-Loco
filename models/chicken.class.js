@@ -27,7 +27,7 @@ class Chicken extends MovableObject {
      */
     initializePosition() {
         this.x = 400 + Math.random() * 3600;
-        this.y = 376;
+        this.y = 370;
         this.originalHeight = this.height;
     }
 
