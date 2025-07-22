@@ -45,6 +45,7 @@ class Keyboard {
                 break;
             case 'ArrowDown':
                 this.DOWN = true;
+                this.SPACE = true; // Pfeiltaste nach unten wirft auch Flaschen
                 break;
             case 'Space':
                 this.SPACE = true;
@@ -69,6 +70,7 @@ class Keyboard {
                 break;
             case 'ArrowDown':
                 this.DOWN = false;
+                this.SPACE = false; // Pfeiltaste nach unten hört auf Flaschen zu werfen
                 break;
             case 'Space':
                 this.SPACE = false;

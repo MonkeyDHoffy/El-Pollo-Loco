@@ -581,15 +581,26 @@ class UIManager {
         this.roundRect(this.world.ctx, button.x, button.y, button.width, button.height, 5);
         this.world.ctx.stroke();
         
-        // Button text
+        // Button text - größeres Icon für Mute Button
         this.world.ctx.fillStyle = 'white';
-        this.world.ctx.font = 'bold 10px Arial';
         this.world.ctx.textAlign = 'center';
-        this.world.ctx.fillText(
-            button.text,
-            button.x + button.width / 2,
-            button.y + button.height / 2 + 3
-        );
+        
+        // Spezielle Behandlung für Mute Button (größeres Icon)
+        if (button.text === '🔇' || button.text === '🔊') {
+            this.world.ctx.font = 'bold 20px Arial';  // Größere Schrift für Mute-Icons
+            this.world.ctx.fillText(
+                button.text,
+                button.x + button.width / 2,
+                button.y + button.height / 2 + 6  // 5px weiter unten für Mute-Icon
+            );
+        } else {
+            this.world.ctx.font = 'bold 10px Arial';  // Normale Schrift für andere Buttons
+            this.world.ctx.fillText(
+                button.text,
+                button.x + button.width / 2,
+                button.y + button.height / 2 + 3  // Normale Position für andere Buttons
+            );
+        }
     }
 
     /**
@@ -642,8 +653,17 @@ class UIManager {
             }
         };
         
+        // Escape key event listener for pause/resume
+        this.onKeyDown = (event) => {
+            if (event.key === 'Escape' || event.keyCode === 27) {
+                event.preventDefault();
+                this.handlePauseButton();
+            }
+        };
+        
         this.world.canvas.addEventListener('click', this.onCanvasClick);
         this.world.canvas.addEventListener('touchstart', this.onTouchStart, { passive: false });
+        document.addEventListener('keydown', this.onKeyDown);
     }
 
     /**
@@ -711,6 +731,9 @@ class UIManager {
         }
         if (this.onTouchStart) {
             this.world.canvas.removeEventListener('touchstart', this.onTouchStart);
+        }
+        if (this.onKeyDown) {
+            document.removeEventListener('keydown', this.onKeyDown);
         }
     }
 }
