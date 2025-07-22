@@ -3,7 +3,7 @@
  * @extends Chicken
  */
 class MiniChicken extends Chicken {
-    speed = 1.5; 
+    speed = 1.8; // Increased by 20% from 1.5 
     height = 50;  
     width = 45;   
     originalHeight = 50;
