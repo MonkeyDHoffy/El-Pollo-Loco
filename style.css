@@ -619,6 +619,13 @@ canvas:hover {
     font-size: 14px;
 }
 
+/* Hide impressum footer at screen heights of 740px and below */
+@media screen and (max-height: 740px) {
+    .impressum-footer {
+        display: none;
+    }
+}
+
 /* Impressum Page Styles */
 .impressum-page {
     background: linear-gradient(to bottom, #87ceeb 40%, #bfa16b 70%, #994409 100%);

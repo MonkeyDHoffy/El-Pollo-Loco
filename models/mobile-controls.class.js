@@ -119,10 +119,10 @@ class MobileControls {
         
         return {
             margin: isTabletSize ? 40 : 30,
-            buttonSpacing: isTabletSize ? 100 : 80,
+            buttonSpacing: isTabletSize ? 140 : 120, // Increased horizontal spacing between left/right buttons
             actionButtonOffset: isTabletSize ? 90 : 80,
-            actionTopOffset: isTabletSize ? 160 : 140, // Increased spacing between buttons
-            actionBottomOffset: isTabletSize ? 70 : 60
+            actionTopOffset: isTabletSize ? 220 : 200, // Much more spacing for jump button
+            actionBottomOffset: isTabletSize ? 100 : 80 // More spacing for throw button
         };
     }
 
@@ -384,8 +384,8 @@ class MobileControls {
         // Save context
         ctx.save();
         
-        // Set global alpha for 75% transparency
-        ctx.globalAlpha = 0.25;
+        // Set global alpha for 40% transparency (15% more visible than before)
+        ctx.globalAlpha = 0.40;
         
         // Button background
     let gradient = ctx.createLinearGradient(
@@ -456,7 +456,7 @@ class MobileControls {
         
         // Adjust margins based on screen size
     let margin = isTabletSize ? 40 : 30;
-    let buttonSpacing = isTabletSize ? 100 : 80;
+    let buttonSpacing = isTabletSize ? 140 : 120; // Increased horizontal spacing
         
         // Update positions
         this.buttons.forEach(button => {
@@ -471,12 +471,12 @@ class MobileControls {
                     break;
                 case 'jump':
                     button.x = canvasWidth - margin - (isTabletSize ? 90 : 80);
-                    button.y = canvasHeight - (isTabletSize ? 140 : 120);
+                    button.y = canvasHeight - (isTabletSize ? 220 : 200); // Much more spacing
                     button.key = 'UP'; // Ensure key is correct
                     break;
                 case 'throw':
                     button.x = canvasWidth - margin - (isTabletSize ? 90 : 80);
-                    button.y = canvasHeight - (isTabletSize ? 70 : 60);
+                    button.y = canvasHeight - (isTabletSize ? 100 : 80); // More spacing
                     button.key = 'SPACE'; // Ensure key is correct
                     break;
             }
