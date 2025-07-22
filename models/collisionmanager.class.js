@@ -368,9 +368,9 @@ class CollisionManager {
         this.world.audioManager.playGlassBreakSound();
         
         if (enemy instanceof MiniChicken) {
-            this.world.totalScore += 10;
+            this.world.totalScore += 15;
         } else if (enemy instanceof Chicken) {
-            this.world.totalScore += 20;
+            this.world.totalScore += 25;
         }
         
         // Notify endless mode about enemy kill
@@ -457,7 +457,7 @@ class CollisionManager {
      * @param {Endboss} endboss - Endboss that died
      */
     handleEndbossDeath(endboss) {
-        this.world.totalScore += 50;
+        this.world.totalScore += 60;
         this.world.endlessMode.onEndbossKilled(endboss);    
         setTimeout(() => {
             let bossIdx = this.world.level.endboss.indexOf(endboss);

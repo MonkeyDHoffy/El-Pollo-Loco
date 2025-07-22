@@ -21,7 +21,6 @@ class World {
     lastThrowTime = 0;
     totalScore = 0;
     coinScore = 0;
-    
     audioManager;
     collisionManager;
     uiManager;
@@ -33,7 +32,6 @@ class World {
         this.ctx = canvas.getContext("2d");
         this.canvas = canvas;
         this.keyboard = keyboard;
-        
         this.initializeLevel();
         this.initializeUI();
         this.initializeCharacter();
@@ -48,8 +46,7 @@ class World {
         this.level = level1;
         this.enemies = level1.enemies;
         this.clouds = level1.clouds;
-        this.backgroundObjects = level1.backgroundObjects;
-        
+        this.backgroundObjects = level1.backgroundObjects;   
         this.totalCoinsInLevel = this.level.coins.length;
         this.totalBottlesInLevel = this.level.bottles.length;
     }
@@ -178,14 +175,12 @@ class World {
      * Toggles game pause state and background music
      */
     togglePause() {
-        this.isPaused = !this.isPaused;
-        
+        this.isPaused = !this.isPaused;   
         if (this.isPaused) {
             this.audioManager.pauseBackgroundMusic();
         } else {
             this.audioManager.resumeBackgroundMusic();
         }
-        
         console.log('Game paused:', this.isPaused);
     }
 
@@ -224,15 +219,12 @@ class World {
         if (!this.character.canThrowBottle()) {
             return;
         }
-        
         if (!this.checkThrowTiming()) {
             return;
-        }
-        
+        }     
         if (!this.character.useBottle()) {
             return;
         }
-        
         this.createAndThrowBottle();
     }
 
@@ -253,14 +245,11 @@ class World {
      * Creates and throws a bottle in the appropriate direction
      */
     createAndThrowBottle() {
-        this.bottlestatusbar.setBottleCount(this.character.bottles);
-        
+        this.bottlestatusbar.setBottleCount(this.character.bottles);  
         let { throwX, throwDirection } = this.calculateThrowPosition();
         let throwY = this.character.y + 100;
-        
         let bottle = new ThrowableObject(throwX, throwY, throwDirection);
-        this.throwableObjects.push(bottle);
-        
+        this.throwableObjects.push(bottle);  
         this.audioManager.playThrowSound();
     }
 
@@ -355,8 +344,7 @@ class World {
     drawMobileControls() {
         if (window.mobileControls) {
             window.mobileControls.draw();
-        }
-        
+        }      
         if (gameOver && gameOver.isGameOverActive()) {
             gameOver.draw();
         }
@@ -442,10 +430,8 @@ class World {
         if(mobject.otherDirection) {
             this.flipImage(mobject);
         }
-
         mobject.draw(this.ctx);
-        mobject.drawFrame(this.ctx);
-      
+        mobject.drawFrame(this.ctx);   
         if(mobject.otherDirection) {
             this.flipImageBack(mobject);
         }
