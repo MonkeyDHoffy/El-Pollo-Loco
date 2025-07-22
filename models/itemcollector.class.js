@@ -75,8 +75,6 @@ class ItemCollector {
      */
     logCoinCollection() {
         let collectedPercentage = (this.world.character.coins / this.world.totalCoinsInLevel) * 100;
-        console.log('Münze gesammelt! Score:', this.world.coinScore);
-        console.log(`Coins gesammelt: ${this.world.character.coins}/${this.world.totalCoinsInLevel} (${Math.round(collectedPercentage)}%)`);
     }
 
     /**
@@ -94,8 +92,6 @@ class ItemCollector {
     handleAllCoinsCollected() {
         this.world.character.energy = 100;
         this.world.statusbar.setPercentage(this.world.character.energy);
-        console.log('Alle Münzen gesammelt! Energie vollständig wiederhergestellt!');
-        
         setTimeout(() => {
             this.respawnAllCoins();
         }, 1000);
@@ -106,21 +102,12 @@ class ItemCollector {
      */
     collectBottle(bottle, index) {
         if (this.world.character.bottles >= 10) {
-            console.log('Maximum bottles reached! Cannot collect more.');
             return;
         }
-        
         this.world.level.bottles.splice(index, 1);
         this.world.character.bottles += 1; 
-        
         this.world.bottlestatusbar.setBottleCount(this.world.character.bottles);
-        
         this.world.audioManager.playRandomBottleCollectingSound();
-        
-        console.log('Flasche gesammelt! Bottles:', this.world.character.bottles);
-        console.log(`Bottles gesammelt: ${this.world.character.bottles}/10`);
-        
-        // Spawn new bottle immediately when one is collected (if enabled and under limit)
         if (this.config.enableBottleRespawn && this.world.level.bottles.length < this.config.maxBottlesInLevel) {
             this.spawnNewBottle();
         }
@@ -130,75 +117,43 @@ class ItemCollector {
      * Spawn a new bottle at a random location
      */
     spawnNewBottle() {
-        // Create new bottle
         let newBottle = new Bottle();
-        
-        // Random spawn location - spread across the level (only X-axis)
-        let spawnX = 300 + Math.random() * 4200; // Between 300 and 4500
+        let spawnX = 300 + Math.random() * 4200; 
         newBottle.x = spawnX;
-        newBottle.y = 350; // Fixed Y position on ground (same as original bottles)
-        
-        // Update originalX for parallax effect
+        newBottle.y = 350; 
         newBottle.originalX = newBottle.x;
-        
-        // Add to bottles array
         this.world.level.bottles.push(newBottle);
-        
-        console.log(`[ItemCollector] New bottle spawned at x: ${Math.round(newBottle.x)}, y: ${Math.round(newBottle.y)} (ground level)`);
     }
 
     /**
      * Spawn a new coin at a random location (for future use)
      */
     spawnNewCoin() {
-        // Create new coin
         let newCoin = new Coin();
-        
-        // Random spawn location - spread across the level
-        let spawnX = 300 + Math.random() * 4075; // Same as original coin spawn range
+        let spawnX = 300 + Math.random() * 4075;
         newCoin.x = spawnX;
-        newCoin.y = 50 + Math.random() * 200; // Random height
-        
-        // Set base positions for oscillation
+        newCoin.y = 50 + Math.random() * 200;
         newCoin.baseX = newCoin.x;
         newCoin.baseY = newCoin.y;
-        
-        // Random vertical movement
         newCoin.hasVerticalMovement = Math.random() < 0.5;
         newCoin.oscillationTime = Math.random() * Math.PI * 2;
-        
-        // Add to coins array
         this.world.level.coins.push(newCoin);
-        
-        console.log(`[ItemCollector] New coin spawned at x: ${Math.round(newCoin.x)}, y: ${Math.round(newCoin.y)}`);
     }
 
     /**
      * Respawn all coins when all have been collected
      */
     respawnAllCoins() {
-        // Clear existing coins (should be empty anyway)
         this.world.level.coins = [];
-        
-        // Reset coin counter
         this.world.character.coins = 0;
         this.world.coinScore = 0;
-        
-        // Spawn the original amount of coins (same as level start)
         let coinsToSpawn = this.world.totalCoinsInLevel;
-        
         for (let i = 0; i < coinsToSpawn; i++) {
             this.spawnNewCoin();
         }
-        
-        // Update UI to reflect the reset
         this.world.coinstatusbar.setPercentage(0);
         this.world.coinstatusbar.setCoinCount(0);
-        
-        // Play respawn sound
         this.world.audioManager.playCoinRespawnSound();
-        
-        console.log(`[ItemCollector] All ${coinsToSpawn} coins respawned! Coin counter reset.`);
     }
 
     /**
@@ -235,13 +190,9 @@ class ItemCollector {
         this.world.character.coins = 0;
         this.world.character.bottles = 0;
         this.world.totalScore = 0;
-        
-        // Update UI
         this.world.coinstatusbar.setPercentage(0);
         this.world.coinstatusbar.setCoinCount(0);
         this.world.bottlestatusbar.setBottleCount(0);
-        
-        console.log('Collection stats reset');
     }
 
     /**
@@ -249,7 +200,6 @@ class ItemCollector {
      */
     updateConfig(newConfig) {
         this.config = { ...this.config, ...newConfig };
-        console.log('[ItemCollector] Configuration updated:', this.config);
     }
 
     /**
@@ -257,7 +207,6 @@ class ItemCollector {
      */
     setBottleRespawn(enabled) {
         this.config.enableBottleRespawn = enabled;
-        console.log(`[ItemCollector] Bottle respawn ${enabled ? 'enabled' : 'disabled'}`);
     }
 
     /**
@@ -265,7 +214,6 @@ class ItemCollector {
      */
     setCoinRespawn(enabled) {
         this.config.enableCoinRespawn = enabled;
-        console.log(`[ItemCollector] Coin respawn ${enabled ? 'enabled' : 'disabled'}`);
     }
 
     /**

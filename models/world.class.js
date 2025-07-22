@@ -222,7 +222,6 @@ class World {
      */
     handleBottleThrow() {
         if (!this.character.canThrowBottle()) {
-            console.log("No bottles available to throw!");
             return;
         }
         

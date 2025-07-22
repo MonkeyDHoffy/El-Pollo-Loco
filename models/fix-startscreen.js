@@ -11,10 +11,7 @@ function addTouchSupportToStartScreen() {
     if (!validateStartScreen(startScreen)) {
         return;
     }
-    
-    console.log('Adding touch support to StartScreen');
     attachTouchHandler(startScreen);
-    console.log('Touch support added successfully');
 }
 
 /**
@@ -24,7 +21,6 @@ function addTouchSupportToStartScreen() {
  */
 function validateStartScreen(startScreen) {
     if (!startScreen) {
-        console.error('StartScreen object not found');
         return false;
     }
     return true;
@@ -50,8 +46,6 @@ function createTouchHandler(startScreen) {
         event.preventDefault();
         
     let coordinates = calculateTouchCoordinates(event, startScreen);
-        logTouchInfo(coordinates, startScreen);
-        
         if (isTouchOnPlayButton(coordinates, startScreen)) {
             handlePlayButtonTouch(startScreen);
         }
@@ -69,25 +63,12 @@ function calculateTouchCoordinates(event, startScreen) {
     let touch = event.touches[0];
     let touchX = touch.clientX - rect.left;
     let touchY = touch.clientY - rect.top;
-    
     let scaleX = startScreen.canvas.width / rect.width;
     let scaleY = startScreen.canvas.height / rect.height;
-    
     return {
         x: touchX * scaleX,
         y: touchY * scaleY
     };
-}
-
-/**
- * Logs touch information for debugging
- * @param {Object} coordinates - Touch coordinates
- * @param {Object} startScreen - StartScreen object reference
- */
-function logTouchInfo(coordinates, startScreen) {
-    console.log('Touch at:', coordinates.x, coordinates.y);
-    console.log('Button:', startScreen.playButtonX, startScreen.playButtonY, 
-               startScreen.playButtonWidth, startScreen.playButtonHeight);
 }
 
 /**
@@ -108,8 +89,6 @@ function isTouchOnPlayButton(coordinates, startScreen) {
  * @param {Object} startScreen - StartScreen object reference
  */
 function handlePlayButtonTouch(startScreen) {
-    console.log('Play Button touched! Starting game...');
-    
     if (typeof startScreen.startGame === 'function') {
         startScreen.startGame();
     } else if (window.onStartGame) {

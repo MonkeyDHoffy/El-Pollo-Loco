@@ -79,8 +79,6 @@ class Character extends MovableObject {
 
     constructor() {
         super().loadImage('img/img_pollo_locco/img/2_character_pepe/1_idle/idle/I-1.png');
-        
-        console.log('Verifying image loading...');
         this.loadAllImages();
         this.applyGravity();
         this.animate();
@@ -148,7 +146,7 @@ class Character extends MovableObject {
             if (this.bottles === 0) {
                 this.jump(28);
                 this.activateSuperJumpSpeed();
-                console.log("Super jump activated! (no bottles) - lower but faster");
+                
             } else {
                 this.jump(20);
             }
@@ -240,7 +238,7 @@ class Character extends MovableObject {
     jump(howhigh) {
         this.speedY = howhigh;
         this.playRandomJumpSound();
-        console.log("character is jumping");
+  
     }
 
     /**
@@ -256,10 +254,10 @@ class Character extends MovableObject {
         // Reset speed after jump duration (approximately when landing)
         setTimeout(() => {
             this.speed = this.originalSpeed || 8;
-            console.log("Super jump speed boost ended");
+           
         }, 800); // 800ms should be enough for the jump arc
         
-        console.log("Super jump speed boost activated!");
+       
     }
 
     /**
@@ -277,7 +275,6 @@ class Character extends MovableObject {
     useBottle() {
         if (this.bottles > 0) {
             this.bottles--;
-            console.log(`Bottle thrown! Remaining bottles: ${this.bottles}`);
             return true;
         }
         return false;
@@ -428,7 +425,6 @@ class Character extends MovableObject {
         // If character just landed on ground, reset combo
         if (isCurrentlyOnGround && !this.wasOnGround) {
             if (this.combo > 0) {
-                console.log(`Combo ended at ${this.combo} kills - landed on ground`);
                 // Store the combo value and timestamp for grace period
                 this.lastComboValue = this.combo;
                 this.comboEndTime = Date.now();
@@ -446,8 +442,6 @@ class Character extends MovableObject {
     addComboKill() {
         if (this.isAboveGround()) { // Use existing isAboveGround method
             this.combo++;
-            console.log(`Combo: ${this.combo} airborne kills!`);
-            
             // Play combo sound or effect here if desired
             if (this.combo > 1) {
                 // Could add special combo sound effects
@@ -464,7 +458,6 @@ class Character extends MovableObject {
      */
     resetCombo() {
         if (this.combo > 0) {
-            console.log(`Combo reset from ${this.combo} due to damage`);
             // Store the combo value and timestamp for grace period
             this.lastComboValue = this.combo;
             this.comboEndTime = Date.now();
@@ -487,7 +480,7 @@ class Character extends MovableObject {
         let timeSinceComboEnded = currentTime - this.comboEndTime;
         
         if (this.lastComboValue > 0 && timeSinceComboEnded <= this.comboGracePeriod) {
-            console.log(`Using grace period combo: ${this.lastComboValue} (${Math.round((this.comboGracePeriod - timeSinceComboEnded) / 1000)}s remaining)`);
+            
             return this.lastComboValue;
         }
         

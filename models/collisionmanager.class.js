@@ -234,7 +234,7 @@ class CollisionManager {
      * @param {Object} enemy - Enemy that was killed
      */
     handleCharacterKillsEnemy(enemy) {
-        console.log("huhn besiegt");
+       
         
         this.applyKillEffects(enemy);
         this.updateScoreForKill(enemy);
@@ -294,18 +294,9 @@ class CollisionManager {
      * Handle character bouncing off endboss when jumping on it
      */
     handleCharacterBounceOffEndboss(endboss) {
-        console.log("Character bounces off endboss");
-        
-        // Trigger attack animation when character jumps on endboss
         endboss.attack();
-        
-        // Add to combo for the bounce (even though no kill)
         this.world.character.addComboKill();
-        
-        // Create vertical catapult effect - same as when killing enemies
         this.world.character.speedY = 15;
-        
-        // Optional: Play a sound effect for bouncing
         this.world.character.playRandomChickenAttackSound();
     }
 
@@ -314,10 +305,7 @@ class CollisionManager {
      */
     handleCharacterHitByEnemy(damage) {
         this.world.character.hit(damage);
-        console.log("Kollision mit Gegner! Energie:", this.world.character.energy);
         this.world.statusbar.setPercentage(this.world.character.energy);
-        
-        // Create damage particles at character position
         let characterCenterX = this.world.character.x + this.world.character.width / 2;
         let characterCenterY = this.world.character.y + this.world.character.height / 2;
         this.world.particleManager.createDamageParticles(characterCenterX, characterCenterY, 8);
@@ -328,16 +316,12 @@ class CollisionManager {
      */
     handleCharacterHitByCactus(cactus) {
         this.world.character.hit(15);
-        
         if (this.world.character.otherDirection) {
             this.world.character.x += 150;
         } else {
             this.world.character.x -= 150;
         }
-        
         this.world.character.speedY = 15;
-        
-        console.log("Kollision mit Kaktus! Energie:", this.world.character.energy);
         this.world.statusbar.setPercentage(this.world.character.energy);
     }
 
@@ -347,7 +331,6 @@ class CollisionManager {
     checkBottleProjectileCollisions() {
         this.world.throwableObjects.forEach((throwableObject, throwableIndex) => {
             if (throwableObject.hasHit) return;
-            
             this.checkBottleHitsEnemies(throwableObject);
             this.checkBottleHitsEndboss(throwableObject);
         });
@@ -399,7 +382,6 @@ class CollisionManager {
                 this.world.level.enemies.splice(enemyIdx, 1);
             }
         }, 500);
-        console.log("Gegner von Flasche getroffen!");
     }
 
     /**
@@ -410,11 +392,9 @@ class CollisionManager {
     handleBottleHitsEndboss(throwableObject, endboss) {
         throwableObject.hasHit = true;
         throwableObject.splash();
-        
         let damage = this.calculateComboDamage();
         this.applyDamageToEndboss(endboss, damage);
         this.handleEndbossHitEffects(endboss, damage);
-        
         if (endboss.isDead) {
             this.handleEndbossDeath(endboss);
         }
@@ -429,7 +409,6 @@ class CollisionManager {
         let effectiveCombo = this.world.character.getEffectiveCombo();
         let comboMultiplier = Math.max(1, effectiveCombo);
         let totalDamage = baseDamage * comboMultiplier;
-        
         return {
             base: baseDamage,
             combo: effectiveCombo,
@@ -454,20 +433,7 @@ class CollisionManager {
      * @param {Object} damage - Damage calculation object
      */
     handleEndbossHitEffects(endboss, damage) {
-        this.logDamageInfo(damage);
         this.createHitEffects(endboss, damage);
-    }
-
-    /**
-     * Logs damage information to console
-     * @param {Object} damage - Damage calculation object
-     */
-    logDamageInfo(damage) {
-        if (damage.combo > 0) {
-            console.log(`Endboss von Flasche getroffen! Combo Damage: ${damage.base} x ${damage.multiplier} = ${damage.total}`);
-        } else {
-            console.log(`Endboss von Flasche getroffen! Base Damage: ${damage.total}`);
-        }
     }
 
     /**
@@ -478,11 +444,9 @@ class CollisionManager {
     createHitEffects(endboss, damage) {
         let endbossX = endboss.x + endboss.width / 2;
         let endbossY = endboss.y + endboss.height / 2;
-        
         if (damage.combo >= 3) {
             this.world.particleManager.createComboParticles(endbossX, endbossY, damage.combo);
         }
-        
         if (damage.total > 20) {
             this.showFloatingDamage(endbossX, endboss.y, damage.total);
         }
@@ -494,8 +458,7 @@ class CollisionManager {
      */
     handleEndbossDeath(endboss) {
         this.world.totalScore += 50;
-        this.world.endlessMode.onEndbossKilled(endboss);
-        
+        this.world.endlessMode.onEndbossKilled(endboss);    
         setTimeout(() => {
             let bossIdx = this.world.level.endboss.indexOf(endboss);
             if (bossIdx > -1) {
@@ -508,10 +471,6 @@ class CollisionManager {
      * Show floating damage number (visual feedback for high damage)
      */
     showFloatingDamage(x, y, damage) {
-        // Simple console output for now - could be extended to visual floating text
-        console.log(`💥 MASSIVE DAMAGE: ${damage}! 💥`);
-        
-        // Create extra visual particles for massive damage
         if (damage >= 50) {
             this.world.particleManager.createDustParticles(x, y + 50, 20); // Extra dust
         }

@@ -56,8 +56,6 @@ class GameOver {
         this.initializeGameOverSequence(finalScore);
         this.pauseGame();
         this.scheduleReplayScreen();
-        
-        console.log('[GameOver] Game Over started with score:', finalScore);
     }
 
     /**
@@ -260,10 +258,7 @@ class GameOver {
             
             event.preventDefault();
     let coordinates = this.getTouchCoordinates(event);
-            this.logTouchInfo(coordinates);
-            
             if (this.isPointInReplayButton(coordinates.x, coordinates.y)) {
-                console.log('[GameOver] Replay button touched!');
                 this.restartGame();
             }
         };
@@ -284,16 +279,6 @@ class GameOver {
             x: (touch.clientX - rect.left) * scaleX,
             y: (touch.clientY - rect.top) * scaleY
         };
-    }
-
-    /**
-     * Log touch information for debugging
-     * @param {Object} coordinates - Touch coordinates
-     */
-    logTouchInfo(coordinates) {
-        console.log('[GameOver] Touch at:', coordinates.x, coordinates.y);
-        console.log('[GameOver] Button:', this.replayButton.x, this.replayButton.y, 
-                   this.replayButton.width, this.replayButton.height);
     }
 
     /**
@@ -346,14 +331,10 @@ class GameOver {
      */
     restartGame() {
         console.log('[GameOver] Restarting game...');
-        
-        // Reset all game over states
         this.isActive = false;
         this.showGameOverImage = false;
         this.showReplayScreen = false;
         this.finalScore = 0;
-        
-        // Trigger game restart
         if (window.onGameRestart) {
             window.onGameRestart();
         }

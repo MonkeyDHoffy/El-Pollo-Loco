@@ -19,7 +19,6 @@ class ParticleManager {
      */
     createDamageParticles(x, y, count = 8) {
         this.createParticlesOfType(x, y, count, 'damage', 60, 40);
-        console.log(`Created ${count} damage particles at (${x}, ${y})`);
     }
 
     /**
@@ -40,7 +39,6 @@ class ParticleManager {
      */
     createDustParticles(x, y, count = 12) {
         this.createParticlesOfType(x, y, count, 'dust', 80, 20);
-        console.log(`Created ${count} dust particles at (${x}, ${y})`);
     }
 
     /**

@@ -59,7 +59,6 @@ class EndlessMode {
     shouldKeepEnemy(enemy) {
         if (enemy.x < this.config.cleanupLeftBound || 
             enemy.x > this.config.cleanupRightBound) {
-            console.log(`[EndlessMode] Removing distant enemy at x: ${Math.round(enemy.x)}`);
             return false;
         }
         return true;
@@ -72,7 +71,6 @@ class EndlessMode {
     logEnemyCleanup(beforeCount) {
         let afterCount = this.world.level.enemies.length;
         if (beforeCount !== afterCount) {
-            console.log(`[EndlessMode] Cleaned up ${beforeCount - afterCount} distant enemies`);
         }
     }
 
@@ -85,15 +83,11 @@ class EndlessMode {
             // Remove endbosses that are too far left or right
             if (endboss.x < this.config.cleanupLeftBound || 
                 endboss.x > this.config.cleanupRightBound) {
-                console.log(`[EndlessMode] Removing distant endboss at x: ${Math.round(endboss.x)}`);
                 return false; // Remove this endboss
             }
             return true; // Keep this endboss
         });
         let afterCount = this.world.level.endboss.length;
-        if (beforeCount !== afterCount) {
-            console.log(`[EndlessMode] Cleaned up ${beforeCount - afterCount} distant endbosses`);
-        }
     }
 
     /**
@@ -115,7 +109,6 @@ class EndlessMode {
      */
     maintainEndbossCount() {
         let currentEndbossCount = this.world.level.endboss.length;
-        
         if (currentEndbossCount < this.config.minEndbosses) {
             let endbossesToSpawn = this.config.minEndbosses - currentEndbossCount;
             for (let i = 0; i < endbossesToSpawn; i++) {
@@ -154,7 +147,7 @@ class EndlessMode {
         let spawnRange = this.config.spawnAreaEnd - this.config.spawnAreaStart;
         
         newEnemy.x = this.config.spawnAreaStart + Math.random() * spawnRange;
-        newEnemy.y = enemyType === MiniChicken ? 385 : 376;
+        newEnemy.y = enemyType === MiniChicken ? 395 : 376;
         
         return newEnemy;
     }
@@ -186,8 +179,6 @@ class EndlessMode {
         let newEndboss = this.createAndPositionEndboss();
         this.configureNewEndboss(newEndboss);
         this.addEndbossToLevel(newEndboss);
-        
-        console.log(`[EndlessMode] Spawned new endboss with ${newEndboss.maxEnergy} health at x: ${Math.round(newEndboss.x)}`);
     }
 
     /**
@@ -227,8 +218,6 @@ class EndlessMode {
      */
     onEnemyKilled(enemy) {
         if (!this.isActive) return;
-        
-        console.log(`[EndlessMode] Enemy killed, spawning replacement`);
         this.spawnNewEnemy();
     }
 
@@ -237,8 +226,6 @@ class EndlessMode {
      */
     onEndbossKilled(endboss) {
         if (!this.isActive) return;
-        
-        console.log(`[EndlessMode] Endboss killed, spawning replacement`);
         this.spawnNewEndboss();
     }
 
@@ -247,7 +234,6 @@ class EndlessMode {
      */
     setActive(active) {
         this.isActive = active;
-        console.log(`[EndlessMode] ${active ? 'Enabled' : 'Disabled'}`);
     }
 
     /**
@@ -255,7 +241,6 @@ class EndlessMode {
      */
     updateConfig(newConfig) {
         this.config = { ...this.config, ...newConfig };
-        console.log(`[EndlessMode] Configuration updated:`, this.config);
     }
 
     /**

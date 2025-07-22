@@ -121,10 +121,6 @@ class Chicken extends MovableObject {
         this.img = this.imageCache[this.IMAGES_DEAD[0]];
     }
 
-    /**
-     * Makes the chicken perform eating action
-     */
-    eat() {
-        console.log("chicken is eating");
-    }
+   
+    
 }

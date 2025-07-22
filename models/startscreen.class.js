@@ -12,13 +12,10 @@ class StartScreen {
         this.ctx = ctx;
         this.isActive = true;
         this.imageLoaded = false;
-        
         this.initializeButton();
         this.initializeAnimation();
         this.loadBackgroundImage();
         this.setupEventListeners();
-        
-        console.log('[StartScreen] Initialized');
     }
 
     /**
@@ -49,11 +46,9 @@ class StartScreen {
         
         this.startImage.onload = () => {
             this.imageLoaded = true;
-            console.log('[StartScreen] Background image loaded');
         };
         
         this.startImage.onerror = () => {
-            console.warn('[StartScreen] Could not load background image');
             this.imageLoaded = false;
         };
     }
@@ -73,15 +68,13 @@ class StartScreen {
      */
     createMouseHandlers() {
         this.onMouseMove = (event) => {
-            if (!this.isActive) return;
-            
+            if (!this.isActive) return;       
             let mousePos = this.getMousePosition(event);
             this.updateButtonHover(mousePos.x, mousePos.y);
         };
         
         this.onMouseClick = (event) => {
-            if (!this.isActive) return;
-            
+            if (!this.isActive) return;        
             let mousePos = this.getMousePosition(event);
             this.handleButtonClick(mousePos.x, mousePos.y);
         };
@@ -92,8 +85,7 @@ class StartScreen {
      */
     createTouchHandlers() {
         this.onTouchStart = (event) => {
-            if (!this.isActive) return;
-            
+            if (!this.isActive) return;           
             event.preventDefault();
             let touchPos = this.getTouchPosition(event);
             this.handleButtonClick(touchPos.x, touchPos.y);
@@ -174,7 +166,6 @@ class StartScreen {
      */
     handleButtonClick(x, y) {
         if (this.isPointInButton(x, y)) {
-            console.log('[StartScreen] Play button clicked!');
             this.startGame();
         }
     }
@@ -207,11 +198,8 @@ class StartScreen {
      * Start the game
      */
     startGame() {
-        console.log('[StartScreen] Starting game...');
         this.isActive = false;
         this.removeEventListeners();
-        
-        // Trigger game start (will be called by external function)
         if (window.onStartGame) {
             window.onStartGame();
         }
@@ -222,11 +210,7 @@ class StartScreen {
      */
     update() {
         if (!this.isActive) return;
-        
-        // Update pulse animation
         this.pulseValue = Math.sin(Date.now() * 0.003) * 0.1 + 1;
-        
-        // Update glow intensity
         this.glowIntensity = Math.sin(Date.now() * 0.005) * 0.3 + 0.7;
     }
     
@@ -235,41 +219,22 @@ class StartScreen {
      */
     draw() {
         if (!this.isActive) return;
-        
         this.ctx.save();
-        
-        // Clear canvas
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        
-        // Draw background image if loaded
         if (this.imageLoaded) {
             this.ctx.drawImage(this.startImage, 0, 0, this.canvas.width, this.canvas.height);
         } else {
-            // Fallback background
-            this.ctx.fillStyle = '#87CEEB'; // Sky blue
+            this.ctx.fillStyle = '#87CEEB';
             this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-            
-            // Loading text
             this.ctx.fillStyle = '#FFFFFF';
             this.ctx.font = 'bold 24px Comic Sans MS';
             this.ctx.textAlign = 'center';
             this.ctx.fillText('Loading...', this.canvas.width / 2, this.canvas.height / 2);
         }
-        
-        // Draw title
-        // this.drawTitle(); // Removed title from start screen
-        
-        // Draw play button
         this.drawPlayButton();
-        
-        // Draw instructions
-        // this.drawInstructions(); // Removed instructions from start screen
-        
-        // Draw mobile controls if available
         if (window.mobileControls) {
             window.mobileControls.draw();
         }
-        
         this.ctx.restore();
     }
     
@@ -278,27 +243,19 @@ class StartScreen {
      */
     drawTitle() {
         this.ctx.save();
-        
-        // Title shadow
         this.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
         this.ctx.font = 'bold 48px Comic Sans MS';
         this.ctx.textAlign = 'center';
-        this.ctx.fillText('EL POLLO LOCO', this.canvas.width / 2 + 3, 60 + 3);
-        
-        // Title main text with gradient effect
+        this.ctx.fillText('EL POLLO LOCO', this.canvas.width / 2 + 3, 63);
         let gradient = this.ctx.createLinearGradient(0, 30, 0, 70);
         gradient.addColorStop(0, '#FFD700');
         gradient.addColorStop(0.5, '#FF8C00');
         gradient.addColorStop(1, '#FF4500');
-        
         this.ctx.fillStyle = gradient;
         this.ctx.fillText('EL POLLO LOCO', this.canvas.width / 2, 60);
-        
-        // Title outline
         this.ctx.strokeStyle = '#8B0000';
         this.ctx.lineWidth = 3;
         this.ctx.strokeText('EL POLLO LOCO', this.canvas.width / 2, 60);
-        
         this.ctx.restore();
     }
     
@@ -307,27 +264,19 @@ class StartScreen {
      */
     drawPlayButton() {
         this.ctx.save();
-        
-        // Button scaling effect - combine hover and pulse
         let hoverScale = this.playButtonHovered ? 1.05 : 1;
-        let pulseScale = this.pulseValue; // Already calculated in update()
+        let pulseScale = this.pulseValue;
         let totalScale = hoverScale * pulseScale;
-        
         let buttonX = this.playButtonX + (this.playButtonWidth * (1 - totalScale)) / 2;
         let buttonY = this.playButtonY + (this.playButtonHeight * (1 - totalScale)) / 2;
         let buttonWidth = this.playButtonWidth * totalScale;
         let buttonHeight = this.playButtonHeight * totalScale;
-        
-        // Glow effect - combine hover and pulse
         if (this.playButtonHovered || this.glowIntensity > 0.6) {
             this.ctx.shadowColor = '#FFD700';
-            this.ctx.shadowBlur = 15 + (this.glowIntensity * 10); // Pulsing glow
+            this.ctx.shadowBlur = 15 + (this.glowIntensity * 10);
         }
-        
-        // Button background with gradient - add pulse effect to colors
         let buttonGradient = this.ctx.createLinearGradient(buttonX, buttonY, buttonX, buttonY + buttonHeight);
-        let pulseIntensity = this.glowIntensity; // Use glow intensity for color pulsing
-        
+        let pulseIntensity = this.glowIntensity;
         if (this.playButtonHovered) {
             buttonGradient.addColorStop(0, `rgba(50, 205, 50, ${0.8 + pulseIntensity * 0.2})`);
             buttonGradient.addColorStop(1, `rgba(34, 139, 34, ${0.8 + pulseIntensity * 0.2})`);
@@ -335,37 +284,24 @@ class StartScreen {
             buttonGradient.addColorStop(0, `rgba(76, 175, 80, ${0.7 + pulseIntensity * 0.3})`);
             buttonGradient.addColorStop(1, `rgba(56, 142, 60, ${0.7 + pulseIntensity * 0.3})`);
         }
-        
-        // Draw rounded rectangle button
         this.roundRect(buttonX, buttonY, buttonWidth, buttonHeight, 15);
         this.ctx.fillStyle = buttonGradient;
         this.ctx.fill();
-        
-        // Button border - add pulse effect
         let borderIntensity = this.glowIntensity;
-        this.ctx.strokeStyle = this.playButtonHovered ? 
-            `rgba(255, 215, 0, ${0.8 + borderIntensity * 0.2})` : 
+        this.ctx.strokeStyle = this.playButtonHovered ?
+            `rgba(255, 215, 0, ${0.8 + borderIntensity * 0.2})` :
             `rgba(46, 125, 50, ${0.6 + borderIntensity * 0.4})`;
-        this.ctx.lineWidth = 2 + (borderIntensity * 2); // Pulsing border width
+        this.ctx.lineWidth = 2 + (borderIntensity * 2);
         this.ctx.stroke();
-        
-        // Reset shadow
         this.ctx.shadowBlur = 0;
-        
-        // Button text
         this.ctx.fillStyle = '#FFFFFF';
         this.ctx.font = 'bold 28px Comic Sans MS';
         this.ctx.textAlign = 'center';
         this.ctx.textBaseline = 'middle';
-        
-        // Text shadow
         this.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
         this.ctx.fillText('PLAY', buttonX + buttonWidth / 2 + 2, buttonY + buttonHeight / 2 + 2);
-        
-        // Main text
         this.ctx.fillStyle = '#FFFFFF';
         this.ctx.fillText('PLAY', buttonX + buttonWidth / 2, buttonY + buttonHeight / 2);
-        
         this.ctx.restore();
     }
     
@@ -374,23 +310,16 @@ class StartScreen {
      */
     drawInstructions() {
         this.ctx.save();
-        
-        // Instructions background
         this.ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
         this.roundRect(this.canvas.width / 2 - 200, this.canvas.height - 120, 400, 80, 10);
         this.ctx.fill();
-        
-        // Instructions text
         this.ctx.fillStyle = '#FFFFFF';
         this.ctx.font = 'bold 18px Comic Sans MS';
         this.ctx.textAlign = 'center';
         this.ctx.fillText('Click PLAY or press SPACE to start', this.canvas.width / 2, this.canvas.height - 85);
-        
-        // Controls hint
         this.ctx.font = 'bold 14px Comic Sans MS';
         this.ctx.fillStyle = '#FFD700';
         this.ctx.fillText('Use ARROW KEYS to move, SPACE to jump, D to throw', this.canvas.width / 2, this.canvas.height - 60);
-        
         this.ctx.restore();
     }
     

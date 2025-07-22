@@ -86,7 +86,6 @@ class StatusBar extends DrawableObject {
     let text = `${this.currentHealth}%`;
     let textX = this.x + 60;
     let textY = this.y + 35;
-    
     ctx.strokeText(text, textX, textY);
     ctx.fillText(text, textX, textY);
   }
@@ -207,7 +206,6 @@ class CoinStatusBar extends DrawableObject {
     let text = `x ${this.coinCount}`;
     let textX = this.x + 60;
     let textY = this.y + 35;
-    
     ctx.strokeText(text, textX, textY);
     ctx.fillText(text, textX, textY);
   }
@@ -329,8 +327,7 @@ class BottleStatusBar extends DrawableObject {
   renderBottleText(ctx) {
     let text = `x ${this.bottleCount}`;
     let textX = this.x + 60;
-    let textY = this.y + 35;
-    
+    let textY = this.y + 35;   
     ctx.strokeText(text, textX, textY);
     ctx.fillText(text, textX, textY);
   }

@@ -14,8 +14,6 @@ class WaveManager {
         this.initializeDamageScaling();
         this.pointsPerWave = 100;
         this.lastCheckedScore = 0;
-        
-        console.log("[WaveManager] Initialized - Wave 1 started");
     }
 
     /**
@@ -33,8 +31,7 @@ class WaveManager {
     initializeEnemySpawning() {
         this.baseMinEnemies = 5;
         this.chickenIncreaseStartWave = 5;
-        this.maxExtraChickens = 31;
-        
+        this.maxExtraChickens = 31;    
         this.baseMinEndbosses = 2;
         this.endbossIncreaseStartWave = 15;
         this.endbossIncreaseInterval = 10;
@@ -58,8 +55,7 @@ class WaveManager {
      */
     update() {
         let currentScore = this.world.totalScore;
-        let expectedWave = Math.floor(currentScore / this.pointsPerWave) + 1;
-        
+        let expectedWave = Math.floor(currentScore / this.pointsPerWave) + 1;       
         if (expectedWave > this.currentWave) {
             this.advanceToWave(expectedWave);
         }
@@ -71,12 +67,10 @@ class WaveManager {
      */
     advanceToWave(newWave) {
         let oldWave = this.currentWave;
-        this.currentWave = newWave;
-        
+        this.currentWave = newWave;      
         this.updateSpeedMultiplier();
         this.updateEnemyCount();
         this.updateEnemySpeeds();
-        this.logWaveProgression(oldWave);
         this.showWaveChangeNotification();
     }
 
@@ -87,42 +81,8 @@ class WaveManager {
         let newMultiplier = Math.min(
             1.0 + (this.currentWave - 1) * this.speedIncreasePerWave,
             this.maxSpeedMultiplier
-        );
-        
+        );    
         this.baseSpeedMultiplier = newMultiplier;
-    }
-
-    /**
-     * Logs wave progression information
-     * @param {number} oldWave - Previous wave number
-     */
-    logWaveProgression(oldWave) {
-        console.log(`[WaveManager] Advanced from Wave ${oldWave} to Wave ${this.currentWave}`);
-        console.log(`[WaveManager] Speed multiplier: ${(this.baseSpeedMultiplier * 100).toFixed(0)}%`);
-        console.log(`[WaveManager] Enemy count: ${this.getCurrentEnemyCount()}`);
-        console.log(`[WaveManager] Endboss count: ${this.getCurrentEndbossCount()}`);
-        
-        this.logSpecialWaveEvents();
-        this.logScalingInfo();
-    }
-
-    /**
-     * Logs special wave milestone events
-     */
-    logSpecialWaveEvents() {
-        if (this.currentWave === this.scalingStartWave) {
-            console.log(`[WaveManager] 🚨 WAVE 35 REACHED! 🚨 Damage and health scaling now active!`);
-        }
-    }
-
-    /**
-     * Logs scaling information for waves 35+
-     */
-    logScalingInfo() {
-        if (this.currentWave >= this.scalingStartWave) {
-            console.log(`[WaveManager] Damage scaling: ${(this.getDamageMultiplier() * 100).toFixed(0)}% (Enemy: ${this.getScaledEnemyDamage()}, Endboss: ${this.getScaledEndbossDamage()})`);
-            console.log(`[WaveManager] Endboss health scaling: ${(this.getHealthMultiplier() * 100).toFixed(0)}% (${this.getScaledEndbossHealth()} HP)`);
-        }
     }
 
     /**
@@ -225,7 +185,6 @@ class WaveManager {
     applySpeedToEnemy(enemy) {
         this.storeOriginalSpeed(enemy);
         this.calculateNewSpeed(enemy);
-        this.logSpeedUpdate(enemy);
     }
 
     /**
@@ -244,14 +203,6 @@ class WaveManager {
      */
     calculateNewSpeed(enemy) {
         enemy.speed = enemy.originalSpeed * this.baseSpeedMultiplier;
-    }
-
-    /**
-     * Logs speed update for enemy
-     * @param {Object} enemy - Enemy object
-     */
-    logSpeedUpdate(enemy) {
-        console.log(`[WaveManager] Updated ${enemy.constructor.name} speed to ${enemy.speed.toFixed(2)} (${(this.baseSpeedMultiplier * 100).toFixed(0)}%)`);
     }
 
     /**
@@ -399,7 +350,5 @@ class WaveManager {
                 minEndbosses: this.baseMinEndbosses
             });
         }
-        
-        console.log("[WaveManager] Reset to Wave 1");
     }
 }

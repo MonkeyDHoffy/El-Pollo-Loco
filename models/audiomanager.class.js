@@ -271,8 +271,6 @@ class AudioManager {
         this.isMuted = muted;
         this.muteBackgroundMusic(muted);
         this.muteWalkingSound(muted);
-        
-        console.log(`[AudioManager] Audio ${muted ? 'muted' : 'unmuted'}`);
     }
 
     /**
