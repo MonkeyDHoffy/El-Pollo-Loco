@@ -46,7 +46,6 @@ class AudioManager {
     initializeCoinSounds() {
         this.coinCollectingSounds = [
             'audio/sounds/coincollecting(1).mp3',
-            'audio/sounds/coincollecting(1).wav',
             'audio/sounds/coincollecting(2).wav',
             'audio/sounds/coincollecting(3).wav'
         ];
@@ -69,9 +68,70 @@ class AudioManager {
     initializeJumpSounds() {
         this.jumpSounds = [
             'audio/sounds/jump1.wav',
+            'audio/sounds/jump1.wav',
+            'audio/sounds/jump1.wav',
+            'audio/sounds/jump1.wav',
+            'audio/sounds/jump1.wav',
+            'audio/sounds/jump1.wav',
+            'audio/sounds/jump1.wav',
+            'audio/sounds/jump1.wav',
+            'audio/sounds/jump1.wav',
+            'audio/sounds/jump1.wav',
+            'audio/sounds/jump1.wav',
+            'audio/sounds/jump1.wav',
+            'audio/sounds/jump1.wav',
+            'audio/sounds/jump1.wav',
+            'audio/sounds/jump1.wav',
+            'audio/sounds/jump1.wav',
+            'audio/sounds/jump1.wav',
+            'audio/sounds/jump1.wav',
+            'audio/sounds/jump1.wav',
+            'audio/sounds/jump1.wav',
+            'audio/sounds/jump1.wav',
+            'audio/sounds/jump1.wav',
+            'audio/sounds/jump1.wav',
+            'audio/sounds/jump1.wav',
+            'audio/sounds/jump1.wav',
+            'audio/sounds/jump1.wav',
+            'audio/sounds/jump1.wav',
+            'audio/sounds/jump1.wav',
+            'audio/sounds/jump1.wav',
+            'audio/sounds/jump1.wav',
             'audio/sounds/jumpfart1.wav',
             'audio/sounds/jumpfart2.wav',
-            'audio/sounds/jumpfart3.mp3'
+            'audio/sounds/jumpfart3.mp3',
+            'audio/sounds/jumpjump.wav',
+            'audio/sounds/jumpjump2.wav',
+            'audio/sounds/jumpjump3.wav',
+            'audio/sounds/jumpjump4.wav',
+            'audio/sounds/jumpjump1.wav',
+            'audio/sounds/jumpjump2.wav',
+            'audio/sounds/jumpjump3.wav',
+            'audio/sounds/jumpjump4.wav',
+            'audio/sounds/jumpjump1.wav',
+            'audio/sounds/jumpjump2.wav',
+            'audio/sounds/jumpjump3.wav',
+            'audio/sounds/jumpjump4.wav',
+            'audio/sounds/jumpjump1.wav',
+            'audio/sounds/jumpjump2.wav',
+            'audio/sounds/jumpjump3.wav',
+            'audio/sounds/jumpjump4.wav',
+            'audio/sounds/jumpjump2.wav',
+            'audio/sounds/jumpjump3.wav',
+            'audio/sounds/jumpjump4.wav',
+            'audio/sounds/jumpjump1.wav',
+            'audio/sounds/jumpjump2.wav',
+            'audio/sounds/jumpjump3.wav',
+            'audio/sounds/jumpjump4.wav',
+            'audio/sounds/jumpjump1.wav',
+            'audio/sounds/jumpjump2.wav',
+            'audio/sounds/jumpjump3.wav',
+            'audio/sounds/jumpjump4.wav',
+            'audio/sounds/jumpjump1.wav',
+            'audio/sounds/jumpjump2.wav',
+            'audio/sounds/jumpjump3.wav',
+            'audio/sounds/jumpjump4.wav'
+          
         ];
     }
 
@@ -81,6 +141,12 @@ class AudioManager {
     initializeChickenAttackSounds() {
         this.chickenAttackSounds = [
             'audio/sounds/chickenattack/chicken1.wav',
+            'audio/sounds/chickenattack/chicken2.wav',
+            'audio/sounds/chickenattack/chicken3.wav',
+            'audio/sounds/chickenattack/pop.flac',
+            'audio/sounds/chickenattack/popp.mp3',
+            'audio/sounds/chickenattack/poppp.flac',
+            'audio/sounds/chickenattack/poppp.wav',
             'audio/sounds/chickenattack/chicken2.wav',
             'audio/sounds/chickenattack/chicken3.wav',
             'audio/sounds/chickenattack/pop.flac',
@@ -176,7 +242,7 @@ class AudioManager {
      * Play throw sound effect
      */
     playThrowSound() {
-        this.playSound('audio/sounds/throw1.wav');
+        this.playSound('audio/sounds/throw1.wav',0.7);
     }
 
     /**
@@ -190,7 +256,7 @@ class AudioManager {
      * Play random bottle collecting sound
      */
     playRandomBottleCollectingSound() {
-        this.playRandomSound(this.bottleCollectingSounds);
+        this.playRandomSound(this.bottleCollectingSounds, 0.3);
     }
 
     /**
@@ -204,21 +270,24 @@ class AudioManager {
      * Play random jump sound
      */
     playRandomJumpSound() {
-        this.playRandomSound(this.jumpSounds);
+        this.playRandomSound(this.jumpSounds, 0.7);
     }
 
     /**
      * Play random chicken attack sound
      */
     playRandomChickenAttackSound() {
-        this.playRandomSound(this.chickenAttackSounds);
+        if (this.isMuted || !this.chickenAttackSounds || this.chickenAttackSounds.length === 0) return;
+        let randomSound = this.chickenAttackSounds[Math.floor(Math.random() * this.chickenAttackSounds.length)];
+        let volume = randomSound.includes('chicken1.wav') ? 0.1 : 0.7;
+        this.playSound(randomSound, volume);
     }
 
     /**
      * Play random hurt sound
      */
     playRandomHurtSound() {
-        this.playRandomSound(this.hurtSounds);
+        this.playRandomSound(this.hurtSounds, 0.7);
     }
 
     /**
