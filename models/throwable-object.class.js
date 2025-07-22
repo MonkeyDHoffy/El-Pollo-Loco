@@ -93,4 +93,19 @@ class ThrowableObject extends MovableObject {
         this.speedY = 0;
         this.speedX = 0;
     }
+
+    /**
+     * Smaller collision detection for more precise bottle hits
+     * @param {Object} mobject - Object to check collision with
+     * @returns {boolean} True if collision detected
+     */
+    isColliding(mobject) {
+        // 25px Padding auf allen Seiten für kleinere Kollisionsbox
+        let padding = 33;
+        
+        return (this.x + padding) + (this.width - padding * 2) > mobject.x &&
+               (this.x + padding) < mobject.x + mobject.width &&
+               (this.y + padding) + (this.height - padding * 2) > mobject.y &&
+               (this.y + padding) < mobject.y + mobject.height;
+    }
 }
