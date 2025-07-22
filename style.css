@@ -3,12 +3,15 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(to bottom, #87ceeb 40%, #bfa16b 70%, #994409 100%);
+    background: url('img/img_pollo_locco/wüstenbackground.png');
     background-repeat: no-repeat;
-    background-size: 100% 100%;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
     padding: 0;
     margin: 0;
     height: 100vh;
+    overflow-x: hidden;
 }
 
 .mexican-section {
@@ -25,9 +28,10 @@ body {
 }
 
 canvas {
-    background: linear-gradient(to bottom, #87ceeb 40%, #bfa16b 70%, #994409 100%);
+    background: url('img/img_pollo_locco/wüstenbackground.png');
     background-repeat: no-repeat;
-    background-size: 100% 100%;
+    background-size: cover;
+    background-position: center;
     border-radius: 20px;
     max-width: 100%;
     height: auto;

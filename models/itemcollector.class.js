@@ -51,7 +51,7 @@ class ItemCollector {
     updateCoinScores() {
         this.world.coinScore += 1;
         this.world.character.coins += 1;
-        this.world.totalScore += 5;
+        this.world.totalScore += 20;
     }
 
     /**
