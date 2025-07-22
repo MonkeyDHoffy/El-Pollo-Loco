@@ -130,8 +130,7 @@ class AudioManager {
             'audio/sounds/jumpjump1.wav',
             'audio/sounds/jumpjump2.wav',
             'audio/sounds/jumpjump3.wav',
-            'audio/sounds/jumpjump4.wav'
-          
+            'audio/sounds/jumpjump4.wav'       
         ];
     }
 
