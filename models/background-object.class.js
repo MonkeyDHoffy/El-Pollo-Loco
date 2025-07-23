@@ -15,6 +15,7 @@ class BackgroundObject extends MovableObject {
      */
     constructor(imagePath, x, y = 0) {
         super().loadImage(imagePath);
+        this.imagePath = imagePath; // Store imagePath for later use
         this.initializePosition(x, y);
         this.setParallaxSpeed(imagePath);
     }
@@ -40,7 +41,7 @@ class BackgroundObject extends MovableObject {
         } else if (imagePath.includes('3_third_layer')) {
             this.parallaxSpeed = 0.05;
         } else if (imagePath.includes('1_first_layer')) {
-            this.parallaxSpeed = 0.2;
+            this.parallaxSpeed = 0; // Foreground layer is static (no parallax)
         } else {
             this.parallaxSpeed = 0;
         }
@@ -51,7 +52,13 @@ class BackgroundObject extends MovableObject {
      * @param {number} characterX - Character's X position
      */
     updatePosition(characterX) {
-        let parallaxOffset = characterX * this.parallaxSpeed;
-        this.x = this.originalX - parallaxOffset;
+        if (this.imagePath.includes('1_first_layer')) {
+            // For first layer: move exactly with camera for seamless effect
+            this.x = this.originalX - characterX;
+        } else {
+            // For background layers: use parallax effect
+            let parallaxOffset = characterX * this.parallaxSpeed;
+            this.x = this.originalX - parallaxOffset;
+        }
     }
 }
