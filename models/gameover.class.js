@@ -26,6 +26,28 @@ class GameOver {
         this.showReplayScreen = false;
         this.finalScore = 0;
         this.gameOverStartTime = 0;
+        this.initializeHighscore();
+    }
+
+    /**
+     * Initialize highscore from localStorage with default value of 500
+     */
+    initializeHighscore() {
+        const storedHighscore = localStorage.getItem('elPolloLocoHighscore');
+        this.highscore = storedHighscore ? parseInt(storedHighscore) : 500;
+    }
+
+    /**
+     * Update highscore if current score is higher
+     * @param {number} currentScore - The current game score
+     */
+    updateHighscore(currentScore) {
+        if (currentScore > this.highscore) {
+            this.highscore = currentScore;
+            localStorage.setItem('elPolloLocoHighscore', this.highscore.toString());
+            return true; // New highscore achieved
+        }
+        return false; // No new highscore
     }
 
     /**
@@ -68,6 +90,7 @@ class GameOver {
         this.showReplayScreen = false;
         this.finalScore = finalScore;
         this.gameOverStartTime = Date.now();
+        this.isNewHighscore = this.updateHighscore(finalScore);
     }
 
     /**
@@ -152,10 +175,23 @@ class GameOver {
         this.ctx.textAlign = 'center';
         
         this.ctx.font = 'bold 48px Arial';
-        this.ctx.fillText('GAME OVER', this.canvas.width / 2, this.canvas.height / 2 - 100);
+        this.ctx.fillText('GAME OVER', this.canvas.width / 2, this.canvas.height / 2 - 120);
         
         this.ctx.font = 'bold 32px Arial';
-        this.ctx.fillText('Final Score: ' + this.finalScore, this.canvas.width / 2, this.canvas.height / 2 - 50);
+        this.ctx.fillText('Final Score: ' + this.finalScore, this.canvas.width / 2, this.canvas.height / 2 - 70);
+        
+        // Highscore display
+        if (this.isNewHighscore) {
+            // New highscore achieved - make it golden and pulsing
+            let pulseValue = Math.sin(Date.now() * 0.01) * 0.3 + 0.7;
+            this.ctx.fillStyle = `rgba(255, 215, 0, ${pulseValue})`;
+            this.ctx.fillText('🎉 NEW HIGHSCORE! 🎉', this.canvas.width / 2, this.canvas.height / 2 - 20);
+            this.ctx.fillStyle = '#FFD700';
+        } else {
+            this.ctx.fillStyle = '#cccccc';
+        }
+        this.ctx.font = 'bold 28px Arial';
+        this.ctx.fillText('Highscore: ' + this.highscore, this.canvas.width / 2, this.canvas.height / 2 + 10);
         
         this.ctx.restore();
     }

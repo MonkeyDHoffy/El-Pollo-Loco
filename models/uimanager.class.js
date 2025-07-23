@@ -47,6 +47,28 @@ class UIManager {
     initializeMuteState() {
         this.isMuted = localStorage.getItem('elPolloLocoMuted') === 'true';
         this.updateMuteState();
+        this.initializeHighscore();
+    }
+
+    /**
+     * Initialize highscore from localStorage with default value of 500
+     */
+    initializeHighscore() {
+        const storedHighscore = localStorage.getItem('elPolloLocoHighscore');
+        this.highscore = storedHighscore ? parseInt(storedHighscore) : 500;
+    }
+
+    /**
+     * Update highscore if current score is higher
+     * @param {number} currentScore - The current game score
+     */
+    updateHighscore(currentScore) {
+        if (currentScore > this.highscore) {
+            this.highscore = currentScore;
+            localStorage.setItem('elPolloLocoHighscore', this.highscore.toString());
+            return true; // New highscore achieved
+        }
+        return false; // No new highscore
     }
 
     /**
@@ -189,6 +211,9 @@ class UIManager {
     drawGameOverScreen() {
         this.world.ctx.save();
         
+        // Update highscore before displaying
+        let isNewHighscore = this.updateHighscore(this.world.totalScore);
+        
         // Dark overlay
         this.world.ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
         this.world.ctx.fillRect(0, 0, this.world.canvas.width, this.world.canvas.height);
@@ -197,12 +222,24 @@ class UIManager {
         this.world.ctx.fillStyle = '#ff0000';
         this.world.ctx.font = 'bold 48px Comic Sans MS';
         this.world.ctx.textAlign = 'center';
-        this.world.ctx.fillText('GAME OVER', this.world.canvas.width / 2, this.world.canvas.height / 2 - 50);
+        this.world.ctx.fillText('GAME OVER', this.world.canvas.width / 2, this.world.canvas.height / 2 - 80);
         
         // Final score
         this.world.ctx.fillStyle = '#ffffff';
         this.world.ctx.font = 'bold 24px Comic Sans MS';
-        this.world.ctx.fillText(`Final Score: ${this.world.totalScore}`, this.world.canvas.width / 2, this.world.canvas.height / 2 + 20);
+        this.world.ctx.fillText(`Final Score: ${this.world.totalScore}`, this.world.canvas.width / 2, this.world.canvas.height / 2 - 20);
+        
+        // Highscore display
+        if (isNewHighscore) {
+            // New highscore achieved - make it golden and pulsing
+            let pulseValue = Math.sin(Date.now() * 0.01) * 0.3 + 0.7;
+            this.world.ctx.fillStyle = `rgba(255, 215, 0, ${pulseValue})`;
+            this.world.ctx.fillText('🎉 NEW HIGHSCORE! 🎉', this.world.canvas.width / 2, this.world.canvas.height / 2 + 20);
+            this.world.ctx.fillStyle = '#FFD700';
+        } else {
+            this.world.ctx.fillStyle = '#cccccc';
+        }
+        this.world.ctx.fillText(`Highscore: ${this.highscore}`, this.world.canvas.width / 2, this.world.canvas.height / 2 + 50);
         
         this.world.ctx.restore();
     }
