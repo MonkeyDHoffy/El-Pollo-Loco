@@ -40,8 +40,8 @@ class Bottle extends MovableObject {
      * @returns {boolean} True if collision detected
      */
     isColliding(mobject) {
-        return (this.x + 15) + (this.width - 30) > mobject.x &&
-               (this.x + 15) < mobject.x + mobject.width &&
+        return (this.x + 18) + (this.width - 36) > mobject.x &&
+               (this.x + 18) < mobject.x + mobject.width &&
                (this.y + 15) + (this.height - 30) > mobject.y &&
                (this.y + 15) < mobject.y + mobject.height;
     }
