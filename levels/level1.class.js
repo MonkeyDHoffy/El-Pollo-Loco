@@ -136,6 +136,6 @@ level1 = new Level(
     ],
     [  // Cacti - at beginning and end of level
         new Cactus(-125),  // Beginning of level
-        new Cactus(4435)
+        new Cactus(4430)
     ]
 );}
