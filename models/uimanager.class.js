@@ -304,7 +304,7 @@ class UIManager {
         this.roundRect(this.world.ctx, config.x - config.width/2, config.y - 30, config.width, config.height, 10);
         this.world.ctx.fill();
         
-        let borderColor = (waveInfo.maxWaveReached && waveInfo.maxChickensReached) ? '#FF6B35' : '#4ECDC4';
+        let borderColor = (waveInfo.maxWaveReached && waveInfo.maxChickensReached) ? '#ff6b35' : '#4ECDC4';
         this.world.ctx.strokeStyle = borderColor;
         this.world.ctx.lineWidth = 3;
         this.roundRect(this.world.ctx, config.x - config.width/2, config.y - 30, config.width, config.height, 10);
@@ -334,42 +334,6 @@ class UIManager {
         
         this.world.ctx.fillStyle = '#FFFFFF';
         this.world.ctx.fillText(`WAVE ${waveInfo.currentWave}`, config.x, config.y - 5);
-    }
-
-    /**
-     * Draw wave information line with stats
-     * @param {Object} config - Indicator configuration
-     * @param {Object} waveInfo - Wave information
-     */
-    drawWaveInfoLine(config, waveInfo) {
-        this.world.ctx.font = 'bold 11px Comic Sans MS';
-        let borderColor = (waveInfo.maxWaveReached && waveInfo.maxChickensReached) ? '#FF6B35' : '#4ECDC4';
-        this.world.ctx.fillStyle = borderColor;
-        
-        let infoText = this.buildWaveInfoText(waveInfo);
-        this.world.ctx.fillText(infoText, config.x, config.y + 12);
-    }
-
-    /**
-     * Build wave information text string
-     * @param {Object} waveInfo - Wave information
-     * @returns {string} Formatted info text
-     */
-    buildWaveInfoText(waveInfo) {
-        let infoText = `${waveInfo.speedPercentage}% Speed`;
-        
-        if (waveInfo.extraChickens > 0) {
-            infoText += ` | +${waveInfo.extraChickens} 🐔`;
-        }
-        if (waveInfo.extraEndbosses > 0) {
-            infoText += ` | +${waveInfo.extraEndbosses} 👑`;
-        }
-        if (waveInfo.isDamageScaling) {
-            infoText += ` | ⚔️${waveInfo.damagePercentage}%`;
-            infoText += ` | ❤️${waveInfo.healthPercentage}%`;
-        }
-        
-        return infoText;
     }
 
     /**
@@ -522,26 +486,15 @@ class UIManager {
         let centerX = this.world.canvas.width / 2;
         let centerY = this.world.canvas.height / 2 - 50;
         
-        // Large notification box
-        this.world.ctx.fillStyle = `rgba(255, 107, 53, ${alpha * 0.9})`;
-        this.roundRect(this.world.ctx, centerX - 200, centerY - 50, 400, 100, 15);
-        this.world.ctx.fill();
-        
-        // Border
-        this.world.ctx.strokeStyle = `rgba(230, 57, 70, ${alpha})`;
-        this.world.ctx.lineWidth = 4;
-        this.roundRect(this.world.ctx, centerX - 200, centerY - 50, 400, 100, 15);
-        this.world.ctx.stroke();
-        
-        // Text
+        // Text only - no background box
         this.world.ctx.font = 'bold 36px Comic Sans MS';
         this.world.ctx.textAlign = 'center';
         
-        // Shadow
+        // Black text shadow for better visibility
         this.world.ctx.fillStyle = `rgba(0, 0, 0, ${alpha * 0.8})`;
-        this.world.ctx.fillText(`WAVE ${this.waveChangeNotification.wave}`, centerX + 2, centerY + 2);
+        this.world.ctx.fillText(`WAVE ${this.waveChangeNotification.wave}`, centerX + 3, centerY + 3);
         
-        // Main text
+        // Main white text
         this.world.ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
         this.world.ctx.fillText(`WAVE ${this.waveChangeNotification.wave}`, centerX, centerY);
         
