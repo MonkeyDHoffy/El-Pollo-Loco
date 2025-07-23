@@ -35,15 +35,19 @@ class Keyboard {
     handleKeyDown(event) {
         switch(event.code) {
             case 'ArrowRight':
+            case 'KeyD':
                 this.RIGHT = true;
                 break;
             case 'ArrowLeft':
+            case 'KeyA':
                 this.LEFT = true;
                 break;
             case 'ArrowUp':
+            case 'KeyW':
                 this.UP = true;
                 break;
             case 'ArrowDown':
+            case 'KeyS':
                 this.DOWN = true;
                 this.SPACE = true; // Pfeiltaste nach unten wirft auch Flaschen
                 break;
@@ -60,15 +64,19 @@ class Keyboard {
     handleKeyUp(event) {
         switch(event.code) {
             case 'ArrowRight':
+            case 'KeyD':
                 this.RIGHT = false;
                 break;
             case 'ArrowLeft':
+            case 'KeyA':
                 this.LEFT = false;
                 break;
             case 'ArrowUp':
+            case 'KeyW':
                 this.UP = false;
                 break;
             case 'ArrowDown':
+            case 'KeyS':
                 this.DOWN = false;
                 this.SPACE = false; // Pfeiltaste nach unten hört auf Flaschen zu werfen
                 break;

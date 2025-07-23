@@ -19,8 +19,6 @@ function init() {
     initializeScreens(ctx);
     setupGameCallbacks();
     startScreenLoop();
-    
-    console.log('[Game] Start screen initialized');
 }
 
 /**
@@ -337,10 +335,7 @@ function startScreenLoop() {
  */
 function startGame() {
     if (gameStarted) return;
-    
     gameStarted = true;
-    console.log('[Game] Starting main game...');
-    
     hideStartScreen();
     initializeLevel();
     createWorld();
@@ -361,7 +356,6 @@ function hideStartScreen() {
  */
 function initializeLevel() {
     initLevel1();
-    console.log('[Game] Level initialized');
 }
 
 /**
