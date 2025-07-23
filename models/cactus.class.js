@@ -1,12 +1,10 @@
 /**
- * Represents a cactus obstacle with parallax scrolling effect
+ * Represents a static cactus obstacle
  * @extends DrawableObject
  */
 class Cactus extends DrawableObject {
     width = 200;
     height = 600;
-    parallaxSpeed = 0.2;
-    originalX;
 
     /**
      * Initialize cactus at specified position
@@ -18,16 +16,6 @@ class Cactus extends DrawableObject {
         this.loadImage('img/img_pollo_locco/img/10_special/cactus.png');
         this.x = x;
         this.y = y - 155;
-        this.originalX = this.x;
-    }
-
-    /**
-     * Updates cactus position with parallax scrolling effect
-     * @param {number} characterX - Character's X position for parallax calculation
-     */
-    updatePosition(characterX) {
-        let parallaxOffset = characterX * this.parallaxSpeed;
-        this.x = this.originalX - parallaxOffset;
     }
 
     /**

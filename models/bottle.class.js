@@ -1,12 +1,10 @@
 /**
- * Collectible bottle object with parallax effect
+ * Collectible bottle object
  * @extends MovableObject
  */
 class Bottle extends MovableObject {
     height = 90;
     width = 70;
-    parallaxSpeed = 0.2;
-    originalX;
 
     IMAGES_BOTTLE = [
         'img/img_pollo_locco/img/6_salsa_bottle/1_salsa_bottle_on_ground.png',
@@ -21,17 +19,7 @@ class Bottle extends MovableObject {
         this.loadImages(this.IMAGES_BOTTLE);
         this.x = 400 + Math.random() * 3600;
         this.y = 350;
-        this.originalX = this.x;
         this.animate();
-    }
-
-    /**
-     * Updates bottle position based on character position for parallax effect
-     * @param {number} characterX - Character's x position
-     */
-    updatePosition(characterX) {
-        let parallaxOffset = characterX * this.parallaxSpeed;
-        this.x = this.originalX - parallaxOffset;
     }
 
     /**

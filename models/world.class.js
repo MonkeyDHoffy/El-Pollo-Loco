@@ -351,12 +351,10 @@ class World {
     }
 
     /**
-     * Updates background object positions based on character position
+     * Updates background object positions for parallax effect
      */
     updateBackgroundPosition() {
         this.updateBackgroundObjects();
-        this.updateBottlePositions();
-        this.updateCactiPositions();
     }
 
     /**
@@ -366,28 +364,6 @@ class World {
         this.level.backgroundObjects.forEach(bgObject => {
             if (bgObject.updatePosition) {
                 bgObject.updatePosition(this.character.x);
-            }
-        });
-    }
-
-    /**
-     * Updates bottle positions
-     */
-    updateBottlePositions() {
-        this.level.bottles.forEach(bottle => {
-            if (bottle.updatePosition) {
-                bottle.updatePosition(this.character.x);
-            }
-        });
-    }
-
-    /**
-     * Updates cacti positions
-     */
-    updateCactiPositions() {
-        this.level.cacti.forEach(cactus => {
-            if (cactus.updatePosition) {
-                cactus.updatePosition(this.character.x);
             }
         });
     }
