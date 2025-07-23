@@ -618,10 +618,3 @@ document.addEventListener('keydown', function(event) {
         toggleFullscreen();
     }
 });
-
-/**
- * Event listener for debugging keyboard events
- */
-window.addEventListener('keypress', (event) => {
-    console.log(event);
-});
