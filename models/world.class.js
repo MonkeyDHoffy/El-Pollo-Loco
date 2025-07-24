@@ -208,6 +208,7 @@ class World {
      */
     checkThrowObjects() {
         if(this.keyboard.SPACE) {
+            this.character.resetIdleTimer();
             this.handleBottleThrow();
         }
     }

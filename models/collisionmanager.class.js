@@ -201,31 +201,18 @@ class CollisionManager {
      * 3. horizontalPadding: Horizontaler Abstand vom Endboss-Rand (aktuell: 10px)
      */
     isCharacterJumpingOnEndboss(endboss) {
-        // Character must be falling (negative speedY)
         let isFalling = this.world.character.speedY < 0;
-        
-        // PARAMETER 1: Vertikaler Offset in den Endboss hinein
-        let endbossTopOffset = 140; // HIER ANPASSEN: Höher = Kollision startet tiefer im Endboss
-        
-        // PARAMETER 2: Kollisionsspielraum über dem Endboss  
-        let collisionMargin = 15; // HIER ANPASSEN: Kleiner = Character muss näher sein
-        
-        // PARAMETER 3: Horizontaler Puffer
-        let horizontalPadding = 10; // HIER ANPASSEN: Kleiner = schmalere Kollisionsbox
-        
-        // Calculate precise collision boundaries for jump detection
+        let endbossTopOffset = 140; 
+        let collisionMargin = 15; 
+        let horizontalPadding = 10; 
         let characterBottom = this.world.character.y + this.world.character.height;
         let characterCenterX = this.world.character.x + this.world.character.width / 2;
-        
         let endbossJumpTop = endboss.y + endbossTopOffset; 
         let endbossLeft = endboss.x + horizontalPadding;
         let endbossRight = endboss.x + endboss.width - horizontalPadding;
-        
-        // Check if character is in the jump zone
         let isInJumpZoneVertically = characterBottom >= (endbossJumpTop - collisionMargin) && 
                                      characterBottom <= (endbossJumpTop + collisionMargin);
-        let isInJumpZoneHorizontally = characterCenterX >= endbossLeft && characterCenterX <= endbossRight;
-        
+        let isInJumpZoneHorizontally = characterCenterX >= endbossLeft && characterCenterX <= endbossRight; 
         return isFalling && isInJumpZoneVertically && isInJumpZoneHorizontally;
     }
 
@@ -233,9 +220,7 @@ class CollisionManager {
      * Handles character killing an enemy by jumping on it
      * @param {Object} enemy - Enemy that was killed
      */
-    handleCharacterKillsEnemy(enemy) {
-       
-        
+    handleCharacterKillsEnemy(enemy) { 
         this.applyKillEffects(enemy);
         this.updateScoreForKill(enemy);
         this.scheduleEnemyRemoval(enemy);

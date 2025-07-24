@@ -16,6 +16,12 @@ class Character extends MovableObject {
     comboEndTime = 0;
     comboGracePeriod = 2000;
 
+    // Long idle animation variables
+    lastInputTime = Date.now();
+    longIdleThreshold = 3000; // 4 seconds
+    isInLongIdle = false;
+    longIdleImage = 0;
+
     IMAGES_JUMPING = [
         'img/img_pollo_locco/img/2_character_pepe/3_jump/J-31.png',
         'img/img_pollo_locco/img/2_character_pepe/3_jump/J-31.png',
@@ -48,6 +54,19 @@ class Character extends MovableObject {
         'img/img_pollo_locco/img/2_character_pepe/1_idle/idle/I-8.png',
         'img/img_pollo_locco/img/2_character_pepe/1_idle/idle/I-9.png',
         'img/img_pollo_locco/img/2_character_pepe/1_idle/idle/I-10.png'
+    ];
+
+    IMAGES_LONG_IDLE = [
+        'img/img_pollo_locco/img/2_character_pepe/1_idle/long_idle/I-11.png',
+        'img/img_pollo_locco/img/2_character_pepe/1_idle/long_idle/I-12.png',
+        'img/img_pollo_locco/img/2_character_pepe/1_idle/long_idle/I-13.png',
+        'img/img_pollo_locco/img/2_character_pepe/1_idle/long_idle/I-14.png',
+        'img/img_pollo_locco/img/2_character_pepe/1_idle/long_idle/I-15.png',
+        'img/img_pollo_locco/img/2_character_pepe/1_idle/long_idle/I-16.png',
+        'img/img_pollo_locco/img/2_character_pepe/1_idle/long_idle/I-17.png',
+        'img/img_pollo_locco/img/2_character_pepe/1_idle/long_idle/I-18.png',
+        'img/img_pollo_locco/img/2_character_pepe/1_idle/long_idle/I-19.png',
+        'img/img_pollo_locco/img/2_character_pepe/1_idle/long_idle/I-20.png'
     ];
 
     IMAGES_WALKING = [
@@ -89,6 +108,7 @@ class Character extends MovableObject {
      */
     loadAllImages() {
         this.loadImages(this.IMAGES_IDLE);
+        this.loadImages(this.IMAGES_LONG_IDLE);
         this.loadImages(this.IMAGES_WALKING);
         this.loadImages(this.IMAGES_JUMPING);
         this.loadImages(this.IMAGES_DEAD);
@@ -126,9 +146,11 @@ class Character extends MovableObject {
         if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
             this.moveRight();
             this.playWalkingSound();
+            this.resetIdleTimer();
         } else if (this.world.keyboard.LEFT && this.x > 0) {
             this.moveLeft(true);
             this.playWalkingSound();
+            this.resetIdleTimer();
         } else if (this.world.keyboard.LEFT && this.x <= 0) {
             this.showWrongDirectionWarning = true;
             this.warningStartTime = Date.now();
@@ -143,6 +165,7 @@ class Character extends MovableObject {
      */
     handleJumping() {
         if (this.world.keyboard.UP && !this.isAboveGround()) {
+            this.resetIdleTimer();
             if (this.bottles === 0) {
                 this.jump(28);
                 this.activateSuperJumpSpeed();
@@ -151,6 +174,15 @@ class Character extends MovableObject {
                 this.jump(20);
             }
         }
+    }
+
+    /**
+     * Resets the idle timer when input is detected
+     */
+    resetIdleTimer() {
+        this.lastInputTime = Date.now();
+        this.isInLongIdle = false;
+        this.longIdleImage = 0;
     }
 
     /**
@@ -193,9 +225,21 @@ class Character extends MovableObject {
     startIdleAnimationLoop() {
         setInterval(() => {
             if (this.shouldPlayIdleAnimation()) {
+                this.updateIdleState();
                 this.playIdleFrame();
             }
         }, 1000 / 5);
+    }
+
+    /**
+     * Updates the idle state based on time since last input
+     */
+    updateIdleState() {
+        const timeSinceLastInput = Date.now() - this.lastInputTime;
+        if (timeSinceLastInput >= this.longIdleThreshold && !this.isInLongIdle) {
+            this.isInLongIdle = true;
+            this.longIdleImage = 0;
+        }
     }
 
     /**
@@ -214,11 +258,34 @@ class Character extends MovableObject {
      * Plays a single frame of idle animation
      */
     playIdleFrame() {
+        if (this.isInLongIdle) {
+            this.playLongIdleFrame();
+        } else {
+            this.playNormalIdleFrame();
+        }
+    }
+
+    /**
+     * Plays a frame of normal idle animation
+     */
+    playNormalIdleFrame() {
         let idlePath = this.IMAGES_IDLE[this.currentImage];
         this.img = this.imageCache[idlePath];
         this.currentImage++;
         if (this.currentImage >= this.IMAGES_IDLE.length) {
             this.currentImage = 0;
+        }
+    }
+
+    /**
+     * Plays a frame of long idle animation
+     */
+    playLongIdleFrame() {
+        let longIdlePath = this.IMAGES_LONG_IDLE[this.longIdleImage];
+        this.img = this.imageCache[longIdlePath];
+        this.longIdleImage++;
+        if (this.longIdleImage >= this.IMAGES_LONG_IDLE.length) {
+            this.longIdleImage = 0;
         }
     }
 
