@@ -8,20 +8,17 @@ class Endboss extends MovableObject {
     y = 175;
     energy = 50;
     isDead = false;
-    
     IMAGES_WALKING = [
         'img/img_pollo_locco/img/4_enemie_boss_chicken/1_walk/G1.png',
         'img/img_pollo_locco/img/4_enemie_boss_chicken/1_walk/G2.png',
         'img/img_pollo_locco/img/4_enemie_boss_chicken/1_walk/G3.png',
         'img/img_pollo_locco/img/4_enemie_boss_chicken/1_walk/G4.png',
     ];
-
     IMAGES_HURT = [
         'img/img_pollo_locco/img/4_enemie_boss_chicken/4_hurt/G21.png',
         'img/img_pollo_locco/img/4_enemie_boss_chicken/4_hurt/G22.png',
         'img/img_pollo_locco/img/4_enemie_boss_chicken/4_hurt/G23.png'
     ];
-
     IMAGES_ALERT = [
         'img/img_pollo_locco/img/4_enemie_boss_chicken/2_alert/G5.png',
         'img/img_pollo_locco/img/4_enemie_boss_chicken/2_alert/G6.png',
@@ -32,7 +29,6 @@ class Endboss extends MovableObject {
         'img/img_pollo_locco/img/4_enemie_boss_chicken/2_alert/G11.png',
         'img/img_pollo_locco/img/4_enemie_boss_chicken/2_alert/G12.png'
     ];
-
     IMAGES_ATTACK = [
         'img/img_pollo_locco/img/4_enemie_boss_chicken/3_attack/G13.png',
         'img/img_pollo_locco/img/4_enemie_boss_chicken/3_attack/G14.png',
@@ -43,7 +39,6 @@ class Endboss extends MovableObject {
         'img/img_pollo_locco/img/4_enemie_boss_chicken/3_attack/G19.png',
         'img/img_pollo_locco/img/4_enemie_boss_chicken/3_attack/G20.png'
     ];
-
     IMAGES_DEAD = [
         'img/img_pollo_locco/img/4_enemie_boss_chicken/5_dead/G24.png',
         'img/img_pollo_locco/img/4_enemie_boss_chicken/5_dead/G25.png',
@@ -63,7 +58,6 @@ class Endboss extends MovableObject {
         this.x = 3800 - (index * 600);
         this.animate();
     }
-
     /**
      * Loads all endboss animation images
      */
@@ -74,7 +68,6 @@ class Endboss extends MovableObject {
         this.loadImages(this.IMAGES_ATTACK);
         this.loadImages(this.IMAGES_DEAD);
     }
-
     /**
      * Initializes all animation state variables
      */
@@ -88,12 +81,10 @@ class Endboss extends MovableObject {
         this.fallSpeed = 0;
         this.startedFalling = false;
         this.originalY = 175;
-        
         this.isAttacking = false;
         this.attackAnimationTimer = 0;
         this.attackFrameIndex = 0;
         this.attackAnimationComplete = false;
-        
         this.isAlert = false;
         this.alertAnimationTimer = 0;
         this.alertFrameIndex = 0;
@@ -101,7 +92,6 @@ class Endboss extends MovableObject {
         this.alertCycleCount = 0;
         this.maxAlertCycles = 2;
     }
-
     /**
      * Initializes health scaling properties
      */
@@ -109,7 +99,6 @@ class Endboss extends MovableObject {
         this.baseEnergy = 50;
         this.maxEnergy = 50;
     }
-
     /**
      * Initializes character detection properties
      */
@@ -117,26 +106,19 @@ class Endboss extends MovableObject {
         this.hasSeenCharacter = false;
         this.detectionRange = 400;
     }
-
     /**
      * Set world reference and apply health scaling based on current wave
      */
     setWorld(world) {
         this.world = world;
-        
-        // Apply health scaling based on current wave
         if (world && world.waveManager) {
             this.maxEnergy = world.waveManager.getScaledEndbossHealth();
             this.energy = this.maxEnergy; // Set current energy to max
-         
         } else {
-            // Fallback to base energy if no wave manager
             this.maxEnergy = this.baseEnergy;
             this.energy = this.maxEnergy;
-        
         }
     }
-
     /**
      * Starts all animation loops for endboss behavior
      */
@@ -144,7 +126,6 @@ class Endboss extends MovableObject {
         this.startMovementLoop();
         this.startAnimationLoop();
     }
-
     /**
      * Handles endboss movement and character detection
      */
@@ -156,7 +137,6 @@ class Endboss extends MovableObject {
             }
         }, 1000 / 60);
     }
-
     /**
      * Handles endboss movement based on current state
      */
@@ -165,7 +145,6 @@ class Endboss extends MovableObject {
             this.moveLeft(false);
         }
     }
-
     /**
      * Handles all animation states and transitions
      */
@@ -176,7 +155,6 @@ class Endboss extends MovableObject {
             }
         }, 1000 / 10);
     }
-
     /**
      * Manages animation state priorities and transitions
      */
@@ -187,7 +165,6 @@ class Endboss extends MovableObject {
             this.handleLivingAnimations();
         }
     }
-
     /**
      * Handles death animation and falling behavior
      */
@@ -198,24 +175,19 @@ class Endboss extends MovableObject {
             this.handleFalling();
         }
     }
-
     /**
      * Handles falling behavior after death animation
      */
     handleFalling() {
         if (!this.startedFalling) {
             this.startedFalling = true;
-         
         }
-        
         this.fallSpeed += 1.2;
         this.y += this.fallSpeed;
-        
         if (this.y > 1500) {
             this.removeFromGame();
         }
     }
-
     /**
      * Handles animations for living endboss based on priority
      */
@@ -230,20 +202,16 @@ class Endboss extends MovableObject {
             this.playAnimation(this.IMAGES_WALKING);
         }
     }
-
     /**
      * Handles hurt animation and timer management
      */
     handleHurtAnimation() {
         this.playAnimation(this.IMAGES_HURT);
         this.hurtAnimationTimer -= 1000 / 10;
-        
         if (this.hurtAnimationTimer <= 0) {
             this.isHurt = false;
-         
         }
     }
-
     /**
      * Handles damage taken by endboss
      * @param {number} damage - Amount of damage to apply
@@ -251,14 +219,11 @@ class Endboss extends MovableObject {
     hit(damage) {
         this.energy -= damage;
         this.handleHitEffects();
-        
         if (this.energy <= 0) {
             this.energy = 0;
             this.die();
         }
-     
     }
-
     /**
      * Handles visual and audio effects when hit
      */
@@ -266,10 +231,8 @@ class Endboss extends MovableObject {
         if (this.energy > 0) {
             this.isHurt = true;
             this.hurtAnimationTimer = 500;
-          
         }
     }
-
     /**
      * Initiates endboss death sequence
      */
@@ -277,10 +240,8 @@ class Endboss extends MovableObject {
         if (!this.isDead) {
             this.isDead = true;
             this.initializeDeathAnimation();
-           
         }
     }
-
     /**
      * Sets up death animation parameters
      */
@@ -293,21 +254,17 @@ class Endboss extends MovableObject {
         this.startedFalling = false;
         this.speed = 0;
     }
-
     /**
      * Check if character is within detection range
      */
     checkCharacterDetection() {
         if (!this.hasSeenCharacter && this.world && this.world.character) {
             let distance = Math.abs(this.x - this.world.character.x);
-            
-            // If character is within detection range, trigger alert
             if (distance <= this.detectionRange) {
                 this.triggerAlert();
             }
         }
     }
-
     /**
      * Trigger alert animation when character is first spotted
      */
@@ -319,54 +276,37 @@ class Endboss extends MovableObject {
             this.alertFrameIndex = 0;
             this.alertAnimationComplete = false;
             this.alertCycleCount = 0; // Reset cycle counter
-            
         }
     }
-
     /**
      * Play alert animation exactly twice, frame by frame
      */
     playAlertAnimationOnce() {
-        // Decrease timer
         this.alertAnimationTimer -= 1000 / 10;
-        
-        // Calculate which frame to show based on time elapsed
         let timeElapsed = 800 - this.alertAnimationTimer;
         let frameIndex = Math.floor(timeElapsed / 100); // Change frame every 100ms
-        
-        // Check if one cycle is complete
         if (frameIndex >= this.IMAGES_ALERT.length) {
             this.alertCycleCount++;
         
             
-            // If we haven't reached max cycles, restart animation
             if (this.alertCycleCount < this.maxAlertCycles) {
                 this.alertAnimationTimer = 800; // Reset timer for next cycle
                 this.alertFrameIndex = 0; // Reset frame index
                 frameIndex = 0; // Start from first frame again
-                
             } else {
-                // All cycles complete, end alert animation
                 frameIndex = this.IMAGES_ALERT.length - 1;
                 this.alertAnimationComplete = true;
                 this.isAlert = false; // End alert animation
-            
             }
         }
-        
-        // Set the current image to the correct alert frame
         let path = this.IMAGES_ALERT[frameIndex];
         if (this.imageCache[path] && this.imageCache[path].complete) {
             this.img = this.imageCache[path];
         }
-        
-        // Log frame changes
         if (frameIndex !== this.alertFrameIndex) {
             this.alertFrameIndex = frameIndex;
-           
         }
     }
-
     /**
      * Start attack animation
      */
@@ -376,132 +316,60 @@ class Endboss extends MovableObject {
             this.attackAnimationTimer = 800; // 800ms for attack animation (8 frames * 100ms each)
             this.attackFrameIndex = 0;
             this.attackAnimationComplete = false;
-        
         }
     }
-
     /**
      * Play attack animation exactly once, frame by frame
      */
     playAttackAnimationOnce() {
-        // Decrease timer
         this.attackAnimationTimer -= 1000 / 10;
-        
-        // Calculate which frame to show based on time elapsed
         let timeElapsed = 800 - this.attackAnimationTimer;
         let frameIndex = Math.floor(timeElapsed / 100); // Change frame every 100ms
-        
-        // Clamp to last frame when animation should be complete
         if (frameIndex >= this.IMAGES_ATTACK.length) {
             frameIndex = this.IMAGES_ATTACK.length - 1;
             this.attackAnimationComplete = true;
             this.isAttacking = false; // End attack animation
         }
-        
-        // Set the current image to the correct attack frame
         let path = this.IMAGES_ATTACK[frameIndex];
         if (this.imageCache[path] && this.imageCache[path].complete) {
             this.img = this.imageCache[path];
         }
-        
-        // Log frame changes
         if (frameIndex !== this.attackFrameIndex) {
             this.attackFrameIndex = frameIndex;
         }
     }
-
-    // Remove endboss from game (called after death animation)
     removeFromGame() {
         if (this.world && this.world.level && this.world.level.endboss) {
             let index = this.world.level.endboss.indexOf(this);
             if (index > -1) {
                 this.world.level.endboss.splice(index, 1);
-                // Trigger endless mode replacement if active
                 if (this.world.endlessMode) {
                     this.world.endlessMode.onEndbossKilled(this);
                 }
             }
         }
     }
-
     /**
      * Play death animation exactly once, frame by frame
      */
     playDeathAnimationOnce() {
-        // Decrease timer
         this.deathAnimationTimer -= 1000 / 10;
-        
-        // Calculate which frame to show based on time elapsed
         let timeElapsed = 1000 - this.deathAnimationTimer;
         let frameIndex = Math.floor(timeElapsed / 200); // Change frame every 200ms
-        
-        // Clamp to last frame when animation should be complete
         if (frameIndex >= this.IMAGES_DEAD.length) {
             frameIndex = this.IMAGES_DEAD.length - 1;
             this.deathAnimationComplete = true;
         }
-        
-        // Set the current image to the correct death frame
         let path = this.IMAGES_DEAD[frameIndex];
         if (this.imageCache[path] && this.imageCache[path].complete) {
             this.img = this.imageCache[path];
         }
-        
-        // Log frame changes
         if (frameIndex !== this.deathFrameIndex) {
             this.deathFrameIndex = frameIndex;
         }
     }
-
-    // Draw energy bar above endboss
     draw(ctx) {
-        // Draw the endboss sprite
         super.draw(ctx);
-        
-        // Draw energy bar above endboss
-        this.drawEnergyBar(ctx);
-    }
-
-    drawEnergyBar(ctx) {
-        let barWidth = 180;
-        let barHeight = 20;
-        let barX = this.x + (this.width - barWidth) / 2;
-        let barY = this.y - 40;
-        
-        let energyPercentage = this.energy / this.maxEnergy;
-        
-        // Simple background
-        ctx.fillStyle = '#333333';
-        ctx.fillRect(barX, barY, barWidth, barHeight);
-        
-        // Health bar color based on percentage
-        let currentWidth = barWidth * energyPercentage;
-        if (energyPercentage > 0.6) {
-            ctx.fillStyle = '#00FF00';
-        } else if (energyPercentage > 0.3) {
-            ctx.fillStyle = '#FFFF00';
-        } else {
-            ctx.fillStyle = '#FF0000';
-        }
-        
-        ctx.fillRect(barX, barY, currentWidth, barHeight);
-        
-        // Simple border
-        ctx.strokeStyle = '#000000';
-        ctx.lineWidth = 2;
-        ctx.strokeRect(barX, barY, barWidth, barHeight);
-        
-        // Simple text
-        ctx.save();
-        ctx.font = 'bold 14px Arial';
-        ctx.textAlign = 'center';
-        ctx.fillStyle = 'white';
-        ctx.strokeStyle = 'black';
-        ctx.lineWidth = 1;
-        
-        ctx.strokeText(`Pollo Loco: ${this.energy}/${this.maxEnergy}`, barX + barWidth / 2, barY + barHeight / 2 + 5);
-        ctx.fillText(`Pollo Loco: ${this.energy}/${this.maxEnergy}`, barX + barWidth / 2, barY + barHeight / 2 + 5);
-        
-        ctx.restore();
+        EndbossUIRenderer.drawEnergyBar(ctx, this);
     }
 }

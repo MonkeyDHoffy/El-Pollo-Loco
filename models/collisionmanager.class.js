@@ -8,8 +8,8 @@ class CollisionManager {
      */
     constructor(world) {
         this.world = world;
+        this.bottleCollisionManager = new BottleCollisionManager(world);
     }
-
     /**
      * Checks all types of collisions in the game
      */
@@ -19,9 +19,8 @@ class CollisionManager {
         this.checkCharacterCoinCollisions();
         this.checkCharacterBottleCollisions();
         this.checkCharacterCactusCollisions();
-        this.checkBottleProjectileCollisions();
+        this.bottleCollisionManager.checkBottleProjectileCollisions();
     }
-
     /**
      * Checks collisions between character and regular enemies
      */
@@ -32,7 +31,6 @@ class CollisionManager {
             }
         });
     }
-
     /**
      * Handles collision between character and enemy
      * @param {Object} enemy - Enemy object that collided
@@ -45,7 +43,6 @@ class CollisionManager {
             this.handleCharacterHitByEnemy(enemyDamage);
         }
     }
-
     /**
      * Gets scaled enemy damage based on current wave
      * @returns {number} Scaled damage amount
@@ -54,7 +51,6 @@ class CollisionManager {
         return this.world.waveManager ? 
             this.world.waveManager.getScaledEnemyDamage() : 10;
     }
-
     /**
      * Checks collisions between character and endbosses
      */
@@ -65,7 +61,6 @@ class CollisionManager {
             }
         });
     }
-
     /**
      * Handles all character-endboss interactions
      * @param {Endboss} endboss - Endboss to check interaction with
@@ -77,7 +72,6 @@ class CollisionManager {
             this.handleEndbossAttack(endboss);
         }
     }
-
     /**
      * Checks if endboss should deal damage to character
      * @param {Endboss} endboss - Endboss to check
@@ -89,7 +83,6 @@ class CollisionManager {
                !endboss.isDying && 
                !this.world.character.isAboveGround();
     }
-
     /**
      * Handles endboss attack on character
      * @param {Endboss} endboss - Attacking endboss
@@ -99,7 +92,6 @@ class CollisionManager {
         let endbossDamage = this.getScaledEndbossDamage();
         this.handleCharacterHitByEnemy(endbossDamage);
     }
-
     /**
      * Gets scaled endboss damage based on current wave
      * @returns {number} Scaled damage amount
@@ -108,7 +100,6 @@ class CollisionManager {
         return this.world.waveManager ? 
             this.world.waveManager.getScaledEndbossDamage() : 20;
     }
-
     /**
      * Checks collisions between character and coins
      */
@@ -119,7 +110,6 @@ class CollisionManager {
             }
         });
     }
-
     /**
      * Checks collisions between character and bottles
      */
@@ -130,7 +120,6 @@ class CollisionManager {
             }
         });
     }
-
     /**
      * Checks collisions between character and cacti
      */
@@ -141,7 +130,6 @@ class CollisionManager {
             }
         });
     }
-
     /**
      * Checks precise collision between character and cactus
      * @param {Cactus} cactus - Cactus to check collision with
@@ -156,7 +144,6 @@ class CollisionManager {
                charBounds.bottom > cactusBounds.top &&
                charBounds.top < cactusBounds.bottom;
     }
-
     /**
      * Gets character collision bounds
      * @returns {Object} Character bounds
@@ -169,7 +156,6 @@ class CollisionManager {
             bottom: this.world.character.y + this.world.character.height - 10
         };
     }
-
     /**
      * Gets cactus collision bounds
      * @param {Cactus} cactus - Cactus object
@@ -183,7 +169,6 @@ class CollisionManager {
             bottom: cactus.y + cactus.height - 30
         };
     }
-
     /**
      * Check if character is jumping on enemy
      */
@@ -191,7 +176,6 @@ class CollisionManager {
         return this.world.character.speedY < 0 && 
                this.world.character.y + this.world.character.height - 30 < enemy.y + 20;
     }
-
     /**
      * Check if character is jumping on endboss (more precise detection)
      * 
@@ -215,7 +199,6 @@ class CollisionManager {
         let isInJumpZoneHorizontally = characterCenterX >= endbossLeft && characterCenterX <= endbossRight; 
         return isFalling && isInJumpZoneVertically && isInJumpZoneHorizontally;
     }
-
     /**
      * Handles character killing an enemy by jumping on it
      * @param {Object} enemy - Enemy that was killed
@@ -225,7 +208,6 @@ class CollisionManager {
         this.updateScoreForKill(enemy);
         this.scheduleEnemyRemoval(enemy);
     }
-
     /**
      * Applies visual and audio effects for enemy kill
      * @param {Object} enemy - Enemy that was killed
@@ -237,7 +219,6 @@ class CollisionManager {
         enemy.die();
         this.world.character.speedY = 15;
     }
-
     /**
      * Creates dust particles at enemy position
      * @param {Object} enemy - Enemy to create particles for
@@ -247,7 +228,6 @@ class CollisionManager {
         let enemyBottomY = enemy.y + enemy.height;
         this.world.particleManager.createDustParticles(enemyCenterX, enemyBottomY, 12);
     }
-
     /**
      * Updates score based on enemy type
      * @param {Object} enemy - Enemy that was killed
@@ -261,7 +241,6 @@ class CollisionManager {
         
         this.world.endlessMode.onEnemyKilled(enemy);
     }
-
     /**
      * Schedules enemy removal from game world
      * @param {Object} enemy - Enemy to remove
@@ -274,7 +253,6 @@ class CollisionManager {
             }
         }, 500);
     }
-
     /**
      * Handle character bouncing off endboss when jumping on it
      */
@@ -284,7 +262,6 @@ class CollisionManager {
         this.world.character.speedY = 15;
         this.world.character.playRandomChickenAttackSound();
     }
-
     /**
      * Handle character being hit by enemy
      */
@@ -295,7 +272,6 @@ class CollisionManager {
         let characterCenterY = this.world.character.y + this.world.character.height / 2;
         this.world.particleManager.createDamageParticles(characterCenterX, characterCenterY, 8);
     }
-
     /**
      * Handle character being hit by cactus
      */
@@ -308,156 +284,5 @@ class CollisionManager {
         }
         this.world.character.speedY = 15;
         this.world.statusbar.setPercentage(this.world.character.energy);
-    }
-
-    /**
-     * Check collisions between throwable objects and targets
-     */
-    checkBottleProjectileCollisions() {
-        this.world.throwableObjects.forEach((throwableObject, throwableIndex) => {
-            if (throwableObject.hasHit) return;
-            this.checkBottleHitsEnemies(throwableObject);
-            this.checkBottleHitsEndboss(throwableObject);
-        });
-    }
-
-    /**
-     * Check if bottles hit enemies
-     */
-    checkBottleHitsEnemies(throwableObject) {
-        this.world.level.enemies.forEach((enemy, enemyIndex) => {
-            if (throwableObject.isColliding(enemy) && !throwableObject.hasHit) {
-                this.handleBottleHitsEnemy(throwableObject, enemy);
-            }
-        });
-    }
-
-    /**
-     * Check if bottles hit endboss
-     */
-    checkBottleHitsEndboss(throwableObject) {
-        this.world.level.endboss.forEach((endboss, endbossIndex) => {
-            if (throwableObject.isColliding(endboss) && !endboss.isDead && !throwableObject.hasHit) {
-                this.handleBottleHitsEndboss(throwableObject, endboss);
-            }
-        });
-    }
-
-    /**
-     * Handle bottle hitting an enemy
-     */
-    handleBottleHitsEnemy(throwableObject, enemy) {
-        throwableObject.hasHit = true;
-        throwableObject.splash();
-        enemy.die();
-        this.world.audioManager.playGlassBreakSound();
-        
-        if (enemy instanceof MiniChicken) {
-            this.world.totalScore += 15;
-        } else if (enemy instanceof Chicken) {
-            this.world.totalScore += 25;
-        }
-        
-        // Notify endless mode about enemy kill
-        this.world.endlessMode.onEnemyKilled(enemy);
-        
-        setTimeout(() => {
-            let enemyIdx = this.world.level.enemies.indexOf(enemy);
-            if (enemyIdx > -1) {
-                this.world.level.enemies.splice(enemyIdx, 1);
-            }
-        }, 500);
-    }
-
-    /**
-     * Handles bottle hitting an endboss with combo damage calculation
-     * @param {ThrowableObject} throwableObject - Bottle that hit
-     * @param {Endboss} endboss - Endboss that was hit
-     */
-    handleBottleHitsEndboss(throwableObject, endboss) {
-        throwableObject.hasHit = true;
-        throwableObject.splash();
-        let damage = this.calculateComboDamage();
-        this.applyDamageToEndboss(endboss, damage);
-        this.handleEndbossHitEffects(endboss, damage);
-        if (endboss.isDead) {
-            this.handleEndbossDeath(endboss);
-        }
-    }
-
-    /**
-     * Calculates damage with combo multiplier
-     * @returns {Object} Damage calculation details
-     */
-    calculateComboDamage() {
-        let baseDamage = 10;
-        let effectiveCombo = this.world.character.getEffectiveCombo();
-        let comboMultiplier = Math.max(1, effectiveCombo);
-        let totalDamage = baseDamage * comboMultiplier;
-        return {
-            base: baseDamage,
-            combo: effectiveCombo,
-            multiplier: comboMultiplier,
-            total: totalDamage
-        };
-    }
-
-    /**
-     * Applies calculated damage to endboss
-     * @param {Endboss} endboss - Endboss to damage
-     * @param {Object} damage - Damage calculation object
-     */
-    applyDamageToEndboss(endboss, damage) {
-        endboss.hit(damage.total);
-        this.world.audioManager.playGlassBreakSound();
-    }
-
-    /**
-     * Handles visual and audio effects for endboss hit
-     * @param {Endboss} endboss - Endboss that was hit
-     * @param {Object} damage - Damage calculation object
-     */
-    handleEndbossHitEffects(endboss, damage) {
-        this.createHitEffects(endboss, damage);
-    }
-
-    /**
-     * Creates visual effects for high damage hits
-     * @param {Endboss} endboss - Endboss that was hit
-     * @param {Object} damage - Damage calculation object
-     */
-    createHitEffects(endboss, damage) {
-        let endbossX = endboss.x + endboss.width / 2;
-        let endbossY = endboss.y + endboss.height / 2;
-        if (damage.combo >= 3) {
-            this.world.particleManager.createComboParticles(endbossX, endbossY, damage.combo);
-        }
-        if (damage.total > 20) {
-            this.showFloatingDamage(endbossX, endboss.y, damage.total);
-        }
-    }
-
-    /**
-     * Handles endboss death and cleanup
-     * @param {Endboss} endboss - Endboss that died
-     */
-    handleEndbossDeath(endboss) {
-        this.world.totalScore += 60;
-        this.world.endlessMode.onEndbossKilled(endboss);    
-        setTimeout(() => {
-            let bossIdx = this.world.level.endboss.indexOf(endboss);
-            if (bossIdx > -1) {
-                this.world.level.endboss.splice(bossIdx, 1);
-            }
-        }, 1000);
-    }
-
-    /**
-     * Show floating damage number (visual feedback for high damage)
-     */
-    showFloatingDamage(x, y, damage) {
-        if (damage >= 50) {
-            this.world.particleManager.createDustParticles(x, y + 50, 20); // Extra dust
-        }
     }
 }

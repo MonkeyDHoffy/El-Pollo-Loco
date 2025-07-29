@@ -467,6 +467,8 @@ function togglePause() {
  */
 function updatePauseButton() {
     let pauseButton = document.getElementById('pauseButton');
+    if (!pauseButton) return; // Element doesn't exist
+    
     if (world.isPaused) {
         pauseButton.textContent = 'RESUME';
         pauseButton.classList.add('paused');
