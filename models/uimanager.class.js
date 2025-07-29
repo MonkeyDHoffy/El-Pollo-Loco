@@ -378,7 +378,7 @@ class UIManager {
      */
     drawComboIndicator() {
         let effectiveCombo = this.world.character.getEffectiveCombo();
-        let currentCombo = this.world.character.combo;
+        let currentCombo = this.world.character.comboManager.combo;
         
         if (effectiveCombo === 0) return;
         
@@ -398,8 +398,8 @@ class UIManager {
         if (inGracePeriod) {
             // Calculate remaining grace period time
             let currentTime = Date.now();
-            let timeSinceComboEnded = currentTime - this.world.character.comboEndTime;
-            let remainingTime = Math.max(0, this.world.character.comboGracePeriod - timeSinceComboEnded);
+            let timeSinceComboEnded = currentTime - this.world.character.comboManager.comboEndTime;
+            let remainingTime = Math.max(0, this.world.character.comboManager.comboGracePeriod - timeSinceComboEnded);
             let secondsRemaining = Math.ceil(remainingTime / 1000);
             
             comboText = `${effectiveCombo}x`;
@@ -419,8 +419,8 @@ class UIManager {
         if (inGracePeriod) {
             // Fading orange for grace period
             let currentTime = Date.now();
-            let timeSinceComboEnded = currentTime - this.world.character.comboEndTime;
-            let fadeProgress = timeSinceComboEnded / this.world.character.comboGracePeriod;
+            let timeSinceComboEnded = currentTime - this.world.character.comboManager.comboEndTime;
+            let fadeProgress = timeSinceComboEnded / this.world.character.comboManager.comboGracePeriod;
             let alpha = Math.max(0.3, 1 - fadeProgress);
             
             bgColor = `rgba(255, 140, 0, ${alpha * pulseValue * 0.6})`;

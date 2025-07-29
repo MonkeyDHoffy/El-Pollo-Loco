@@ -11,12 +11,72 @@ class Character extends MovableObject {
     longIdleThreshold = 3000;
     isInLongIdle = false;
     longIdleImage = 0;
-    IMAGES_JUMPING = this.generateImageArray('img/img_pollo_locco/img/2_character_pepe/3_jump/J-', 31, 39, 2);
-    IMAGES_IDLE = this.generateImageArray('img/img_pollo_locco/img/2_character_pepe/1_idle/idle/I-', 1, 10);
-    IMAGES_LONG_IDLE = this.generateImageArray('img/img_pollo_locco/img/2_character_pepe/1_idle/long_idle/I-', 11, 20);
-    IMAGES_WALKING = this.generateImageArray('img/img_pollo_locco/img/2_character_pepe/2_walk/W-', 21, 26);
-    IMAGES_HURT = this.generateImageArray('img/img_pollo_locco/img/2_character_pepe/4_hurt/H-', 41, 43);
-    IMAGES_DEAD = this.generateImageArray('img/img_pollo_locco/img/2_character_pepe/5_dead/D-', 51, 57);
+    IMAGES_JUMPING = [
+        'img/img_pollo_locco/img/2_character_pepe/3_jump/J-31.png',
+        'img/img_pollo_locco/img/2_character_pepe/3_jump/J-31.png',
+        'img/img_pollo_locco/img/2_character_pepe/3_jump/J-32.png',
+        'img/img_pollo_locco/img/2_character_pepe/3_jump/J-32.png',
+        'img/img_pollo_locco/img/2_character_pepe/3_jump/J-33.png',
+        'img/img_pollo_locco/img/2_character_pepe/3_jump/J-33.png',
+        'img/img_pollo_locco/img/2_character_pepe/3_jump/J-34.png',
+        'img/img_pollo_locco/img/2_character_pepe/3_jump/J-34.png',
+        'img/img_pollo_locco/img/2_character_pepe/3_jump/J-35.png',
+        'img/img_pollo_locco/img/2_character_pepe/3_jump/J-35.png',
+        'img/img_pollo_locco/img/2_character_pepe/3_jump/J-36.png',
+        'img/img_pollo_locco/img/2_character_pepe/3_jump/J-36.png',
+        'img/img_pollo_locco/img/2_character_pepe/3_jump/J-37.png',
+        'img/img_pollo_locco/img/2_character_pepe/3_jump/J-37.png',
+        'img/img_pollo_locco/img/2_character_pepe/3_jump/J-38.png',
+        'img/img_pollo_locco/img/2_character_pepe/3_jump/J-38.png',
+        'img/img_pollo_locco/img/2_character_pepe/3_jump/J-39.png',
+        'img/img_pollo_locco/img/2_character_pepe/3_jump/J-39.png'
+    ];
+    IMAGES_IDLE = [  
+        'img/img_pollo_locco/img/2_character_pepe/1_idle/idle/I-1.png',
+        'img/img_pollo_locco/img/2_character_pepe/1_idle/idle/I-2.png',
+        'img/img_pollo_locco/img/2_character_pepe/1_idle/idle/I-3.png',
+        'img/img_pollo_locco/img/2_character_pepe/1_idle/idle/I-4.png',
+        'img/img_pollo_locco/img/2_character_pepe/1_idle/idle/I-5.png',
+        'img/img_pollo_locco/img/2_character_pepe/1_idle/idle/I-6.png',
+        'img/img_pollo_locco/img/2_character_pepe/1_idle/idle/I-7.png',
+        'img/img_pollo_locco/img/2_character_pepe/1_idle/idle/I-8.png',
+        'img/img_pollo_locco/img/2_character_pepe/1_idle/idle/I-9.png',
+        'img/img_pollo_locco/img/2_character_pepe/1_idle/idle/I-10.png'
+    ];
+    IMAGES_LONG_IDLE = [
+        'img/img_pollo_locco/img/2_character_pepe/1_idle/long_idle/I-11.png',
+        'img/img_pollo_locco/img/2_character_pepe/1_idle/long_idle/I-12.png',
+        'img/img_pollo_locco/img/2_character_pepe/1_idle/long_idle/I-13.png',
+        'img/img_pollo_locco/img/2_character_pepe/1_idle/long_idle/I-14.png',
+        'img/img_pollo_locco/img/2_character_pepe/1_idle/long_idle/I-15.png',
+        'img/img_pollo_locco/img/2_character_pepe/1_idle/long_idle/I-16.png',
+        'img/img_pollo_locco/img/2_character_pepe/1_idle/long_idle/I-17.png',
+        'img/img_pollo_locco/img/2_character_pepe/1_idle/long_idle/I-18.png',
+        'img/img_pollo_locco/img/2_character_pepe/1_idle/long_idle/I-19.png',
+        'img/img_pollo_locco/img/2_character_pepe/1_idle/long_idle/I-20.png'
+    ];
+    IMAGES_WALKING = [
+        'img/img_pollo_locco/img/2_character_pepe/2_walk/W-21.png',
+        'img/img_pollo_locco/img/2_character_pepe/2_walk/W-22.png',
+        'img/img_pollo_locco/img/2_character_pepe/2_walk/W-23.png',
+        'img/img_pollo_locco/img/2_character_pepe/2_walk/W-24.png',
+        'img/img_pollo_locco/img/2_character_pepe/2_walk/W-25.png',
+        'img/img_pollo_locco/img/2_character_pepe/2_walk/W-26.png'
+    ];
+    IMAGES_HURT = [
+        'img/img_pollo_locco/img/2_character_pepe/4_hurt/H-41.png',
+        'img/img_pollo_locco/img/2_character_pepe/4_hurt/H-42.png',
+        'img/img_pollo_locco/img/2_character_pepe/4_hurt/H-43.png'
+    ];
+    IMAGES_DEAD = [
+        'img/img_pollo_locco/img/2_character_pepe/5_dead/D-51.png',
+        'img/img_pollo_locco/img/2_character_pepe/5_dead/D-52.png',
+        'img/img_pollo_locco/img/2_character_pepe/5_dead/D-53.png',
+        'img/img_pollo_locco/img/2_character_pepe/5_dead/D-54.png',
+        'img/img_pollo_locco/img/2_character_pepe/5_dead/D-55.png',
+        'img/img_pollo_locco/img/2_character_pepe/5_dead/D-56.png',
+        'img/img_pollo_locco/img/2_character_pepe/5_dead/D-57.png'
+    ];
     isWalkingSoundPlaying = false;
     constructor() {
         super().loadImage('img/img_pollo_locco/img/2_character_pepe/1_idle/idle/I-1.png');
@@ -25,25 +85,12 @@ class Character extends MovableObject {
         this.initializeManagers();
         this.animate();
     }
-
     /**
      * Initialize manager instances
      */
     initializeManagers() {
         this.collisionManager = new CharacterCollisionManager(this);
         this.comboManager = new CharacterComboManager(this);
-    }
-    /**
-     * Generate array of image paths
-     */
-    generateImageArray(basePath, start, end, repeat = 1) {
-        let images = [];
-        for (let i = start; i <= end; i++) {
-            for (let r = 0; r < repeat; r++) {
-                images.push(`${basePath}${i}.png`);
-            }
-        }
-        return images;
     }
     /**
      * Loads all character animation images
@@ -223,7 +270,6 @@ class Character extends MovableObject {
             this.showWrongDirectionWarning = false;
         }
     }
-
     /**
      * Makes character jump with specified height
      * @param {number} howhigh - Jump height/speed
@@ -232,7 +278,6 @@ class Character extends MovableObject {
         this.speedY = howhigh;
         this.playRandomJumpSound();
     }
-
     /**
      * Activate super jump speed boost for horizontal movement
      */
@@ -243,7 +288,6 @@ class Character extends MovableObject {
             this.speed = this.originalSpeed || 8;
         }, 800);
     }
-
     /**
      * Checks if character can throw a bottle
      * @returns {boolean} True if character has bottles available
@@ -251,7 +295,6 @@ class Character extends MovableObject {
     canThrowBottle() {
         return this.bottles > 0;
     }
-
     /**
      * Uses a bottle from inventory
      * @returns {boolean} True if bottle was successfully used
@@ -263,7 +306,6 @@ class Character extends MovableObject {
         }
         return false;
     }
-
     /**
      * Plays a random jump sound effect
      */
@@ -272,7 +314,6 @@ class Character extends MovableObject {
             this.world.audioManager.playRandomJumpSound();
         }
     }
-
     /**
      * Plays a random chicken attack sound effect
      */
@@ -281,7 +322,6 @@ class Character extends MovableObject {
             this.world.audioManager.playRandomChickenAttackSound();
         }
     }
-
     /**
      * Plays a random hurt sound effect
      */
@@ -290,7 +330,6 @@ class Character extends MovableObject {
             this.world.audioManager.playRandomHurtSound();
         }
     }
-
     /**
      * Plays walking sound if character is on ground and not already playing
      */
@@ -305,7 +344,6 @@ class Character extends MovableObject {
             this.stopWalkingSound();
         }
     }
-
     /**
      * Stops walking sound if currently playing
      */
@@ -317,7 +355,6 @@ class Character extends MovableObject {
             this.isWalkingSoundPlaying = false;
         }
     }
-
     /**
      * Checks collision with another object
      * @param {Object} mobject - Object to check collision with
@@ -326,28 +363,24 @@ class Character extends MovableObject {
     isColliding(mobject) {
         return this.collisionManager.isColliding(mobject);
     }
-
     /**
      * Check if character is on ground and update combo tracking
      */
     updateComboTracking() {
         this.comboManager.updateComboTracking();
     }
-
     /**
      * Add to combo when killing chicken while airborne
      */
     addComboKill() {
         this.comboManager.addComboKill();
     }
-
     /**
      * Reset combo (called when taking damage or other events)
      */
     resetCombo() {
         this.comboManager.resetCombo();
     }
-
     /**
      * Get the effective combo value for damage calculation
      * Returns current combo or last combo if within grace period
@@ -355,21 +388,18 @@ class Character extends MovableObject {
     getEffectiveCombo() {
         return this.comboManager.getEffectiveCombo();
     }
-
     /**
      * Getter for combo value
      */
     get combo() {
         return this.comboManager.combo;
     }
-
     /**
      * Setter for combo value
      */
     set combo(value) {
         this.comboManager.combo = value;
     }
-
     /**
      * Override hit method to reset combo when taking damage
      */
