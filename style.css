@@ -224,14 +224,15 @@ canvas:hover {
     }
     
     canvas {
-        width: 100vw;
-        height: 100vh;
-        max-width: none;
-        position: fixed;
-        top: 0;
-        left: 0;
+        width: 100vw !important;
+        height: 100vh !important;
+        max-width: none !important;
+        max-height: none !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
         border-radius: 0;
-        object-fit: contain;
+        object-fit: fill;
     }
     
     #brownGround {
@@ -333,14 +334,15 @@ canvas:hover {
     }
     
     canvas {
-        width: 100vw;
-        height: 100vh;
-        max-height: none;
-        position: fixed;
-        top: 0;
-        left: 0;
+        width: 100vw !important;
+        height: 100vh !important;
+        max-width: none !important;
+        max-height: none !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
         border-radius: 0;
-        object-fit: contain;
+        object-fit: fill;
         background-color: black;
     }
     

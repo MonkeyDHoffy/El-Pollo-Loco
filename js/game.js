@@ -211,14 +211,16 @@ function applyMobileCanvasStyles(canvas) {
  * @param {number} viewportHeight - Current viewport height
  */
 function handleAspectRatio(canvas, viewportWidth, viewportHeight) {
-    let gameAspectRatio = 720 / 480;
-    let screenAspectRatio = viewportWidth / viewportHeight;
+    // For true fullscreen mobile experience, stretch canvas to fill entire screen
+    // Keep internal resolution at 720x480 but stretch visually
+    canvas.style.width = viewportWidth + 'px';
+    canvas.style.height = viewportHeight + 'px';
+    canvas.style.left = '0px';
+    canvas.style.top = '0px';
     
-    if (screenAspectRatio > gameAspectRatio) {
-        applyHorizontalLetterboxing(canvas, viewportWidth, viewportHeight, gameAspectRatio);
-    } else {
-        applyVerticalLetterboxing(canvas, viewportWidth, viewportHeight, gameAspectRatio);
-    }
+    // Keep the internal canvas resolution for game logic
+    canvas.width = 720;
+    canvas.height = 480;
 }
 
 /**
