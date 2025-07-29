@@ -444,7 +444,7 @@ canvas:hover {
     visibility: hidden;
     transform: translateY(10px);
     transition: all 0.4s ease;
-    z-index: 1000;
+    z-index: 100000 !important;
     font-family: 'Bangers', cursive;
     font-size: 14px;
     line-height: 1.4;
@@ -595,7 +595,7 @@ canvas:hover {
     bottom: 0;
     left: 0;
     right: 0;
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(0, 0, 0, 0.438);
     padding: 10px;
     text-align: center;
     z-index: 1000;

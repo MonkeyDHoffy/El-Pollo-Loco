@@ -90,8 +90,8 @@ class MobileControls {
                 width: isTabletSize ? 90 : 80,
                 height: isTabletSize ? 90 : 80,
                 radius: 15,
-                color: '#FF6B35',
-                borderColor: '#FFF700',
+                color: '#E63946', // Mexikanisches Rot
+                borderColor: '#FFF700', // Mexikanisches Gelb
                 textColor: 'white',
                 font: isTabletSize ? 'bold 18px Comic Sans MS' : 'bold 16px Comic Sans MS'
             },
@@ -99,8 +99,8 @@ class MobileControls {
                 width: isTabletSize ? 110 : 100,
                 height: isTabletSize ? 80 : 70,
                 radius: 15,
-                color: '#FF6B35',
-                borderColor: '#FFF700',
+                color: '#43AA8B', // Mexikanisches Grün
+                borderColor: '#F77F00', // Mexikanisches Orange
                 textColor: 'white',
                 font: isTabletSize ? 'bold 16px Comic Sans MS' : 'bold 14px Comic Sans MS'
             }
@@ -122,7 +122,7 @@ class MobileControls {
             buttonSpacing: isTabletSize ? 140 : 120, // Increased horizontal spacing between left/right buttons
             actionButtonOffset: isTabletSize ? 90 : 80,
             actionTopOffset: isTabletSize ? 220 : 200, // Much more spacing for jump button
-            actionBottomOffset: isTabletSize ? 100 : 80 // More spacing for throw button
+            actionBottomOffset: isTabletSize ? 180 : 120 // Throw button moved even higher
         };
     }
 
@@ -384,44 +384,62 @@ class MobileControls {
         // Save context
         ctx.save();
         
-        // Set global alpha for 40% transparency (15% more visible than before)
-        ctx.globalAlpha = 0.40;
+        // Set global alpha for 60% transparency (20% more visible)
+        ctx.globalAlpha = 0.60;
         
-        // Button background
+        // Button background - Mexikanische Farbverläufe
     let gradient = ctx.createLinearGradient(
             button.x, button.y, 
             button.x, button.y + button.height
         );
         
         if (button.pressed) {
-            gradient.addColorStop(0, '#E63946');
-            gradient.addColorStop(1, '#DC2626');
+            // Gedrückte Buttons - dunklere mexikanische Töne
+            if (button.id === 'jump' || button.id === 'throw') {
+                gradient.addColorStop(0, '#2D7D68'); // Dunkleres Grün
+                gradient.addColorStop(1, '#1B4D3E');
+            } else {
+                gradient.addColorStop(0, '#C62E3A'); // Dunkleres Rot
+                gradient.addColorStop(1, '#8B1E2B');
+            }
         } else {
-            gradient.addColorStop(0, '#FF6B35');
-            gradient.addColorStop(1, '#E63946');
+            // Normale Buttons - lebendige mexikanische Farben
+            if (button.id === 'jump' || button.id === 'throw') {
+                gradient.addColorStop(0, '#43AA8B'); // Mexikanisches Grün
+                gradient.addColorStop(0.5, '#52C69B'); // Heller in der Mitte
+                gradient.addColorStop(1, '#3A9B7A'); // Dunkler unten
+            } else {
+                gradient.addColorStop(0, '#E63946'); // Mexikanisches Rot
+                gradient.addColorStop(0.5, '#F04A5A'); // Heller in der Mitte  
+                gradient.addColorStop(1, '#D32F2F'); // Dunkler unten
+            }
         }
         
         // Draw button
         ctx.fillStyle = gradient;
         ctx.strokeStyle = button.borderColor;
-        ctx.lineWidth = 3;
+        ctx.lineWidth = 4; // Dickere Umrandung für mexikanischen Look
         
         this.roundRect(ctx, button.x, button.y, button.width, button.height, button.radius);
         ctx.fill();
         ctx.stroke();
         
-        // Add glow effect
-        ctx.shadowColor = 'rgba(0, 0, 0, 0.3)';
-        ctx.shadowBlur = 5;
-        ctx.shadowOffsetY = 2;
+        // Mexikanischer Glow-Effekt mit warmen Farben
+        ctx.shadowColor = 'rgba(247, 127, 0, 0.4)'; // Orangener Schatten
+        ctx.shadowBlur = 8;
+        ctx.shadowOffsetY = 3;
         
-        // Button text
+        // Button text mit mexikanischem Text-Schatten
         ctx.fillStyle = button.textColor;
         ctx.font = button.font;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
-        ctx.shadowBlur = 2;
+        
+        // Doppelter Schatten für mexikanischen 3D-Effekt
+        ctx.shadowColor = 'rgba(139, 30, 43, 0.8)'; // Dunkles Rot
+        ctx.shadowBlur = 3;
+        ctx.shadowOffsetX = 2;
+        ctx.shadowOffsetY = 2;
         
     let centerX = button.x + button.width / 2;
     let centerY = button.y + button.height / 2;
