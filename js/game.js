@@ -604,10 +604,16 @@ function handleFullscreenChange() {
  * @param {HTMLElement} fullscreenButton - The fullscreen toggle button
  */
 function resetFullscreenUI(canvas, body, fullscreenButton) {
-    canvas.classList.remove('fullscreen');
-    body.classList.remove('fullscreen-active');
-    fullscreenButton.textContent = 'FULLSCREEN';
-    fullscreenButton.classList.remove('active');
+    if (canvas) {
+        canvas.classList.remove('fullscreen');
+    }
+    if (body) {
+        body.classList.remove('fullscreen-active');
+    }
+    if (fullscreenButton) {
+        fullscreenButton.textContent = 'FULLSCREEN';
+        fullscreenButton.classList.remove('active');
+    }
     
     document.documentElement.style.setProperty('--scale-factor', '1');
 }
