@@ -121,8 +121,7 @@ class MobileControls {
             margin: isTabletSize ? 40 : 30,
             buttonSpacing: isTabletSize ? 140 : 120, // Increased horizontal spacing between left/right buttons
             actionButtonOffset: isTabletSize ? 90 : 80,
-            actionTopOffset: isTabletSize ? 220 : 200, // Much more spacing for jump button
-            actionBottomOffset: isTabletSize ? 180 : 120 // Throw button moved even higher
+            actionTopOffset: isTabletSize ? 220 : 200 // Spacing for action buttons
         };
     }
 
@@ -162,25 +161,37 @@ class MobileControls {
      * @param {number} canvasHeight - Canvas height
      */
     createActionButtons(positions, styling, canvasWidth, canvasHeight) {
-    let { margin, actionButtonOffset, actionTopOffset, actionBottomOffset } = positions;
-    let { actionButtonStyle } = styling;
+        let { margin, actionButtonOffset, actionTopOffset } = positions;
+        let { actionButtonStyle } = styling;
 
+        // Beide Buttons auf gleicher Höhe positionieren
+        let buttonY = canvasHeight - actionTopOffset;
+        
+        // Jump button (rechts)
+        let jumpX = canvasWidth - margin - actionButtonOffset;
         this.buttons.push({
             id: 'jump',
-            x: canvasWidth - margin - actionButtonOffset,
-            y: canvasHeight - actionTopOffset,
+            x: jumpX,
+            y: buttonY,
             ...actionButtonStyle,
             text: 'JUMP',
             key: 'UP'
         });
 
+        // Throw button (links neben Jump button mit 20px Abstand)
+        let throwX = jumpX - actionButtonStyle.width - 20;
         this.buttons.push({
             id: 'throw',
-            x: canvasWidth - margin - actionButtonOffset,
-            y: canvasHeight - actionBottomOffset,
+            x: throwX,
+            y: buttonY, // Gleiche Y-Position wie Jump button
             ...actionButtonStyle,
             text: 'THROW',
             key: 'SPACE'
+        });
+        
+        console.log('Action buttons created:', {
+            jump: { x: jumpX, y: buttonY },
+            throw: { x: throwX, y: buttonY }
         });
     }
 
@@ -488,14 +499,21 @@ class MobileControls {
                     button.y = canvasHeight - buttonSpacing;
                     break;
                 case 'jump':
-                    button.x = canvasWidth - margin - (isTabletSize ? 90 : 80);
-                    button.y = canvasHeight - (isTabletSize ? 220 : 200); // Much more spacing
-                    button.key = 'UP'; // Ensure key is correct
+                    // Jump button rechts, auf gleicher Höhe wie Throw
+                    let jumpX = canvasWidth - margin - (isTabletSize ? 90 : 80);
+                    let buttonY = canvasHeight - (isTabletSize ? 220 : 200);
+                    button.x = jumpX;
+                    button.y = buttonY;
+                    button.key = 'UP';
                     break;
                 case 'throw':
-                    button.x = canvasWidth - margin - (isTabletSize ? 90 : 80);
-                    button.y = canvasHeight - (isTabletSize ? 100 : 80); // More spacing
-                    button.key = 'SPACE'; // Ensure key is correct
+                    // Throw button links neben Jump button
+                    let throwJumpX = canvasWidth - margin - (isTabletSize ? 90 : 80);
+                    let throwButtonY = canvasHeight - (isTabletSize ? 220 : 200);
+                    let buttonWidth = isTabletSize ? 110 : 100;
+                    button.x = throwJumpX - buttonWidth - 20; // 20px Abstand
+                    button.y = throwButtonY; // Gleiche Y-Position wie Jump
+                    button.key = 'SPACE';
                     break;
             }
         });
