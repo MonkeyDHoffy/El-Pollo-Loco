@@ -8,7 +8,6 @@ class UIManager {
      */
     constructor(world) {
         this.world = world;
-        
         this.initializeButtons();
         this.initializeMuteState();
         this.setupButtonEventListeners();
@@ -66,9 +65,9 @@ class UIManager {
         if (currentScore > this.highscore) {
             this.highscore = currentScore;
             localStorage.setItem('elPolloLocoHighscore', this.highscore.toString());
-            return true; // New highscore achieved
+            return true;
         }
-        return false; // No new highscore
+        return false;
     }
 
     /**
@@ -76,19 +75,15 @@ class UIManager {
      */
     drawUI() {
         this.drawMexicanScore();
-        this.drawWaveIndicator(); // Add wave indicator
-        this.drawComboIndicator(); // Add combo indicator
-        this.drawCanvasButtons(); // Add canvas buttons
-        
+        this.drawWaveIndicator();
+        this.drawComboIndicator();
+        this.drawCanvasButtons();
         if (this.world.isPaused) {
             this.drawPauseOverlay();
         }
-
         if (this.world.character.showWrongDirectionWarning) {
             this.drawWrongDirectionWarning();
         }
-
-        // Draw wave change notification if active
         if (this.waveChangeNotification) {
             this.drawWaveChangeNotification();
         }
@@ -99,11 +94,9 @@ class UIManager {
      */
     drawMexicanScore() {
         this.world.ctx.save();
-        
         let scorePosition = this.calculateScorePosition();
         this.drawScoreBackground(scorePosition);
         this.drawScoreText(scorePosition);
-        
         this.world.ctx.restore();
     }
 
@@ -128,7 +121,6 @@ class UIManager {
         this.world.ctx.fillStyle = '#FF6B35';
         this.roundRect(this.world.ctx, pos.x - 10, pos.y - 20, pos.width, pos.height, 8);
         this.world.ctx.fill();
-        
         this.world.ctx.strokeStyle = '#E63946';
         this.world.ctx.lineWidth = 2;
         this.roundRect(this.world.ctx, pos.x - 10, pos.y - 20, pos.width, pos.height, 8);
@@ -142,10 +134,8 @@ class UIManager {
     drawScoreText(pos) {
         this.world.ctx.font = 'bold 24px Comic Sans MS';
         this.world.ctx.textAlign = 'center';
-        
         this.world.ctx.fillStyle = '#8B1538';
         this.world.ctx.fillText(`${this.world.totalScore}`, pos.x + 40 + 2, pos.y + 2);
-        
         this.world.ctx.fillStyle = '#FFFFFF';
         this.world.ctx.fillText(`${this.world.totalScore}`, pos.x + 40, pos.y);
     }
@@ -174,12 +164,10 @@ class UIManager {
         this.world.ctx.save();
         this.world.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
         this.world.ctx.fillRect(0, 0, this.world.canvas.width, this.world.canvas.height);
-        
         this.world.ctx.fillStyle = '#fff';
         this.world.ctx.font = Math.min(this.world.canvas.width / 15, 48) + 'px Comic Sans MS';
         this.world.ctx.textAlign = 'center';
         this.world.ctx.fillText('PAUSED', this.world.canvas.width / 2, this.world.canvas.height / 2);
-        
         this.world.ctx.restore();
     }
 
@@ -194,14 +182,11 @@ class UIManager {
         this.world.ctx.fillStyle = '#fff';
         this.world.ctx.strokeStyle = '#ff0000';
         this.world.ctx.lineWidth = 3;
-        
         let warningText = 'WRONG DIRECTION!';
         let textX = this.world.canvas.width / 2;
         let textY = this.world.canvas.height / 2 - 100;
-        
         this.world.ctx.strokeText(warningText, textX, textY);
         this.world.ctx.fillText(warningText, textX, textY);
-        
         this.world.ctx.restore();
     }
 
@@ -210,28 +195,17 @@ class UIManager {
      */
     drawGameOverScreen() {
         this.world.ctx.save();
-        
-        // Update highscore before displaying
         let isNewHighscore = this.updateHighscore(this.world.totalScore);
-        
-        // Dark overlay
         this.world.ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
         this.world.ctx.fillRect(0, 0, this.world.canvas.width, this.world.canvas.height);
-        
-        // Game Over text
         this.world.ctx.fillStyle = '#ff0000';
         this.world.ctx.font = 'bold 48px Comic Sans MS';
         this.world.ctx.textAlign = 'center';
         this.world.ctx.fillText('GAME OVER', this.world.canvas.width / 2, this.world.canvas.height / 2 - 80);
-        
-        // Final score
         this.world.ctx.fillStyle = '#ffffff';
         this.world.ctx.font = 'bold 24px Comic Sans MS';
         this.world.ctx.fillText(`Final Score: ${this.world.totalScore}`, this.world.canvas.width / 2, this.world.canvas.height / 2 - 20);
-        
-        // Highscore display
         if (isNewHighscore) {
-            // New highscore achieved - make it golden and pulsing
             let pulseValue = Math.sin(Date.now() * 0.01) * 0.3 + 0.7;
             this.world.ctx.fillStyle = `rgba(255, 215, 0, ${pulseValue})`;
             this.world.ctx.fillText('🎉 NEW HIGHSCORE! 🎉', this.world.canvas.width / 2, this.world.canvas.height / 2 + 20);
@@ -240,7 +214,6 @@ class UIManager {
             this.world.ctx.fillStyle = '#cccccc';
         }
         this.world.ctx.fillText(`Highscore: ${this.highscore}`, this.world.canvas.width / 2, this.world.canvas.height / 2 + 50);
-        
         this.world.ctx.restore();
     }
 
@@ -249,22 +222,15 @@ class UIManager {
      */
     drawLevelCompleteScreen() {
         this.world.ctx.save();
-        
-        // Light overlay
         this.world.ctx.fillStyle = 'rgba(0, 255, 0, 0.3)';
         this.world.ctx.fillRect(0, 0, this.world.canvas.width, this.world.canvas.height);
-        
-        // Level Complete text
         this.world.ctx.fillStyle = '#00ff00';
         this.world.ctx.font = 'bold 48px Comic Sans MS';
         this.world.ctx.textAlign = 'center';
         this.world.ctx.fillText('LEVEL COMPLETE!', this.world.canvas.width / 2, this.world.canvas.height / 2 - 50);
-        
-        // Score
         this.world.ctx.fillStyle = '#ffffff';
         this.world.ctx.font = 'bold 24px Comic Sans MS';
         this.world.ctx.fillText(`Score: ${this.world.totalScore}`, this.world.canvas.width / 2, this.world.canvas.height / 2 + 20);
-        
         this.world.ctx.restore();
     }
 
@@ -273,15 +239,12 @@ class UIManager {
      */
     drawDebugInfo() {
         if (!this.world.debugMode) return;
-        
         this.world.ctx.save();
         this.world.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
         this.world.ctx.fillRect(10, 10, 200, 150);
-        
         this.world.ctx.fillStyle = '#ffffff';
         this.world.ctx.font = '12px Arial';
         this.world.ctx.textAlign = 'left';
-        
         let y = 30;
         this.world.ctx.fillText(`Character X: ${Math.round(this.world.character.x)}`, 20, y);
         y += 15;
@@ -298,7 +261,6 @@ class UIManager {
         this.world.ctx.fillText(`Score: ${this.world.totalScore}`, 20, y);
         y += 15;
         this.world.ctx.fillText(`FPS: ${this.world.fps || 'N/A'}`, 20, y);
-        
         this.world.ctx.restore();
     }
 
@@ -307,14 +269,11 @@ class UIManager {
      */
     drawWaveIndicator() {
         if (!this.world.waveManager) return;
-        
         let waveInfo = this.world.waveManager.getWaveInfo();
         this.world.ctx.save();
-        
         let indicatorConfig = this.calculateWaveIndicatorPosition();
         this.drawWaveIndicatorBackground(indicatorConfig, waveInfo);
         this.drawWaveIndicatorText(indicatorConfig, waveInfo);
-        
         this.world.ctx.restore();
     }
 
@@ -340,7 +299,6 @@ class UIManager {
         this.world.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
         this.roundRect(this.world.ctx, config.x - config.width/2, config.y - 30, config.width, config.height, 10);
         this.world.ctx.fill();
-        
         let borderColor = (waveInfo.maxWaveReached && waveInfo.maxChickensReached) ? '#ff6b35' : '#4ECDC4';
         this.world.ctx.strokeStyle = borderColor;
         this.world.ctx.lineWidth = 3;
@@ -365,10 +323,8 @@ class UIManager {
     drawWaveTitle(config, waveInfo) {
         this.world.ctx.font = 'bold 20px Comic Sans MS';
         this.world.ctx.textAlign = 'center';
-        
         this.world.ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
         this.world.ctx.fillText(`WAVE ${waveInfo.currentWave}`, config.x + 1, config.y - 5 + 1);
-        
         this.world.ctx.fillStyle = '#FFFFFF';
         this.world.ctx.fillText(`WAVE ${waveInfo.currentWave}`, config.x, config.y - 5);
     }
@@ -379,96 +335,67 @@ class UIManager {
     drawComboIndicator() {
         let effectiveCombo = this.world.character.getEffectiveCombo();
         let currentCombo = this.world.character.comboManager.combo;
-        
         if (effectiveCombo === 0) return;
-        
         this.world.ctx.save();
-        
-        // Position at left side of screen
         let indicatorX = 150;
         let indicatorY = 120;
         let boxWidth = 120;
         let boxHeight = 40;
-        
-        // Check if we're in grace period
         let inGracePeriod = currentCombo === 0 && effectiveCombo > 0;
         let comboText = '';
         let subText = '';
-        
         if (inGracePeriod) {
-            // Calculate remaining grace period time
             let currentTime = Date.now();
             let timeSinceComboEnded = currentTime - this.world.character.comboManager.comboEndTime;
             let remainingTime = Math.max(0, this.world.character.comboManager.comboGracePeriod - timeSinceComboEnded);
             let secondsRemaining = Math.ceil(remainingTime / 1000);
-            
             comboText = `${effectiveCombo}x`;
             subText = `${secondsRemaining}s`;
-            boxHeight = 50; // Make box taller for grace period text
+            boxHeight = 50;
         } else {
             comboText = `${effectiveCombo}x`;
             subText = 'COMBO';
         }
-        
-        // Pulsing effect based on combo count
         let pulseValue = Math.sin(Date.now() * 0.01) * 0.2 + 0.8;
-        let intensity = Math.min(effectiveCombo / 10, 1); // More intense with higher combo
-        
-        // Dynamic colors based on combo count and grace period
+        let intensity = Math.min(effectiveCombo / 10, 1);
         let bgColor, borderColor, textColor;
         if (inGracePeriod) {
-            // Fading orange for grace period
             let currentTime = Date.now();
             let timeSinceComboEnded = currentTime - this.world.character.comboManager.comboEndTime;
             let fadeProgress = timeSinceComboEnded / this.world.character.comboManager.comboGracePeriod;
             let alpha = Math.max(0.3, 1 - fadeProgress);
-            
             bgColor = `rgba(255, 140, 0, ${alpha * pulseValue * 0.6})`;
             borderColor = `rgba(255, 165, 0, ${alpha})`;
             textColor = '#FFFFFF';
         } else if (effectiveCombo >= 10) {
-            // Rainbow/legendary effect for 10+ combo
             let hue = (Date.now() * 0.1) % 360;
             bgColor = `hsla(${hue}, 80%, 50%, ${pulseValue * 0.9})`;
             borderColor = `hsla(${hue + 60}, 90%, 60%, 1)`;
             textColor = '#FFFFFF';
         } else if (effectiveCombo >= 5) {
-            // Gold for 5+ combo
             bgColor = `rgba(255, 215, 0, ${pulseValue * 0.8})`;
             borderColor = '#FFD700';
             textColor = '#8B0000';
         } else {
-            // Orange for lower combos
             bgColor = `rgba(255, 165, 0, ${pulseValue * 0.7})`;
             borderColor = '#FF8C00';
             textColor = '#FFFFFF';
         }
-        
-        // Glowing background
         this.world.ctx.fillStyle = bgColor;
         this.roundRect(this.world.ctx, indicatorX - 10, indicatorY - 25, boxWidth, boxHeight, 12);
         this.world.ctx.fill();
-        
-        // Border with glow effect
         this.world.ctx.strokeStyle = borderColor;
         this.world.ctx.lineWidth = 3;
         this.roundRect(this.world.ctx, indicatorX - 10, indicatorY - 25, boxWidth, boxHeight, 12);
         this.world.ctx.stroke();
-        
-        // Main text
         this.world.ctx.font = 'bold 18px Comic Sans MS';
         this.world.ctx.textAlign = 'center';
-        
         if (inGracePeriod) {
-            // Grace period layout
-            // Text shadow
             this.world.ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
             this.world.ctx.fillText(comboText, indicatorX + boxWidth/2 - 10 + 1, indicatorY - 5 + 1);
             this.world.ctx.font = 'bold 12px Comic Sans MS';
             this.world.ctx.fillText('DAMAGE', indicatorX + boxWidth/2 - 10 + 1, indicatorY + 8 + 1);
             this.world.ctx.fillText(subText, indicatorX + boxWidth/2 - 10 + 1, indicatorY + 20 + 1);
-            
-            // Main text
             this.world.ctx.fillStyle = textColor;
             this.world.ctx.font = 'bold 18px Comic Sans MS';
             this.world.ctx.fillText(comboText, indicatorX + boxWidth/2 - 10, indicatorY - 5);
@@ -476,18 +403,13 @@ class UIManager {
             this.world.ctx.fillText('DAMAGE', indicatorX + boxWidth/2 - 10, indicatorY + 8);
             this.world.ctx.fillText(subText, indicatorX + boxWidth/2 - 10, indicatorY + 20);
         } else {
-            // Normal combo layout
-            // Text shadow
             this.world.ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
             this.world.ctx.fillText(subText, indicatorX + boxWidth/2 - 10 + 1, indicatorY - 8 + 1);
             this.world.ctx.fillText(comboText, indicatorX + boxWidth/2 - 10 + 1, indicatorY + 8 + 1);
-            
-            // Main text
             this.world.ctx.fillStyle = textColor;
             this.world.ctx.fillText(subText, indicatorX + boxWidth/2 - 10, indicatorY - 8);
             this.world.ctx.fillText(comboText, indicatorX + boxWidth/2 - 10, indicatorY + 8);
         }
-        
         this.world.ctx.restore();
     }
 
@@ -498,7 +420,7 @@ class UIManager {
         this.waveChangeNotification = {
             wave: wave,
             startTime: Date.now(),
-            duration: 3000 // 3 seconds
+            duration: 3000
         };
     }
 
@@ -507,34 +429,21 @@ class UIManager {
      */
     drawWaveChangeNotification() {
         if (!this.waveChangeNotification) return;
-        
         let elapsed = Date.now() - this.waveChangeNotification.startTime;
         if (elapsed > this.waveChangeNotification.duration) {
             this.waveChangeNotification = null;
             return;
         }
-        
         this.world.ctx.save();
-        
-        // Fade effect
         let alpha = Math.max(0, 1 - elapsed / this.waveChangeNotification.duration);
-        
-        // Center position
         let centerX = this.world.canvas.width / 2;
         let centerY = this.world.canvas.height / 2 - 50;
-        
-        // Text only - no background box
         this.world.ctx.font = 'bold 36px Comic Sans MS';
         this.world.ctx.textAlign = 'center';
-        
-        // Black text shadow for better visibility
         this.world.ctx.fillStyle = `rgba(0, 0, 0, ${alpha * 0.8})`;
         this.world.ctx.fillText(`WAVE ${this.waveChangeNotification.wave}`, centerX + 3, centerY + 3);
-        
-        // Main white text
         this.world.ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
         this.world.ctx.fillText(`WAVE ${this.waveChangeNotification.wave}`, centerX, centerY);
-        
         this.world.ctx.restore();
     }
 
@@ -543,16 +452,11 @@ class UIManager {
      */
     drawCanvasButtons() {
         this.world.ctx.save();
-        
-        // Update pause button text
         this.buttons.pause.text = this.world.isPaused ? 'RESUME' : 'PAUSE';
         this.buttons.mute.text = this.isMuted ? '🔇' : '🔊';
-        
-        // Draw each button
         Object.values(this.buttons).forEach(button => {
             this.drawButton(button);
         });
-        
         this.world.ctx.restore();
     }
 
@@ -560,35 +464,28 @@ class UIManager {
      * Draw individual button
      */
     drawButton(button) {
-        // Button background
         this.world.ctx.fillStyle = '#FF6B35';
         this.roundRect(this.world.ctx, button.x, button.y, button.width, button.height, 5);
         this.world.ctx.fill();
-        
-        // Button border
         this.world.ctx.strokeStyle = '#E63946';
         this.world.ctx.lineWidth = 1;
         this.roundRect(this.world.ctx, button.x, button.y, button.width, button.height, 5);
         this.world.ctx.stroke();
-        
-        // Button text - größeres Icon für Mute Button
         this.world.ctx.fillStyle = 'white';
         this.world.ctx.textAlign = 'center';
-        
-        // Spezielle Behandlung für Mute Button (größeres Icon)
         if (button.text === '🔇' || button.text === '🔊') {
-            this.world.ctx.font = 'bold 20px Arial';  // Größere Schrift für Mute-Icons
+            this.world.ctx.font = 'bold 20px Arial';
             this.world.ctx.fillText(
                 button.text,
                 button.x + button.width / 2,
-                button.y + button.height / 2 + 6  // 5px weiter unten für Mute-Icon
+                button.y + button.height / 2 + 6
             );
         } else {
-            this.world.ctx.font = 'bold 10px Arial';  // Normale Schrift für andere Buttons
+            this.world.ctx.font = 'bold 10px Arial';
             this.world.ctx.fillText(
                 button.text,
                 button.x + button.width / 2,
-                button.y + button.height / 2 + 3  // Normale Position für andere Buttons
+                button.y + button.height / 2 + 3
             );
         }
     }
@@ -598,17 +495,11 @@ class UIManager {
      */
     setupButtonEventListeners() {
         this.onCanvasClick = (event) => {
-    let rect = this.world.canvas.getBoundingClientRect();
-            
-            // Calculate scale factors for fullscreen mode
-    let scaleX = this.world.canvas.width / rect.width;
-    let scaleY = this.world.canvas.height / rect.height;
-            
-            // Convert mouse coordinates to canvas coordinates
-    let x = (event.clientX - rect.left) * scaleX;
-    let y = (event.clientY - rect.top) * scaleY;
-            
-            // Check button clicks
+            let rect = this.world.canvas.getBoundingClientRect();
+            let scaleX = this.world.canvas.width / rect.width;
+            let scaleY = this.world.canvas.height / rect.height;
+            let x = (event.clientX - rect.left) * scaleX;
+            let y = (event.clientY - rect.top) * scaleY;
             if (this.isPointInButton(x, y, this.buttons.pause)) {
                 this.handlePauseButton();
             } else if (this.isPointInButton(x, y, this.buttons.fullscreen)) {
@@ -617,23 +508,14 @@ class UIManager {
                 this.handleMuteButton();
             }
         };
-        
         this.onTouchStart = (event) => {
-            // Prevent default to avoid scrolling/zooming
             event.preventDefault();
-            
-    let rect = this.world.canvas.getBoundingClientRect();
-    let touch = event.touches[0];
-            
-            // Calculate scale factors for proper coordinate conversion
-    let scaleX = this.world.canvas.width / rect.width;
-    let scaleY = this.world.canvas.height / rect.height;
-            
-            // Convert touch coordinates to canvas coordinates
-    let x = (touch.clientX - rect.left) * scaleX;
-    let y = (touch.clientY - rect.top) * scaleY;
-            
-            // Check button touches
+            let rect = this.world.canvas.getBoundingClientRect();
+            let touch = event.touches[0];
+            let scaleX = this.world.canvas.width / rect.width;
+            let scaleY = this.world.canvas.height / rect.height;
+            let x = (touch.clientX - rect.left) * scaleX;
+            let y = (touch.clientY - rect.top) * scaleY;
             if (this.isPointInButton(x, y, this.buttons.pause)) {
                 this.handlePauseButton();
             } else if (this.isPointInButton(x, y, this.buttons.fullscreen)) {
@@ -642,15 +524,12 @@ class UIManager {
                 this.handleMuteButton();
             }
         };
-        
-        // Escape key event listener for pause/resume
         this.onKeyDown = (event) => {
             if (event.key === 'Escape' || event.keyCode === 27) {
                 event.preventDefault();
                 this.handlePauseButton();
             }
         };
-        
         this.world.canvas.addEventListener('click', this.onCanvasClick);
         this.world.canvas.addEventListener('touchstart', this.onTouchStart, { passive: false });
         document.addEventListener('keydown', this.onKeyDown);

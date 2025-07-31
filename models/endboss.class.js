@@ -8,17 +8,20 @@ class Endboss extends MovableObject {
     y = 175;
     energy = 50;
     isDead = false;
+
     IMAGES_WALKING = [
         'img/img_pollo_locco/img/4_enemie_boss_chicken/1_walk/G1.png',
         'img/img_pollo_locco/img/4_enemie_boss_chicken/1_walk/G2.png',
         'img/img_pollo_locco/img/4_enemie_boss_chicken/1_walk/G3.png',
         'img/img_pollo_locco/img/4_enemie_boss_chicken/1_walk/G4.png',
     ];
+
     IMAGES_HURT = [
         'img/img_pollo_locco/img/4_enemie_boss_chicken/4_hurt/G21.png',
         'img/img_pollo_locco/img/4_enemie_boss_chicken/4_hurt/G22.png',
         'img/img_pollo_locco/img/4_enemie_boss_chicken/4_hurt/G23.png'
     ];
+
     IMAGES_ALERT = [
         'img/img_pollo_locco/img/4_enemie_boss_chicken/2_alert/G5.png',
         'img/img_pollo_locco/img/4_enemie_boss_chicken/2_alert/G6.png',
@@ -29,6 +32,7 @@ class Endboss extends MovableObject {
         'img/img_pollo_locco/img/4_enemie_boss_chicken/2_alert/G11.png',
         'img/img_pollo_locco/img/4_enemie_boss_chicken/2_alert/G12.png'
     ];
+
     IMAGES_ATTACK = [
         'img/img_pollo_locco/img/4_enemie_boss_chicken/3_attack/G13.png',
         'img/img_pollo_locco/img/4_enemie_boss_chicken/3_attack/G14.png',
@@ -39,6 +43,7 @@ class Endboss extends MovableObject {
         'img/img_pollo_locco/img/4_enemie_boss_chicken/3_attack/G19.png',
         'img/img_pollo_locco/img/4_enemie_boss_chicken/3_attack/G20.png'
     ];
+
     IMAGES_DEAD = [
         'img/img_pollo_locco/img/4_enemie_boss_chicken/5_dead/G24.png',
         'img/img_pollo_locco/img/4_enemie_boss_chicken/5_dead/G25.png',
@@ -113,7 +118,7 @@ class Endboss extends MovableObject {
         this.world = world;
         if (world && world.waveManager) {
             this.maxEnergy = world.waveManager.getScaledEndbossHealth();
-            this.energy = this.maxEnergy; // Set current energy to max
+            this.energy = this.maxEnergy; 
         } else {
             this.maxEnergy = this.baseEnergy;
             this.energy = this.maxEnergy;
@@ -270,12 +275,12 @@ class Endboss extends MovableObject {
      */
     triggerAlert() {
         if (!this.isDead && !this.isDying && !this.hasSeenCharacter) {
-            this.hasSeenCharacter = true; // Mark as seen to prevent repeated alerts
+            this.hasSeenCharacter = true; 
             this.isAlert = true;
-            this.alertAnimationTimer = 800; // 800ms for one cycle (8 frames * 100ms each)
+            this.alertAnimationTimer = 800; 
             this.alertFrameIndex = 0;
             this.alertAnimationComplete = false;
-            this.alertCycleCount = 0; // Reset cycle counter
+            this.alertCycleCount = 0; 
         }
     }
     /**
@@ -284,20 +289,10 @@ class Endboss extends MovableObject {
     playAlertAnimationOnce() {
         this.alertAnimationTimer -= 1000 / 10;
         let timeElapsed = 800 - this.alertAnimationTimer;
-        let frameIndex = Math.floor(timeElapsed / 100); // Change frame every 100ms
+        let frameIndex = Math.floor(timeElapsed / 100);
         if (frameIndex >= this.IMAGES_ALERT.length) {
-            this.alertCycleCount++;
-        
-            
-            if (this.alertCycleCount < this.maxAlertCycles) {
-                this.alertAnimationTimer = 800; // Reset timer for next cycle
-                this.alertFrameIndex = 0; // Reset frame index
-                frameIndex = 0; // Start from first frame again
-            } else {
-                frameIndex = this.IMAGES_ALERT.length - 1;
-                this.alertAnimationComplete = true;
-                this.isAlert = false; // End alert animation
-            }
+            this.handleAlertCycle();
+            frameIndex = this.IMAGES_ALERT.length - 1;
         }
         let path = this.IMAGES_ALERT[frameIndex];
         if (this.imageCache[path] && this.imageCache[path].complete) {
@@ -305,6 +300,17 @@ class Endboss extends MovableObject {
         }
         if (frameIndex !== this.alertFrameIndex) {
             this.alertFrameIndex = frameIndex;
+        }
+    }
+
+    handleAlertCycle() {
+        this.alertCycleCount++;
+        if (this.alertCycleCount < this.maxAlertCycles) {
+            this.alertAnimationTimer = 800;
+            this.alertFrameIndex = 0;
+        } else {
+            this.alertAnimationComplete = true;
+            this.isAlert = false;
         }
     }
     /**
@@ -338,6 +344,7 @@ class Endboss extends MovableObject {
             this.attackFrameIndex = frameIndex;
         }
     }
+
     removeFromGame() {
         if (this.world && this.world.level && this.world.level.endboss) {
             let index = this.world.level.endboss.indexOf(this);
@@ -349,6 +356,7 @@ class Endboss extends MovableObject {
             }
         }
     }
+
     /**
      * Play death animation exactly once, frame by frame
      */
@@ -368,6 +376,7 @@ class Endboss extends MovableObject {
             this.deathFrameIndex = frameIndex;
         }
     }
+    
     draw(ctx) {
         super.draw(ctx);
         EndbossUIRenderer.drawEnergyBar(ctx, this);

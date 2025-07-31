@@ -173,27 +173,33 @@ class GameOver {
         this.ctx.save();
         this.ctx.fillStyle = 'white';
         this.ctx.textAlign = 'center';
-        
+
         this.ctx.font = 'bold 48px Arial';
         this.ctx.fillText('GAME OVER', this.canvas.width / 2, this.canvas.height / 2 - 120);
-        
+
         this.ctx.font = 'bold 32px Arial';
         this.ctx.fillText('Final Score: ' + this.finalScore, this.canvas.width / 2, this.canvas.height / 2 - 70);
-        
-        // Highscore display
+
+        this.drawHighscoreText();
+
+        this.ctx.restore();
+    }
+
+    /**
+     * Draw highscore and new highscore text
+     */
+    drawHighscoreText() {
         if (this.isNewHighscore) {
-            // New highscore achieved - make it golden and pulsing
             let pulseValue = Math.sin(Date.now() * 0.01) * 0.3 + 0.7;
             this.ctx.fillStyle = `rgba(255, 215, 0, ${pulseValue})`;
+            this.ctx.font = 'bold 28px Arial';
             this.ctx.fillText('🎉 NEW HIGHSCORE! 🎉', this.canvas.width / 2, this.canvas.height / 2 - 20);
             this.ctx.fillStyle = '#FFD700';
         } else {
             this.ctx.fillStyle = '#cccccc';
+            this.ctx.font = 'bold 28px Arial';
         }
-        this.ctx.font = 'bold 28px Arial';
         this.ctx.fillText('Highscore: ' + this.highscore, this.canvas.width / 2, this.canvas.height / 2 + 10);
-        
-        this.ctx.restore();
     }
 
     /**

@@ -16,6 +16,7 @@ class MobileControls {
         this.initializeControls();
         this.setupResizeListener();
     }
+
     /**
      * Initializes mobile controls if on mobile device
      */
@@ -25,6 +26,7 @@ class MobileControls {
             this.setupEventListeners();
         }
     }
+
     /**
      * Sets up resize listener for dynamic control management
      */
@@ -33,6 +35,7 @@ class MobileControls {
             this.updateMobileDetection();
         });
     }
+
     /**
      * Updates mobile detection state on resize
      */
@@ -46,6 +49,7 @@ class MobileControls {
             this.buttons = [];
         }
     }
+
     /**
      * Detects if device should show mobile controls
      * @returns {boolean} True if mobile controls should be shown
@@ -55,6 +59,7 @@ class MobileControls {
     let isSmallScreen = window.innerWidth <= 1024;
         return isMobileDevice || isSmallScreen;
     }
+
     /**
      * Sets up button layout and styling
      */
@@ -66,6 +71,7 @@ class MobileControls {
         this.createMovementButtons(positions, styling);
         this.createActionButtons(positions, styling, canvasWidth, canvasHeight);
     }
+
     /**
      * Gets button styling based on screen size
      * @returns {Object} Button styling configuration
@@ -94,6 +100,7 @@ class MobileControls {
             }
         };
     }
+
     /**
      * Calculates button positions based on screen size
      * @param {number} canvasWidth - Canvas width
@@ -110,6 +117,7 @@ class MobileControls {
             actionTopOffset: isTabletSize ? 220 : 200 // Spacing for action buttons
         };
     }
+
     /**
      * Creates movement control buttons
      * @param {Object} positions - Position configuration
@@ -135,6 +143,7 @@ class MobileControls {
             key: 'RIGHT'
         });
     }
+
     /**
      * Creates action control buttons
      * @param {Object} positions - Position configuration
@@ -169,6 +178,7 @@ class MobileControls {
             throw: { x: throwX, y: buttonY }
         });
     }
+
     setupEventListeners() {
         this.canvas.addEventListener('touchstart', (e) => this.handleTouchStart(e), { passive: false });
         this.canvas.addEventListener('touchend', (e) => this.handleTouchEnd(e), { passive: false });
@@ -179,6 +189,7 @@ class MobileControls {
         this.activeTouches = new Map();
         this.isMouseDown = false;
     }
+
     handleTouchStart(e) {
         e.preventDefault();
     let touches = e.touches;
@@ -196,6 +207,7 @@ class MobileControls {
             }
         }
     }
+
     handleTouchMove(e) {
         e.preventDefault();
     let touches = e.touches;
@@ -240,6 +252,7 @@ class MobileControls {
             }
         }
     }
+
     handleTouchEnd(e) {
         e.preventDefault();
     let touches = e.touches;
@@ -257,6 +270,7 @@ class MobileControls {
             }
         }
     }
+
     handleMouseDown(e) {
     let rect = this.canvas.getBoundingClientRect();
     let scaleX = this.canvas.width / rect.width;
@@ -266,6 +280,7 @@ class MobileControls {
         this.isMouseDown = true;
         this.handleButtonPress(x, y, true);
     }
+
     handleMouseMove(e) {
         if (!this.isMouseDown) return;
     let rect = this.canvas.getBoundingClientRect();
@@ -281,6 +296,7 @@ class MobileControls {
         });
         this.handleButtonPress(x, y, true);
     }
+
     handleMouseUp(e) {
         this.isMouseDown = false;
         this.buttons.forEach(button => {
@@ -292,9 +308,11 @@ class MobileControls {
             }
         });
     }
+
     getButtonAtPosition(x, y) {
         return this.buttons.find(button => this.isPointInButton(x, y, button));
     }
+
     handleButtonPress(x, y, isPress) {
         this.buttons.forEach(button => {
             if (this.isPointInButton(x, y, button)) {
@@ -305,29 +323,33 @@ class MobileControls {
             }
         });
     }
+
     isPointInButton(x, y, button) {
         return x >= button.x && 
                x <= button.x + button.width && 
                y >= button.y && 
                y <= button.y + button.height;
     }
+
     draw() {
         if (!this.isMobile) return;
         this.buttons.forEach(button => {
             this.drawButton(button);
         });
     }
+
     drawButton(button) {
         MobileButtonRenderer.drawButton(this.ctx, button);
     }
 
     updateLayout() {
         if (!this.isMobile) return;
-    let canvasWidth = this.canvas.width;
-    let canvasHeight = this.canvas.height;
-    let isTabletSize = window.innerWidth >= 768 && window.innerWidth <= 1024;
-    let margin = isTabletSize ? 40 : 30;
-    let buttonSpacing = isTabletSize ? 140 : 120; // Increased horizontal spacing
+        let canvasWidth = this.canvas.width;
+        let canvasHeight = this.canvas.height;
+        let isTabletSize = window.innerWidth >= 768 && window.innerWidth <= 1024;
+        let margin = isTabletSize ? 40 : 30;
+        let buttonSpacing = isTabletSize ? 140 : 120; // Increased horizontal spacing
+
         this.buttons.forEach(button => {
             switch(button.id) {
                 case 'left':
@@ -339,21 +361,29 @@ class MobileControls {
                     button.y = canvasHeight - buttonSpacing;
                     break;
                 case 'jump':
-                    let jumpX = canvasWidth - margin - (isTabletSize ? 90 : 80);
-                    let buttonY = canvasHeight - (isTabletSize ? 220 : 200);
-                    button.x = jumpX;
-                    button.y = buttonY;
-                    button.key = 'UP';
+                    this.updateJumpButtonLayout(button, canvasWidth, canvasHeight, margin, isTabletSize);
                     break;
                 case 'throw':
-                    let throwJumpX = canvasWidth - margin - (isTabletSize ? 90 : 80);
-                    let throwButtonY = canvasHeight - (isTabletSize ? 220 : 200);
-                    let buttonWidth = isTabletSize ? 110 : 100;
-                    button.x = throwJumpX - buttonWidth - 20; // 20px Abstand
-                    button.y = throwButtonY; // Gleiche Y-Position wie Jump
-                    button.key = 'SPACE';
+                    this.updateThrowButtonLayout(button, canvasWidth, canvasHeight, margin, isTabletSize);
                     break;
             }
         });
+    }
+
+    updateJumpButtonLayout(button, canvasWidth, canvasHeight, margin, isTabletSize) {
+        let jumpX = canvasWidth - margin - (isTabletSize ? 90 : 80);
+        let buttonY = canvasHeight - (isTabletSize ? 220 : 200);
+        button.x = jumpX;
+        button.y = buttonY;
+        button.key = 'UP';
+    }
+
+    updateThrowButtonLayout(button, canvasWidth, canvasHeight, margin, isTabletSize) {
+        let throwJumpX = canvasWidth - margin - (isTabletSize ? 90 : 80);
+        let throwButtonY = canvasHeight - (isTabletSize ? 220 : 200);
+        let buttonWidth = isTabletSize ? 110 : 100;
+        button.x = throwJumpX - buttonWidth - 20; // 20px Abstand
+        button.y = throwButtonY; // Gleiche Y-Position wie Jump
+        button.key = 'SPACE';
     }
 }
