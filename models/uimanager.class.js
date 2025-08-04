@@ -144,50 +144,21 @@ class UIManager {
      * Draw rounded rectangle helper function
      */
     roundRect(ctx, x, y, width, height, radius) {
-        ctx.beginPath();
-        ctx.moveTo(x + radius, y);
-        ctx.lineTo(x + width - radius, y);
-        ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
-        ctx.lineTo(x + width, y + height - radius);
-        ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
-        ctx.lineTo(x + radius, y + height);
-        ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
-        ctx.lineTo(x, y + radius);
-        ctx.quadraticCurveTo(x, y, x + radius, y);
-        ctx.closePath();
+        roundRect(ctx, x, y, width, height, radius);
     }
 
     /**
      * Draw pause overlay
      */
     drawPauseOverlay() {
-        this.world.ctx.save();
-        this.world.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-        this.world.ctx.fillRect(0, 0, this.world.canvas.width, this.world.canvas.height);
-        this.world.ctx.fillStyle = '#fff';
-        this.world.ctx.font = Math.min(this.world.canvas.width / 15, 48) + 'px Comic Sans MS';
-        this.world.ctx.textAlign = 'center';
-        this.world.ctx.fillText('PAUSED', this.world.canvas.width / 2, this.world.canvas.height / 2);
-        this.world.ctx.restore();
+        drawPauseOverlay(this.world);
     }
 
     /**
      * Draw wrong direction warning
      */
     drawWrongDirectionWarning() {
-        this.world.ctx.save();
-        this.world.ctx.fillStyle = 'rgba(255, 0, 0, 0.8)';
-        this.world.ctx.font = '32px Comic Sans MS';
-        this.world.ctx.textAlign = 'center';
-        this.world.ctx.fillStyle = '#fff';
-        this.world.ctx.strokeStyle = '#ff0000';
-        this.world.ctx.lineWidth = 3;
-        let warningText = 'WRONG DIRECTION!';
-        let textX = this.world.canvas.width / 2;
-        let textY = this.world.canvas.height / 2 - 100;
-        this.world.ctx.strokeText(warningText, textX, textY);
-        this.world.ctx.fillText(warningText, textX, textY);
-        this.world.ctx.restore();
+        drawWrongDirectionWarning(this.world);
     }
 
     /**
@@ -221,17 +192,7 @@ class UIManager {
      * Draw level complete screen
      */
     drawLevelCompleteScreen() {
-        this.world.ctx.save();
-        this.world.ctx.fillStyle = 'rgba(0, 255, 0, 0.3)';
-        this.world.ctx.fillRect(0, 0, this.world.canvas.width, this.world.canvas.height);
-        this.world.ctx.fillStyle = '#00ff00';
-        this.world.ctx.font = 'bold 48px Comic Sans MS';
-        this.world.ctx.textAlign = 'center';
-        this.world.ctx.fillText('LEVEL COMPLETE!', this.world.canvas.width / 2, this.world.canvas.height / 2 - 50);
-        this.world.ctx.fillStyle = '#ffffff';
-        this.world.ctx.font = 'bold 24px Comic Sans MS';
-        this.world.ctx.fillText(`Score: ${this.world.totalScore}`, this.world.canvas.width / 2, this.world.canvas.height / 2 + 20);
-        this.world.ctx.restore();
+        drawLevelCompleteScreen(this.world);
     }
 
     /**
@@ -333,84 +294,7 @@ class UIManager {
      * Draw combo indicator when combo > 0 or during grace period
      */
     drawComboIndicator() {
-        let effectiveCombo = this.world.character.getEffectiveCombo();
-        let currentCombo = this.world.character.comboManager.combo;
-        if (effectiveCombo === 0) return;
-        this.world.ctx.save();
-        let indicatorX = 150;
-        let indicatorY = 120;
-        let boxWidth = 120;
-        let boxHeight = 40;
-        let inGracePeriod = currentCombo === 0 && effectiveCombo > 0;
-        let comboText = '';
-        let subText = '';
-        if (inGracePeriod) {
-            let currentTime = Date.now();
-            let timeSinceComboEnded = currentTime - this.world.character.comboManager.comboEndTime;
-            let remainingTime = Math.max(0, this.world.character.comboManager.comboGracePeriod - timeSinceComboEnded);
-            let secondsRemaining = Math.ceil(remainingTime / 1000);
-            comboText = `${effectiveCombo}x`;
-            subText = `${secondsRemaining}s`;
-            boxHeight = 50;
-        } else {
-            comboText = `${effectiveCombo}x`;
-            subText = 'COMBO';
-        }
-        let pulseValue = Math.sin(Date.now() * 0.01) * 0.2 + 0.8;
-        let intensity = Math.min(effectiveCombo / 10, 1);
-        let bgColor, borderColor, textColor;
-        if (inGracePeriod) {
-            let currentTime = Date.now();
-            let timeSinceComboEnded = currentTime - this.world.character.comboManager.comboEndTime;
-            let fadeProgress = timeSinceComboEnded / this.world.character.comboManager.comboGracePeriod;
-            let alpha = Math.max(0.3, 1 - fadeProgress);
-            bgColor = `rgba(255, 140, 0, ${alpha * pulseValue * 0.6})`;
-            borderColor = `rgba(255, 165, 0, ${alpha})`;
-            textColor = '#FFFFFF';
-        } else if (effectiveCombo >= 10) {
-            let hue = (Date.now() * 0.1) % 360;
-            bgColor = `hsla(${hue}, 80%, 50%, ${pulseValue * 0.9})`;
-            borderColor = `hsla(${hue + 60}, 90%, 60%, 1)`;
-            textColor = '#FFFFFF';
-        } else if (effectiveCombo >= 5) {
-            bgColor = `rgba(255, 215, 0, ${pulseValue * 0.8})`;
-            borderColor = '#FFD700';
-            textColor = '#8B0000';
-        } else {
-            bgColor = `rgba(255, 165, 0, ${pulseValue * 0.7})`;
-            borderColor = '#FF8C00';
-            textColor = '#FFFFFF';
-        }
-        this.world.ctx.fillStyle = bgColor;
-        this.roundRect(this.world.ctx, indicatorX - 10, indicatorY - 25, boxWidth, boxHeight, 12);
-        this.world.ctx.fill();
-        this.world.ctx.strokeStyle = borderColor;
-        this.world.ctx.lineWidth = 3;
-        this.roundRect(this.world.ctx, indicatorX - 10, indicatorY - 25, boxWidth, boxHeight, 12);
-        this.world.ctx.stroke();
-        this.world.ctx.font = 'bold 18px Comic Sans MS';
-        this.world.ctx.textAlign = 'center';
-        if (inGracePeriod) {
-            this.world.ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
-            this.world.ctx.fillText(comboText, indicatorX + boxWidth/2 - 10 + 1, indicatorY - 5 + 1);
-            this.world.ctx.font = 'bold 12px Comic Sans MS';
-            this.world.ctx.fillText('DAMAGE', indicatorX + boxWidth/2 - 10 + 1, indicatorY + 8 + 1);
-            this.world.ctx.fillText(subText, indicatorX + boxWidth/2 - 10 + 1, indicatorY + 20 + 1);
-            this.world.ctx.fillStyle = textColor;
-            this.world.ctx.font = 'bold 18px Comic Sans MS';
-            this.world.ctx.fillText(comboText, indicatorX + boxWidth/2 - 10, indicatorY - 5);
-            this.world.ctx.font = 'bold 12px Comic Sans MS';
-            this.world.ctx.fillText('DAMAGE', indicatorX + boxWidth/2 - 10, indicatorY + 8);
-            this.world.ctx.fillText(subText, indicatorX + boxWidth/2 - 10, indicatorY + 20);
-        } else {
-            this.world.ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
-            this.world.ctx.fillText(subText, indicatorX + boxWidth/2 - 10 + 1, indicatorY - 8 + 1);
-            this.world.ctx.fillText(comboText, indicatorX + boxWidth/2 - 10 + 1, indicatorY + 8 + 1);
-            this.world.ctx.fillStyle = textColor;
-            this.world.ctx.fillText(subText, indicatorX + boxWidth/2 - 10, indicatorY - 8);
-            this.world.ctx.fillText(comboText, indicatorX + boxWidth/2 - 10, indicatorY + 8);
-        }
-        this.world.ctx.restore();
+        drawComboIndicator(this);
     }
 
     /**
@@ -494,115 +378,48 @@ class UIManager {
      * Setup event listeners for canvas buttons
      */
     setupButtonEventListeners() {
-        this.onCanvasClick = (event) => {
-            let rect = this.world.canvas.getBoundingClientRect();
-            let scaleX = this.world.canvas.width / rect.width;
-            let scaleY = this.world.canvas.height / rect.height;
-            let x = (event.clientX - rect.left) * scaleX;
-            let y = (event.clientY - rect.top) * scaleY;
-            if (this.isPointInButton(x, y, this.buttons.pause)) {
-                this.handlePauseButton();
-            } else if (this.isPointInButton(x, y, this.buttons.fullscreen)) {
-                this.handleFullscreenButton();
-            } else if (this.isPointInButton(x, y, this.buttons.mute)) {
-                this.handleMuteButton();
-            }
-        };
-        this.onTouchStart = (event) => {
-            event.preventDefault();
-            let rect = this.world.canvas.getBoundingClientRect();
-            let touch = event.touches[0];
-            let scaleX = this.world.canvas.width / rect.width;
-            let scaleY = this.world.canvas.height / rect.height;
-            let x = (touch.clientX - rect.left) * scaleX;
-            let y = (touch.clientY - rect.top) * scaleY;
-            if (this.isPointInButton(x, y, this.buttons.pause)) {
-                this.handlePauseButton();
-            } else if (this.isPointInButton(x, y, this.buttons.fullscreen)) {
-                this.handleFullscreenButton();
-            } else if (this.isPointInButton(x, y, this.buttons.mute)) {
-                this.handleMuteButton();
-            }
-        };
-        this.onKeyDown = (event) => {
-            if (event.key === 'Escape' || event.keyCode === 27) {
-                event.preventDefault();
-                this.handlePauseButton();
-            }
-        };
-        this.world.canvas.addEventListener('click', this.onCanvasClick);
-        this.world.canvas.addEventListener('touchstart', this.onTouchStart, { passive: false });
-        document.addEventListener('keydown', this.onKeyDown);
+        setupButtonEventListeners(this);
     }
 
     /**
      * Check if point is inside button
      */
     isPointInButton(x, y, button) {
-        return x >= button.x && 
-               x <= button.x + button.width &&
-               y >= button.y && 
-               y <= button.y + button.height;
+        return isPointInButton(x, y, button);
     }
 
     /**
      * Handle pause button click
      */
     handlePauseButton() {
-        if (typeof togglePause === 'function') {
-            togglePause();
-        } else {
-            this.world.isPaused = !this.world.isPaused;
-            console.log('Game', this.world.isPaused ? 'paused' : 'resumed');
-        }
+        handlePauseButton(this);
     }
 
     /**
      * Handle fullscreen button click
      */
     handleFullscreenButton() {
-        if (typeof toggleFullscreen === 'function') {
-            toggleFullscreen();
-        } else {
-            if (!document.fullscreenElement) {
-                this.world.canvas.requestFullscreen();
-            } else {
-                document.exitFullscreen();
-            }
-        }
+        handleFullscreenButton(this);
     }
 
     /**
      * Handle mute button click
      */
     handleMuteButton() {
-        this.isMuted = !this.isMuted;
-        this.updateMuteState();
-        localStorage.setItem('elPolloLocoMuted', this.isMuted.toString());
-        console.log('Audio', this.isMuted ? 'muted' : 'unmuted');
+        handleMuteButton(this);
     }
 
     /**
      * Update mute state in audio manager
      */
     updateMuteState() {
-        if (this.world.audioManager) {
-            this.world.audioManager.setMuted(this.isMuted);
-        }
+        updateMuteState(this);
     }
 
     /**
      * Remove event listeners (cleanup)
      */
     removeEventListeners() {
-        if (this.onCanvasClick) {
-            this.world.canvas.removeEventListener('click', this.onCanvasClick);
-        }
-        if (this.onTouchStart) {
-            this.world.canvas.removeEventListener('touchstart', this.onTouchStart);
-        }
-        if (this.onKeyDown) {
-            document.removeEventListener('keydown', this.onKeyDown);
-        }
+        removeEventListeners(this);
     }
 }
