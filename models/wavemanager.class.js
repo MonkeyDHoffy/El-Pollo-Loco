@@ -31,22 +31,22 @@ class WaveManager {
     initializeEnemySpawning() {
         this.baseMinEnemies = 5;
         this.chickenIncreaseStartWave = 5;
-        this.maxExtraChickens = 31;    
+        this.maxExtraChickens = 33;    
         this.baseMinEndbosses = 2;
-        this.endbossIncreaseStartWave = 15;
-        this.endbossIncreaseInterval = 10;
-        this.maxEndbosses = 6;
+        this.endbossIncreaseStartWave = 13;
+        this.endbossIncreaseInterval = 7;
+        this.maxEndbosses = 8;
     }
 
     /**
      * Initializes damage and health scaling system
      */
     initializeDamageScaling() {
-        this.scalingStartWave = 30;
+        this.scalingStartWave = 22;
         this.damageIncreasePerWave = 0.05;
         this.healthIncreasePerWave = 0.05;
-        this.baseDamageEnemy = 10;
-        this.baseDamageEndboss = 20;
+        this.baseDamageEnemy = 13;
+        this.baseDamageEndboss = 23;
         this.baseHealthEndboss = 50;
     }
 

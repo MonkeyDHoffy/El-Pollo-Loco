@@ -341,31 +341,11 @@ class Endboss extends MovableObject {
      * Play alert animation exactly twice, frame by frame
      */
     playAlertAnimationOnce() {
-        this.alertAnimationTimer -= 1000 / 10;
-        let timeElapsed = 800 - this.alertAnimationTimer;
-        let frameIndex = Math.floor(timeElapsed / 100);
-        if (frameIndex >= this.IMAGES_ALERT.length) {
-            this.handleAlertCycle();
-            frameIndex = this.IMAGES_ALERT.length - 1;
-        }
-        let path = this.IMAGES_ALERT[frameIndex];
-        if (this.imageCache[path] && this.imageCache[path].complete) {
-            this.img = this.imageCache[path];
-        }
-        if (frameIndex !== this.alertFrameIndex) {
-            this.alertFrameIndex = frameIndex;
-        }
+        playAlertAnimationOnce(this);
     }
 
     handleAlertCycle() {
-        this.alertCycleCount++;
-        if (this.alertCycleCount < this.maxAlertCycles) {
-            this.alertAnimationTimer = 800;
-            this.alertFrameIndex = 0;
-        } else {
-            this.alertAnimationComplete = true;
-            this.isAlert = false;
-        }
+        handleAlertCycle(this);
     }
     /**
      * Start attack animation
@@ -382,21 +362,7 @@ class Endboss extends MovableObject {
      * Play attack animation exactly once, frame by frame
      */
     playAttackAnimationOnce() {
-        this.attackAnimationTimer -= 1000 / 10;
-        let timeElapsed = 800 - this.attackAnimationTimer;
-        let frameIndex = Math.floor(timeElapsed / 100); // Change frame every 100ms
-        if (frameIndex >= this.IMAGES_ATTACK.length) {
-            frameIndex = this.IMAGES_ATTACK.length - 1;
-            this.attackAnimationComplete = true;
-            this.isAttacking = false; // End attack animation
-        }
-        let path = this.IMAGES_ATTACK[frameIndex];
-        if (this.imageCache[path] && this.imageCache[path].complete) {
-            this.img = this.imageCache[path];
-        }
-        if (frameIndex !== this.attackFrameIndex) {
-            this.attackFrameIndex = frameIndex;
-        }
+        playAttackAnimationOnce(this);
     }
 
     removeFromGame() {
@@ -415,20 +381,7 @@ class Endboss extends MovableObject {
      * Play death animation exactly once, frame by frame
      */
     playDeathAnimationOnce() {
-        this.deathAnimationTimer -= 1000 / 10;
-        let timeElapsed = 1000 - this.deathAnimationTimer;
-        let frameIndex = Math.floor(timeElapsed / 200); // Change frame every 200ms
-        if (frameIndex >= this.IMAGES_DEAD.length) {
-            frameIndex = this.IMAGES_DEAD.length - 1;
-            this.deathAnimationComplete = true;
-        }
-        let path = this.IMAGES_DEAD[frameIndex];
-        if (this.imageCache[path] && this.imageCache[path].complete) {
-            this.img = this.imageCache[path];
-        }
-        if (frameIndex !== this.deathFrameIndex) {
-            this.deathFrameIndex = frameIndex;
-        }
+        playDeathAnimationOnce(this);
     }
     
     draw(ctx) {

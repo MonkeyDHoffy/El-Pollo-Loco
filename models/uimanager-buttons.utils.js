@@ -8,46 +8,66 @@
  * @param {UIManager} uiManager - Reference to UIManager instance
  */
 function setupButtonEventListeners(uiManager) {
-    function handleButtonEvent(x, y, uiManager) {
-        if (isPointInButton(x, y, uiManager.buttons.pause)) {
-            handlePauseButton(uiManager);
-        } else if (isPointInButton(x, y, uiManager.buttons.fullscreen)) {
-            handleFullscreenButton(uiManager);
-        } else if (isPointInButton(x, y, uiManager.buttons.mute)) {
-            handleMuteButton(uiManager);
-        }
+    uiManager.onCanvasClick = createCanvasClickHandler(uiManager);
+    uiManager.onTouchStart = createTouchStartHandler(uiManager);
+    uiManager.onKeyDown = createKeyDownHandler(uiManager);
+
+    uiManager.world.canvas.addEventListener('click', uiManager.onCanvasClick);
+    uiManager.world.canvas.addEventListener('touchstart', uiManager.onTouchStart, { passive: false });
+    document.addEventListener('keydown', uiManager.onKeyDown);
+}
+
+function handleButtonEvent(x, y, uiManager) {
+    if (isPointInButton(x, y, uiManager.buttons.pause)) {
+        handlePauseButton(uiManager);
+    } else if (isPointInButton(x, y, uiManager.buttons.fullscreen)) {
+        handleFullscreenButton(uiManager);
+    } else if (isPointInButton(x, y, uiManager.buttons.mute)) {
+        handleMuteButton(uiManager);
     }
+}
 
-    uiManager.onCanvasClick = (event) => {
-        let rect = uiManager.world.canvas.getBoundingClientRect();
-        let scaleX = uiManager.world.canvas.width / rect.width;
-        let scaleY = uiManager.world.canvas.height / rect.height;
-        let x = (event.clientX - rect.left) * scaleX;
-        let y = (event.clientY - rect.top) * scaleY;
+function createCanvasClickHandler(uiManager) {
+    return function(event) {
+        const { x, y } = getEventCoordinates(event, uiManager);
         handleButtonEvent(x, y, uiManager);
     };
+}
 
-    uiManager.onTouchStart = (event) => {
+function createTouchStartHandler(uiManager) {
+    return function(event) {
         event.preventDefault();
-        let rect = uiManager.world.canvas.getBoundingClientRect();
-        let touch = event.touches[0];
-        let scaleX = uiManager.world.canvas.width / rect.width;
-        let scaleY = uiManager.world.canvas.height / rect.height;
-        let x = (touch.clientX - rect.left) * scaleX;
-        let y = (touch.clientY - rect.top) * scaleY;
+        const { x, y } = getTouchCoordinates(event, uiManager);
         handleButtonEvent(x, y, uiManager);
     };
+}
 
-    uiManager.onKeyDown = (event) => {
+function createKeyDownHandler(uiManager) {
+    return function(event) {
         if (event.key === 'Escape' || event.keyCode === 27) {
             event.preventDefault();
             handlePauseButton(uiManager);
         }
     };
+}
 
-    uiManager.world.canvas.addEventListener('click', uiManager.onCanvasClick);
-    uiManager.world.canvas.addEventListener('touchstart', uiManager.onTouchStart, { passive: false });
-    document.addEventListener('keydown', uiManager.onKeyDown);
+function getEventCoordinates(event, uiManager) {
+    let rect = uiManager.world.canvas.getBoundingClientRect();
+    let scaleX = uiManager.world.canvas.width / rect.width;
+    let scaleY = uiManager.world.canvas.height / rect.height;
+    let x = (event.clientX - rect.left) * scaleX;
+    let y = (event.clientY - rect.top) * scaleY;
+    return { x, y };
+}
+
+function getTouchCoordinates(event, uiManager) {
+    let rect = uiManager.world.canvas.getBoundingClientRect();
+    let touch = event.touches[0];
+    let scaleX = uiManager.world.canvas.width / rect.width;
+    let scaleY = uiManager.world.canvas.height / rect.height;
+    let x = (touch.clientX - rect.left) * scaleX;
+    let y = (touch.clientY - rect.top) * scaleY;
+    return { x, y };
 }
 
 /**

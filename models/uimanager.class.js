@@ -94,50 +94,10 @@ class UIManager {
      */
     drawMexicanScore() {
         this.world.ctx.save();
-        let scorePosition = this.calculateScorePosition();
-        this.drawScoreBackground(scorePosition);
-        this.drawScoreText(scorePosition);
+        let scorePosition = calculateScorePosition(this);
+        drawScoreBackground(this, scorePosition);
+        drawScoreText(this, scorePosition);
         this.world.ctx.restore();
-    }
-
-    /**
-     * Calculate score display position and dimensions
-     * @returns {Object} Position and size information
-     */
-    calculateScorePosition() {
-        return {
-            x: this.world.canvas.width - 120,
-            y: 30,
-            width: 100,
-            height: 35
-        };
-    }
-
-    /**
-     * Draw background and border for score display
-     * @param {Object} pos - Position and size information
-     */
-    drawScoreBackground(pos) {
-        this.world.ctx.fillStyle = '#FF6B35';
-        this.roundRect(this.world.ctx, pos.x - 10, pos.y - 20, pos.width, pos.height, 8);
-        this.world.ctx.fill();
-        this.world.ctx.strokeStyle = '#E63946';
-        this.world.ctx.lineWidth = 2;
-        this.roundRect(this.world.ctx, pos.x - 10, pos.y - 20, pos.width, pos.height, 8);
-        this.world.ctx.stroke();
-    }
-
-    /**
-     * Draw score text with shadow effect
-     * @param {Object} pos - Position information
-     */
-    drawScoreText(pos) {
-        this.world.ctx.font = 'bold 24px Comic Sans MS';
-        this.world.ctx.textAlign = 'center';
-        this.world.ctx.fillStyle = '#8B1538';
-        this.world.ctx.fillText(`${this.world.totalScore}`, pos.x + 40 + 2, pos.y + 2);
-        this.world.ctx.fillStyle = '#FFFFFF';
-        this.world.ctx.fillText(`${this.world.totalScore}`, pos.x + 40, pos.y);
     }
 
     /**
@@ -167,65 +127,9 @@ class UIManager {
     drawGameOverScreen() {
         this.world.ctx.save();
         let isNewHighscore = this.updateHighscore(this.world.totalScore);
-        this.drawGameOverBackground();
-        this.drawGameOverTexts(isNewHighscore);
+        drawGameOverBackground(this);
+        drawGameOverTexts(this, isNewHighscore);
         this.world.ctx.restore();
-    }
-
-    /**
-     * Draws the background overlay for game over screen
-     */
-    drawGameOverBackground() {
-        this.world.ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
-        this.world.ctx.fillRect(0, 0, this.world.canvas.width, this.world.canvas.height);
-    }
-
-    /**
-     * Draws the game over texts and highscore info
-     * @param {boolean} isNewHighscore
-     */
-    drawGameOverTexts(isNewHighscore) {
-        const ctx = this.world.ctx;
-        const centerX = this.world.canvas.width / 2;
-        const centerY = this.world.canvas.height / 2;
-        this.drawGameOverTitle(ctx, centerX, centerY);
-        this.drawGameOverScore(ctx, centerX, centerY);
-
-        if (isNewHighscore) {
-            this.drawNewHighscoreText(ctx, centerX, centerY);
-        } else {
-            ctx.fillStyle = '#cccccc';
-        }
-        ctx.fillText(`Highscore: ${this.highscore}`, centerX, centerY + 50);
-    }
-
-    /**
-     * Draws the "GAME OVER" title
-     */
-    drawGameOverTitle(ctx, centerX, centerY) {
-        ctx.fillStyle = '#ff0000';
-        ctx.font = 'bold 48px Comic Sans MS';
-        ctx.textAlign = 'center';
-        ctx.fillText('GAME OVER', centerX, centerY - 80);
-    }
-
-    /**
-     * Draws the final score text
-     */
-    drawGameOverScore(ctx, centerX, centerY) {
-        ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 24px Comic Sans MS';
-        ctx.fillText(`Final Score: ${this.world.totalScore}`, centerX, centerY - 20);
-    }
-
-    /**
-     * Draws the new highscore text with pulse effect
-     */
-    drawNewHighscoreText(ctx, centerX, centerY) {
-        let pulseValue = Math.sin(Date.now() * 0.01) * 0.3 + 0.7;
-        ctx.fillStyle = `rgba(255, 215, 0, ${pulseValue})`;
-        ctx.fillText('🎉 NEW HIGHSCORE! 🎉', centerX, centerY + 20);
-        ctx.fillStyle = '#FFD700';
     }
 
     /**
@@ -246,31 +150,8 @@ class UIManager {
         this.world.ctx.fillStyle = '#ffffff';
         this.world.ctx.font = '12px Arial';
         this.world.ctx.textAlign = 'left';
-        this.drawDebugTextLines();
+        drawDebugTextLines(this);
         this.world.ctx.restore();
-    }
-
-    /**
-     * Draws the debug info text lines
-     */
-    drawDebugTextLines() {
-        let y = 30;
-        const ctx = this.world.ctx;
-        ctx.fillText(`Character X: ${Math.round(this.world.character.x)}`, 20, y);
-        y += 15;
-        ctx.fillText(`Character Y: ${Math.round(this.world.character.y)}`, 20, y);
-        y += 15;
-        ctx.fillText(`Enemies: ${this.world.level.enemies.length}`, 20, y);
-        y += 15;
-        ctx.fillText(`Endbosses: ${this.world.level.endboss.length}`, 20, y);
-        y += 15;
-        ctx.fillText(`Coins: ${this.world.character.coins}/${this.world.totalCoinsInLevel}`, 20, y);
-        y += 15;
-        ctx.fillText(`Bottles: ${this.world.character.bottles}/10`, 20, y);
-        y += 15;
-        ctx.fillText(`Score: ${this.world.totalScore}`, 20, y);
-        y += 15;
-        ctx.fillText(`FPS: ${this.world.fps || 'N/A'}`, 20, y);
     }
 
     /**
@@ -280,62 +161,10 @@ class UIManager {
         if (!this.world.waveManager) return;
         let waveInfo = this.world.waveManager.getWaveInfo();
         this.world.ctx.save();
-        let indicatorConfig = this.calculateWaveIndicatorPosition();
-        this.drawWaveIndicatorBackground(indicatorConfig, waveInfo);
-        this.drawWaveIndicatorText(indicatorConfig, waveInfo);
+        let indicatorConfig = calculateWaveIndicatorPosition(this);
+        drawWaveIndicatorBackground(this, indicatorConfig, waveInfo);
+        drawWaveIndicatorText(this, indicatorConfig, waveInfo);
         this.world.ctx.restore();
-    }
-
-    /**
-     * Calculate wave indicator position and dimensions
-     * @returns {Object} Indicator configuration
-     */
-    calculateWaveIndicatorPosition() {
-        return {
-            x: this.world.canvas.width / 2,
-            y: 50,
-            width: 200,
-            height: 50
-        };
-    }
-
-    /**
-     * Draw background and border for wave indicator
-     * @param {Object} config - Indicator configuration
-     * @param {Object} waveInfo - Wave information
-     */
-    drawWaveIndicatorBackground(config, waveInfo) {
-        this.world.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-        this.roundRect(this.world.ctx, config.x - config.width/2, config.y - 30, config.width, config.height, 10);
-        this.world.ctx.fill();
-        let borderColor = (waveInfo.maxWaveReached && waveInfo.maxChickensReached) ? '#ff6b35' : '#4ECDC4';
-        this.world.ctx.strokeStyle = borderColor;
-        this.world.ctx.lineWidth = 3;
-        this.roundRect(this.world.ctx, config.x - config.width/2, config.y - 30, config.width, config.height, 10);
-        this.world.ctx.stroke();
-    }
-
-    /**
-     * Draw wave indicator text content
-     * @param {Object} config - Indicator configuration
-     * @param {Object} waveInfo - Wave information
-     */
-    drawWaveIndicatorText(config, waveInfo) {
-        this.drawWaveTitle(config, waveInfo);
-    }
-
-    /**
-     * Draw wave title with shadow effect
-     * @param {Object} config - Indicator configuration
-     * @param {Object} waveInfo - Wave information
-     */
-    drawWaveTitle(config, waveInfo) {
-        this.world.ctx.font = 'bold 20px Comic Sans MS';
-        this.world.ctx.textAlign = 'center';
-        this.world.ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
-        this.world.ctx.fillText(`WAVE ${waveInfo.currentWave}`, config.x + 1, config.y - 5 + 1);
-        this.world.ctx.fillStyle = '#FFFFFF';
-        this.world.ctx.fillText(`WAVE ${waveInfo.currentWave}`, config.x, config.y - 5);
     }
 
     /**
