@@ -306,11 +306,8 @@ function setupAudioListeners() {
  * Restarts the game by resetting all game state and creating new instances
  */
 function restartGame() {
-    console.log('[Game] Restarting game...');
-    
     resetGameState();
     clearExistingGame();
-    
     setTimeout(() => {
         reinitializeGame();
     }, 100);
@@ -342,15 +339,10 @@ function clearExistingGame() {
  */
 function reinitializeGame() {
     initLevel1();
-    console.log('[Game] Level re-initialized');
-    
     world = new World(canvas);
     world.isPaused = false;
     world.draw();
-    
     gameStarted = true;
-    
-    console.log('[Game] Game restarted successfully');
 }
 
 /**

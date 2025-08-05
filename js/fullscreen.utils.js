@@ -8,10 +8,16 @@
 function requestFullscreen() {
     let canvas = document.getElementById('canvas');
     
+    // Return early if canvas is missing
+    if (!canvas) {
+        return {};
+    }
+    
     try {
         tryDocumentFullscreen() || tryCanvasFullscreen(canvas);
     } catch (error) {
         console.log('Error trying to enter fullscreen: ', error);
+        return {};
     }
 }
 
@@ -70,6 +76,11 @@ function toggleFullscreen() {
     let fullscreenButton = document.getElementById('fullscreenButton');
     let body = document.body;
     
+    // Return early if essential elements are missing
+    if (!canvas || !body) {
+        return {};
+    }
+    
     if (!document.fullscreenElement) {
         enterFullscreenMode(canvas, fullscreenButton, body);
     } else {
@@ -122,10 +133,12 @@ function calculateScaleFactor() {
  * @param {HTMLElement} fullscreenButton - The fullscreen toggle button
  */
 function applyFullscreenStyles(canvas, body, fullscreenButton) {
-    canvas.classList.add('fullscreen');
-    body.classList.add('fullscreen-active');
-    fullscreenButton.textContent = 'EXIT FULLSCREEN';
-    fullscreenButton.classList.add('active');
+    if (canvas) canvas.classList.add('fullscreen');
+    if (body) body.classList.add('fullscreen-active');
+    if (fullscreenButton) {
+        fullscreenButton.textContent = 'EXIT FULLSCREEN';
+        fullscreenButton.classList.add('active');
+    }
 }
 
 /**
@@ -160,10 +173,12 @@ function exitDocumentFullscreen() {
  * @param {HTMLElement} fullscreenButton - The fullscreen toggle button
  */
 function removeFullscreenStyles(canvas, body, fullscreenButton) {
-    canvas.classList.remove('fullscreen');
-    body.classList.remove('fullscreen-active');
-    fullscreenButton.textContent = 'FULLSCREEN';
-    fullscreenButton.classList.remove('active');
+    if (canvas) canvas.classList.remove('fullscreen');
+    if (body) body.classList.remove('fullscreen-active');
+    if (fullscreenButton) {
+        fullscreenButton.textContent = 'FULLSCREEN';
+        fullscreenButton.classList.remove('active');
+    }
 }
 
 /**
@@ -173,6 +188,11 @@ function handleFullscreenChange() {
     let canvas = document.getElementById('canvas');
     let fullscreenButton = document.getElementById('fullscreenButton');
     let body = document.body;
+    
+    // Return early if essential elements are missing
+    if (!canvas || !body) {
+        return {};
+    }
     
     if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) {
         resetFullscreenUI(canvas, body, fullscreenButton);
@@ -227,10 +247,14 @@ function enableFullscreen() {
     if (isMobileDevice()) {
         setTimeout(() => {
             requestFullscreen();
-            setupResponsiveCanvas();
+            if (typeof setupResponsiveCanvas === 'function') {
+                setupResponsiveCanvas();
+            }
         }, 300);
         
-        enableAudio();
+        if (typeof enableAudio === 'function') {
+            enableAudio();
+        }
     }
 }
 
@@ -241,10 +265,14 @@ function enableFullscreen() {
     if (isMobileDevice()) {
         setTimeout(() => {
             requestFullscreen();
-            setupResponsiveCanvas();
+            if (typeof setupResponsiveCanvas === 'function') {
+                setupResponsiveCanvas();
+            }
         }, 300);
         
-        enableAudio();
+        if (typeof enableAudio === 'function') {
+            enableAudio();
+        }
     }
 }
 

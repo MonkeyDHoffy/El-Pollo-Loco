@@ -73,7 +73,6 @@ function handlePauseButton(uiManager) {
         togglePause();
     } else {
         uiManager.world.isPaused = !uiManager.world.isPaused;
-        console.log('Game', uiManager.world.isPaused ? 'paused' : 'resumed');
     }
 }
 
@@ -101,7 +100,6 @@ function handleMuteButton(uiManager) {
     uiManager.isMuted = !uiManager.isMuted;
     updateMuteState(uiManager);
     localStorage.setItem('elPolloLocoMuted', uiManager.isMuted.toString());
-    console.log('Audio', uiManager.isMuted ? 'muted' : 'unmuted');
 }
 
 /**

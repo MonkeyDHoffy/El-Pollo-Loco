@@ -61,6 +61,8 @@ class Endboss extends MovableObject {
         this.initializeHealthScaling();
         this.initializeDetection();
         this.x = 3800 - (index * 600);
+        this.speed = 0.5; // Set initial speed
+        this.originalSpeed = this.speed;
         this.animate();
     }
     /**
@@ -96,6 +98,11 @@ class Endboss extends MovableObject {
         this.alertAnimationComplete = false;
         this.alertCycleCount = 0;
         this.maxAlertCycles = 2;
+        this.isEnraged = false;
+        this.enrageTimer = 0;
+        this.enrageDuration = 1500; // 1.5 seconds
+        this.speedMultiplier = 1;
+        this.originalSpeed = 0;
     }
     /**
      * Initializes health scaling properties
@@ -138,9 +145,32 @@ class Endboss extends MovableObject {
         setInterval(() => {
             if (!this.world || !this.world.isPaused) {
                 this.checkCharacterDetection();
+                this.updateEnrageState();
                 this.handleMovement();
             }
         }, 1000 / 60);
+    }
+
+    /**
+     * Updates enrage state and timer
+     */
+    updateEnrageState() {
+        if (this.isEnraged) {
+            this.enrageTimer -= 1000 / 60; // Subtract frame time (60 FPS)
+            if (this.enrageTimer <= 0) {
+                this.endEnrage();
+            }
+        }
+    }
+
+    /**
+     * Ends enrage state and restores normal speed
+     */
+    endEnrage() {
+        this.isEnraged = false;
+        this.enrageTimer = 0;
+        this.speed = this.originalSpeed;
+        this.speedMultiplier = 1;
     }
     /**
      * Handles endboss movement based on current state
@@ -227,6 +257,30 @@ class Endboss extends MovableObject {
         if (this.energy <= 0) {
             this.energy = 0;
             this.die();
+        }
+    }
+
+    /**
+     * Handles damage taken by endboss from jump attack
+     * @param {number} damage - Amount of damage to apply
+     */
+    hitByJump(damage) {
+        this.hit(damage);
+        this.triggerEnrage();
+    }
+
+    /**
+     * Triggers enrage state - 5x speed for 1.5 seconds
+     */
+    triggerEnrage() {
+        if (!this.isDead && !this.isDying) {
+            this.isEnraged = true;
+            this.enrageTimer = this.enrageDuration;
+            if (this.originalSpeed === 0) {
+                this.originalSpeed = this.speed;
+            }
+            this.speed = this.originalSpeed * 9; // Changed from 2x to 5x speed
+            this.speedMultiplier = 9;
         }
     }
     /**

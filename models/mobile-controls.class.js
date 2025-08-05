@@ -173,10 +173,6 @@ class MobileControls {
             text: 'THROW',
             key: 'SPACE'
         });
-        console.log('Action buttons created:', {
-            jump: { x: jumpX, y: buttonY },
-            throw: { x: throwX, y: buttonY }
-        });
     }
 
     setupEventListeners() {

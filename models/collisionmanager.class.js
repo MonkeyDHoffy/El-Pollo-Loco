@@ -257,6 +257,12 @@ class CollisionManager {
      */
     handleCharacterBounceOffEndboss(endboss) {
         endboss.attack();
+        // Use hitByJump instead of regular hit to trigger enrage state
+        if (typeof endboss.hitByJump === 'function') {
+            endboss.hitByJump(this.calculateJumpDamage());
+        } else {
+            endboss.hit(this.calculateJumpDamage());
+        }
         this.world.character.addComboKill();
         this.world.character.speedY = 15;
         this.world.character.playRandomChickenAttackSound();
@@ -283,5 +289,13 @@ class CollisionManager {
         }
         this.world.character.speedY = 15;
         this.world.statusbar.setPercentage(this.world.character.energy);
+    }
+
+    /**
+     * Calculate damage dealt by character jumping on endboss
+     * @returns {number} Jump damage amount
+     */
+    calculateJumpDamage() {
+        return 4; // Base jump damage to endboss
     }
 }

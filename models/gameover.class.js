@@ -363,7 +363,6 @@ class GameOver {
      * Restart the game
      */
     restartGame() {
-        console.log('[GameOver] Restarting game...');
         this.isActive = false;
         this.showGameOverImage = false;
         this.showReplayScreen = false;

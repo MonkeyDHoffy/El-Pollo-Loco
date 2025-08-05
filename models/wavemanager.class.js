@@ -42,9 +42,9 @@ class WaveManager {
      * Initializes damage and health scaling system
      */
     initializeDamageScaling() {
-        this.scalingStartWave = 35;
-        this.damageIncreasePerWave = 0.02;
-        this.healthIncreasePerWave = 0.02;
+        this.scalingStartWave = 30;
+        this.damageIncreasePerWave = 0.05;
+        this.healthIncreasePerWave = 0.05;
         this.baseDamageEnemy = 10;
         this.baseDamageEndboss = 20;
         this.baseHealthEndboss = 50;

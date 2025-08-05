@@ -152,7 +152,6 @@ class World {
      */
     checkGameOver() {
         if (this.character.isDead() && !gameOver.isGameOverActive()) {
-            console.log('[World] Character died, triggering game over');
             gameOver.startGameOver(this.totalScore);
             this.isPaused = true;
             return;
@@ -181,7 +180,6 @@ class World {
         } else {
             this.audioManager.resumeBackgroundMusic();
         }
-        console.log('Game paused:', this.isPaused);
     }
 
     /**
