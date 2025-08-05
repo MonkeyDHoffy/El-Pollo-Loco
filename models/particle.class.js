@@ -14,7 +14,6 @@ class Particle {
         this.type = type;
         this.life = 1.0;
         this.maxLife = 1.0;
-        
         this.initializeParticleProperties();
         this.setColor();
     }
@@ -91,8 +90,7 @@ class Particle {
     update() {
         this.updatePosition();
         this.applyPhysics();
-        this.updateLife();
-        
+        this.updateLife();   
         return this.life <= 0;
     }
 
@@ -142,8 +140,7 @@ class Particle {
      * @param {CanvasRenderingContext2D} ctx - Canvas rendering context
      */
     draw(ctx) {
-        if (this.life <= 0) return;
-        
+        if (this.life <= 0) return;   
         ctx.save();
         this.setupParticleStyle(ctx);
         this.drawMainParticle(ctx);

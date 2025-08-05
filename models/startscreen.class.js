@@ -43,11 +43,9 @@ class StartScreen {
     loadBackgroundImage() {
         this.startImage = new Image();
         this.startImage.src = 'img/img_pollo_locco/img/9_intro_outro_screens/start/startscreen_1.png';
-        
         this.startImage.onload = () => {
             this.imageLoaded = true;
-        };
-        
+        }; 
         this.startImage.onerror = () => {
             this.imageLoaded = false;
         };
@@ -98,7 +96,6 @@ class StartScreen {
     createKeyboardHandlers() {
         this.onKeyDown = (event) => {
             if (!this.isActive) return;
-            
             if (event.code === 'Space') {
                 event.preventDefault();
                 this.startGame();
@@ -264,6 +261,25 @@ class StartScreen {
      */
     drawPlayButton() {
         this.ctx.save();
+        let { buttonX, buttonY, buttonWidth, buttonHeight, buttonGradient, borderColor, borderWidth } = this.getPlayButtonStyle();
+        if (this.playButtonHovered || this.glowIntensity > 0.6) {
+            this.ctx.shadowColor = '#FFD700';
+            this.ctx.shadowBlur = 15 + (this.glowIntensity * 10);}
+        this.roundRect(buttonX, buttonY, buttonWidth, buttonHeight, 15);
+        this.ctx.fillStyle = buttonGradient;
+        this.ctx.fill();
+        this.ctx.strokeStyle = borderColor;
+        this.ctx.lineWidth = borderWidth;
+        this.ctx.stroke();
+        this.ctx.shadowBlur = 0;
+        this.drawPlayButtonText(buttonX, buttonY, buttonWidth, buttonHeight);
+        this.ctx.restore();
+    }
+
+    /**
+     * Returns style properties for the play button
+     */
+    getPlayButtonStyle() {
         let hoverScale = this.playButtonHovered ? 1.05 : 1;
         let pulseScale = this.pulseValue;
         let totalScale = hoverScale * pulseScale;
@@ -271,40 +287,43 @@ class StartScreen {
         let buttonY = this.playButtonY + (this.playButtonHeight * (1 - totalScale)) / 2;
         let buttonWidth = this.playButtonWidth * totalScale;
         let buttonHeight = this.playButtonHeight * totalScale;
-        if (this.playButtonHovered || this.glowIntensity > 0.6) {
-            this.ctx.shadowColor = '#FFD700';
-            this.ctx.shadowBlur = 15 + (this.glowIntensity * 10);
-        }
-        let buttonGradient = this.ctx.createLinearGradient(buttonX, buttonY, buttonX, buttonY + buttonHeight);
-        let pulseIntensity = this.glowIntensity;
-        if (this.playButtonHovered) {
-            buttonGradient.addColorStop(0, `rgba(50, 205, 50, ${0.8 + pulseIntensity * 0.2})`);
-            buttonGradient.addColorStop(1, `rgba(34, 139, 34, ${0.8 + pulseIntensity * 0.2})`);
-        } else {
-            buttonGradient.addColorStop(0, `rgba(76, 175, 80, ${0.7 + pulseIntensity * 0.3})`);
-            buttonGradient.addColorStop(1, `rgba(56, 142, 60, ${0.7 + pulseIntensity * 0.3})`);
-        }
-        this.roundRect(buttonX, buttonY, buttonWidth, buttonHeight, 15);
-        this.ctx.fillStyle = buttonGradient;
-        this.ctx.fill();
+        let buttonGradient = this.createButtonGradient(buttonX, buttonY, buttonHeight);
         let borderIntensity = this.glowIntensity;
-        this.ctx.strokeStyle = this.playButtonHovered ?
+        let borderColor = this.playButtonHovered ?
             `rgba(255, 215, 0, ${0.8 + borderIntensity * 0.2})` :
             `rgba(46, 125, 50, ${0.6 + borderIntensity * 0.4})`;
-        this.ctx.lineWidth = 2 + (borderIntensity * 2);
-        this.ctx.stroke();
-        this.ctx.shadowBlur = 0;
-        this.ctx.fillStyle = '#FFFFFF';
+        let borderWidth = 2 + (borderIntensity * 2);
+        return { buttonX, buttonY, buttonWidth, buttonHeight, buttonGradient, borderColor, borderWidth };
+    }
+
+    /**
+     * Creates the gradient for the play button
+     */
+    createButtonGradient(buttonX, buttonY, buttonHeight) {
+        let gradient = this.ctx.createLinearGradient(buttonX, buttonY, buttonX, buttonY + buttonHeight);
+        let pulseIntensity = this.glowIntensity;
+        if (this.playButtonHovered) {
+            gradient.addColorStop(0, `rgba(50, 205, 50, ${0.8 + pulseIntensity * 0.2})`);
+            gradient.addColorStop(1, `rgba(34, 139, 34, ${0.8 + pulseIntensity * 0.2})`);
+        } else {
+            gradient.addColorStop(0, `rgba(76, 175, 80, ${0.7 + pulseIntensity * 0.3})`);
+            gradient.addColorStop(1, `rgba(56, 142, 60, ${0.7 + pulseIntensity * 0.3})`);
+        }
+        return gradient;
+    }
+
+    /**
+     * Draws the play button text
+     */
+    drawPlayButtonText(buttonX, buttonY, buttonWidth, buttonHeight) {
+        this.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
         this.ctx.font = 'bold 28px Comic Sans MS';
         this.ctx.textAlign = 'center';
         this.ctx.textBaseline = 'middle';
-        this.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
         this.ctx.fillText('PLAY', buttonX + buttonWidth / 2 + 2, buttonY + buttonHeight / 2 + 2);
         this.ctx.fillStyle = '#FFFFFF';
         this.ctx.fillText('PLAY', buttonX + buttonWidth / 2, buttonY + buttonHeight / 2);
-        this.ctx.restore();
     }
-    
     /**
      * Draw instructions
      */

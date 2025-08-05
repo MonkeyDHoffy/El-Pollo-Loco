@@ -167,25 +167,65 @@ class UIManager {
     drawGameOverScreen() {
         this.world.ctx.save();
         let isNewHighscore = this.updateHighscore(this.world.totalScore);
+        this.drawGameOverBackground();
+        this.drawGameOverTexts(isNewHighscore);
+        this.world.ctx.restore();
+    }
+
+    /**
+     * Draws the background overlay for game over screen
+     */
+    drawGameOverBackground() {
         this.world.ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
         this.world.ctx.fillRect(0, 0, this.world.canvas.width, this.world.canvas.height);
-        this.world.ctx.fillStyle = '#ff0000';
-        this.world.ctx.font = 'bold 48px Comic Sans MS';
-        this.world.ctx.textAlign = 'center';
-        this.world.ctx.fillText('GAME OVER', this.world.canvas.width / 2, this.world.canvas.height / 2 - 80);
-        this.world.ctx.fillStyle = '#ffffff';
-        this.world.ctx.font = 'bold 24px Comic Sans MS';
-        this.world.ctx.fillText(`Final Score: ${this.world.totalScore}`, this.world.canvas.width / 2, this.world.canvas.height / 2 - 20);
+    }
+
+    /**
+     * Draws the game over texts and highscore info
+     * @param {boolean} isNewHighscore
+     */
+    drawGameOverTexts(isNewHighscore) {
+        const ctx = this.world.ctx;
+        const centerX = this.world.canvas.width / 2;
+        const centerY = this.world.canvas.height / 2;
+        this.drawGameOverTitle(ctx, centerX, centerY);
+        this.drawGameOverScore(ctx, centerX, centerY);
+
         if (isNewHighscore) {
-            let pulseValue = Math.sin(Date.now() * 0.01) * 0.3 + 0.7;
-            this.world.ctx.fillStyle = `rgba(255, 215, 0, ${pulseValue})`;
-            this.world.ctx.fillText('🎉 NEW HIGHSCORE! 🎉', this.world.canvas.width / 2, this.world.canvas.height / 2 + 20);
-            this.world.ctx.fillStyle = '#FFD700';
+            this.drawNewHighscoreText(ctx, centerX, centerY);
         } else {
-            this.world.ctx.fillStyle = '#cccccc';
+            ctx.fillStyle = '#cccccc';
         }
-        this.world.ctx.fillText(`Highscore: ${this.highscore}`, this.world.canvas.width / 2, this.world.canvas.height / 2 + 50);
-        this.world.ctx.restore();
+        ctx.fillText(`Highscore: ${this.highscore}`, centerX, centerY + 50);
+    }
+
+    /**
+     * Draws the "GAME OVER" title
+     */
+    drawGameOverTitle(ctx, centerX, centerY) {
+        ctx.fillStyle = '#ff0000';
+        ctx.font = 'bold 48px Comic Sans MS';
+        ctx.textAlign = 'center';
+        ctx.fillText('GAME OVER', centerX, centerY - 80);
+    }
+
+    /**
+     * Draws the final score text
+     */
+    drawGameOverScore(ctx, centerX, centerY) {
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 24px Comic Sans MS';
+        ctx.fillText(`Final Score: ${this.world.totalScore}`, centerX, centerY - 20);
+    }
+
+    /**
+     * Draws the new highscore text with pulse effect
+     */
+    drawNewHighscoreText(ctx, centerX, centerY) {
+        let pulseValue = Math.sin(Date.now() * 0.01) * 0.3 + 0.7;
+        ctx.fillStyle = `rgba(255, 215, 0, ${pulseValue})`;
+        ctx.fillText('🎉 NEW HIGHSCORE! 🎉', centerX, centerY + 20);
+        ctx.fillStyle = '#FFD700';
     }
 
     /**
@@ -206,23 +246,31 @@ class UIManager {
         this.world.ctx.fillStyle = '#ffffff';
         this.world.ctx.font = '12px Arial';
         this.world.ctx.textAlign = 'left';
-        let y = 30;
-        this.world.ctx.fillText(`Character X: ${Math.round(this.world.character.x)}`, 20, y);
-        y += 15;
-        this.world.ctx.fillText(`Character Y: ${Math.round(this.world.character.y)}`, 20, y);
-        y += 15;
-        this.world.ctx.fillText(`Enemies: ${this.world.level.enemies.length}`, 20, y);
-        y += 15;
-        this.world.ctx.fillText(`Endbosses: ${this.world.level.endboss.length}`, 20, y);
-        y += 15;
-        this.world.ctx.fillText(`Coins: ${this.world.character.coins}/${this.world.totalCoinsInLevel}`, 20, y);
-        y += 15;
-        this.world.ctx.fillText(`Bottles: ${this.world.character.bottles}/10`, 20, y);
-        y += 15;
-        this.world.ctx.fillText(`Score: ${this.world.totalScore}`, 20, y);
-        y += 15;
-        this.world.ctx.fillText(`FPS: ${this.world.fps || 'N/A'}`, 20, y);
+        this.drawDebugTextLines();
         this.world.ctx.restore();
+    }
+
+    /**
+     * Draws the debug info text lines
+     */
+    drawDebugTextLines() {
+        let y = 30;
+        const ctx = this.world.ctx;
+        ctx.fillText(`Character X: ${Math.round(this.world.character.x)}`, 20, y);
+        y += 15;
+        ctx.fillText(`Character Y: ${Math.round(this.world.character.y)}`, 20, y);
+        y += 15;
+        ctx.fillText(`Enemies: ${this.world.level.enemies.length}`, 20, y);
+        y += 15;
+        ctx.fillText(`Endbosses: ${this.world.level.endboss.length}`, 20, y);
+        y += 15;
+        ctx.fillText(`Coins: ${this.world.character.coins}/${this.world.totalCoinsInLevel}`, 20, y);
+        y += 15;
+        ctx.fillText(`Bottles: ${this.world.character.bottles}/10`, 20, y);
+        y += 15;
+        ctx.fillText(`Score: ${this.world.totalScore}`, 20, y);
+        y += 15;
+        ctx.fillText(`FPS: ${this.world.fps || 'N/A'}`, 20, y);
     }
 
     /**
@@ -357,6 +405,13 @@ class UIManager {
         this.world.ctx.stroke();
         this.world.ctx.fillStyle = 'white';
         this.world.ctx.textAlign = 'center';
+        this.drawButtonText(button);
+    }
+
+    /**
+     * Draw button text (icon or label)
+     */
+    drawButtonText(button) {
         if (button.text === '🔇' || button.text === '🔊') {
             this.world.ctx.font = 'bold 20px Arial';
             this.world.ctx.fillText(

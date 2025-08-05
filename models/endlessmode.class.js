@@ -158,7 +158,6 @@ class EndlessMode {
      */
     configureNewEnemy(newEnemy) {
         newEnemy.world = this.world;
-        
         if (this.world.waveManager) {
             this.world.waveManager.applySpeedToEnemy(newEnemy);
         }
@@ -189,7 +188,6 @@ class EndlessMode {
         let newEndboss = new Endboss();
         let spawnRange = this.config.spawnAreaEnd - this.config.spawnAreaStart;
         newEndboss.x = this.config.spawnAreaStart + Math.random() * spawnRange;
-        
         return newEndboss;
     }
 

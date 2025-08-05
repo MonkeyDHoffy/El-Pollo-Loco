@@ -126,7 +126,6 @@ class GameOver {
      */
     draw() {
         if (!this.isActive) return;
-
         if (this.showGameOverImage) {
             this.drawGameOverImage();
         } else if (this.showReplayScreen) {
@@ -173,15 +172,11 @@ class GameOver {
         this.ctx.save();
         this.ctx.fillStyle = 'white';
         this.ctx.textAlign = 'center';
-
         this.ctx.font = 'bold 48px Arial';
         this.ctx.fillText('GAME OVER', this.canvas.width / 2, this.canvas.height / 2 - 120);
-
         this.ctx.font = 'bold 32px Arial';
         this.ctx.fillText('Final Score: ' + this.finalScore, this.canvas.width / 2, this.canvas.height / 2 - 70);
-
         this.drawHighscoreText();
-
         this.ctx.restore();
     }
 
@@ -284,8 +279,7 @@ class GameOver {
     getMouseCoordinates(event) {
     let rect = this.canvas.getBoundingClientRect();
     let scaleX = this.canvas.width / rect.width;
-    let scaleY = this.canvas.height / rect.height;
-        
+    let scaleY = this.canvas.height / rect.height;    
         return {
             x: (event.clientX - rect.left) * scaleX,
             y: (event.clientY - rect.top) * scaleY
@@ -297,7 +291,6 @@ class GameOver {
     createTouchHandler() {
         this.onTouchStart = (event) => {
             if (!this.isActive || !this.showReplayScreen) return;
-            
             event.preventDefault();
     let coordinates = this.getTouchCoordinates(event);
             if (this.isPointInReplayButton(coordinates.x, coordinates.y)) {
@@ -315,8 +308,7 @@ class GameOver {
     let rect = this.canvas.getBoundingClientRect();
     let touch = event.touches[0];
     let scaleX = this.canvas.width / rect.width;
-    let scaleY = this.canvas.height / rect.height;
-        
+    let scaleY = this.canvas.height / rect.height;  
         return {
             x: (touch.clientX - rect.left) * scaleX,
             y: (touch.clientY - rect.top) * scaleY
@@ -328,8 +320,7 @@ class GameOver {
      */
     createKeyboardHandler() {
         this.onKeyDown = (event) => {
-            if (!this.isActive || !this.showReplayScreen) return;
-            
+            if (!this.isActive || !this.showReplayScreen) return;   
             if (event.code === 'Space' || event.code === 'Enter') {
                 event.preventDefault();
                 this.restartGame();

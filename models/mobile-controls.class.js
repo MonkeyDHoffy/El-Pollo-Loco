@@ -341,7 +341,6 @@ class MobileControls {
     drawButton(button) {
         MobileButtonRenderer.drawButton(this.ctx, button);
     }
-
     updateLayout() {
         if (!this.isMobile) return;
         let canvasWidth = this.canvas.width;
@@ -351,23 +350,27 @@ class MobileControls {
         let buttonSpacing = isTabletSize ? 140 : 120; // Increased horizontal spacing
 
         this.buttons.forEach(button => {
-            switch(button.id) {
-                case 'left':
-                    button.x = margin;
-                    button.y = canvasHeight - buttonSpacing;
-                    break;
-                case 'right':
-                    button.x = margin + buttonSpacing;
-                    button.y = canvasHeight - buttonSpacing;
-                    break;
-                case 'jump':
-                    this.updateJumpButtonLayout(button, canvasWidth, canvasHeight, margin, isTabletSize);
-                    break;
-                case 'throw':
-                    this.updateThrowButtonLayout(button, canvasWidth, canvasHeight, margin, isTabletSize);
-                    break;
-            }
+            this.updateButtonPosition(button, canvasWidth, canvasHeight, margin, buttonSpacing, isTabletSize);
         });
+    }
+
+    updateButtonPosition(button, canvasWidth, canvasHeight, margin, buttonSpacing, isTabletSize) {
+        switch(button.id) {
+            case 'left':
+                button.x = margin;
+                button.y = canvasHeight - buttonSpacing;
+                break;
+            case 'right':
+                button.x = margin + buttonSpacing;
+                button.y = canvasHeight - buttonSpacing;
+                break;
+            case 'jump':
+                this.updateJumpButtonLayout(button, canvasWidth, canvasHeight, margin, isTabletSize);
+                break;
+            case 'throw':
+                this.updateThrowButtonLayout(button, canvasWidth, canvasHeight, margin, isTabletSize);
+                break;
+        }
     }
 
     updateJumpButtonLayout(button, canvasWidth, canvasHeight, margin, isTabletSize) {

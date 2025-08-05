@@ -194,8 +194,7 @@ class CollisionManager {
         let endbossJumpTop = endboss.y + endbossTopOffset; 
         let endbossLeft = endboss.x + horizontalPadding;
         let endbossRight = endboss.x + endboss.width - horizontalPadding;
-        let isInJumpZoneVertically = characterBottom >= (endbossJumpTop - collisionMargin) && 
-                                     characterBottom <= (endbossJumpTop + collisionMargin);
+        let isInJumpZoneVertically = characterBottom >= (endbossJumpTop - collisionMargin) && characterBottom <= (endbossJumpTop + collisionMargin);
         let isInJumpZoneHorizontally = characterCenterX >= endbossLeft && characterCenterX <= endbossRight; 
         return isFalling && isInJumpZoneVertically && isInJumpZoneHorizontally;
     }
