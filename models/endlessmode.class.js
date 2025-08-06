@@ -80,12 +80,11 @@ class EndlessMode {
     cleanupDistantEndbosses() {
         let beforeCount = this.world.level.endboss.length;
         this.world.level.endboss = this.world.level.endboss.filter(endboss => {
-            // Remove endbosses that are too far left or right
             if (endboss.x < this.config.cleanupLeftBound || 
                 endboss.x > this.config.cleanupRightBound) {
-                return false; // Remove this endboss
+                return false; 
             }
-            return true; // Keep this endboss
+            return true; 
         });
         let afterCount = this.world.level.endboss.length;
     }

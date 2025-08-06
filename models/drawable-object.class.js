@@ -115,7 +115,6 @@ class DrawableObject {
      */
     setupImageEvents(img, path) {
         img.onload = () => {
-            // Image successfully loaded
         };
         img.onerror = () => {
             console.error('Failed to load image for cache:', path);

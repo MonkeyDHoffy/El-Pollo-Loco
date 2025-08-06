@@ -7,8 +7,6 @@
  */
 function requestFullscreen() {
     let canvas = document.getElementById('canvas');
-    
-    // Return early if canvas is missing
     if (!canvas) {
         return {};
     }
@@ -75,8 +73,6 @@ function toggleFullscreen() {
     let canvas = document.getElementById('canvas');
     let fullscreenButton = document.getElementById('fullscreenButton');
     let body = document.body;
-    
-    // Return early if essential elements are missing
     if (!canvas || !body) {
         return {};
     }
@@ -188,8 +184,6 @@ function handleFullscreenChange() {
     let canvas = document.getElementById('canvas');
     let fullscreenButton = document.getElementById('fullscreenButton');
     let body = document.body;
-    
-    // Return early if essential elements are missing
     if (!canvas || !body) {
         return {};
     }

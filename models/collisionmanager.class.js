@@ -257,7 +257,6 @@ class CollisionManager {
      */
     handleCharacterBounceOffEndboss(endboss) {
         endboss.attack();
-        // Use hitByJump instead of regular hit to trigger enrage state
         if (typeof endboss.hitByJump === 'function') {
             endboss.hitByJump(this.calculateJumpDamage());
         } else {
@@ -296,6 +295,6 @@ class CollisionManager {
      * @returns {number} Jump damage amount
      */
     calculateJumpDamage() {
-        return 4; // Base jump damage to endboss
+        return 4; 
     }
 }

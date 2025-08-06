@@ -16,7 +16,7 @@ class BackgroundObject extends MovableObject {
      */
     constructor(imagePath, x, y = 0) {
         super().loadImage(imagePath);
-        this.imagePath = imagePath; // Store imagePath for later use
+        this.imagePath = imagePath; 
         this.x = x;
         this.y = 480 - this.height - y;
         this.originalX = x;
@@ -29,11 +29,11 @@ class BackgroundObject extends MovableObject {
      */
     setParallaxSpeed(imagePath) {
         if (imagePath.includes('2_second_layer')) {
-            this.parallaxSpeed = 0.2; // Moderate parallax for second layer
+            this.parallaxSpeed = 0.2; 
         } else if (imagePath.includes('3_third_layer')) {
-            this.parallaxSpeed = 0.1; // Minimal parallax for third layer
+            this.parallaxSpeed = 0.1; 
         } else {
-            this.parallaxSpeed = 0; // No parallax for first layer and air
+            this.parallaxSpeed = 0; 
         }
     }
 

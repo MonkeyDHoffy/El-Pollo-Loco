@@ -217,7 +217,7 @@ class WaveManager {
      */
     getDamageMultiplier() {
         if (this.currentWave < this.scalingStartWave) {
-            return 1.0; // No scaling before wave 35
+            return 1.0; 
         }
         
         let wavesAfterScaling = this.currentWave - this.scalingStartWave;
@@ -229,7 +229,7 @@ class WaveManager {
      */
     getHealthMultiplier() {
         if (this.currentWave < this.scalingStartWave) {
-            return 1.0; // No scaling before wave 35
+            return 1.0; 
         }
         
         let wavesAfterScaling = this.currentWave - this.scalingStartWave;
@@ -261,7 +261,6 @@ class WaveManager {
      * Show wave change notification (temporary)
      */
     showWaveChangeNotification() {
-        // This will be handled by the UI manager
         if (this.world.uiManager) {
             this.world.uiManager.showWaveChangeNotification(this.currentWave);
         }
@@ -342,8 +341,6 @@ class WaveManager {
         this.currentWave = 1;
         this.baseSpeedMultiplier = 1.0;
         this.lastCheckedScore = 0;
-        
-        // Reset enemy and endboss count to base
         if (this.world.endlessMode) {
             this.world.endlessMode.updateConfig({ 
                 minEnemies: this.baseMinEnemies,

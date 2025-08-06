@@ -84,8 +84,8 @@ class MobileControls {
                 width: isTabletSize ? 90 : 80,
                 height: isTabletSize ? 90 : 80,
                 radius: 15,
-                color: '#E63946', // Mexikanisches Rot
-                borderColor: '#FFF700', // Mexikanisches Gelb
+                color: '#E63946', 
+                borderColor: '#FFF700', 
                 textColor: 'white',
                 font: isTabletSize ? 'bold 18px Comic Sans MS' : 'bold 16px Comic Sans MS'
             },
@@ -93,8 +93,8 @@ class MobileControls {
                 width: isTabletSize ? 110 : 100,
                 height: isTabletSize ? 80 : 70,
                 radius: 15,
-                color: '#43AA8B', // Mexikanisches Grün
-                borderColor: '#F77F00', // Mexikanisches Orange
+                color: '#43AA8B', 
+                borderColor: '#F77F00', 
                 textColor: 'white',
                 font: isTabletSize ? 'bold 16px Comic Sans MS' : 'bold 14px Comic Sans MS'
             }
@@ -112,9 +112,9 @@ class MobileControls {
     let { isTabletSize } = styling;
         return {
             margin: isTabletSize ? 40 : 30,
-            buttonSpacing: isTabletSize ? 140 : 120, // Increased horizontal spacing between left/right buttons
+            buttonSpacing: isTabletSize ? 140 : 120, 
             actionButtonOffset: isTabletSize ? 90 : 80,
-            actionTopOffset: isTabletSize ? 220 : 200 // Spacing for action buttons
+            actionTopOffset: isTabletSize ? 220 : 200 
         };
     }
 
@@ -168,7 +168,7 @@ class MobileControls {
         this.buttons.push({
             id: 'throw',
             x: throwX,
-            y: buttonY, // Gleiche Y-Position wie Jump button
+            y: buttonY, 
             ...actionButtonStyle,
             text: 'THROW',
             key: 'SPACE'
@@ -343,7 +343,7 @@ class MobileControls {
         let canvasHeight = this.canvas.height;
         let isTabletSize = window.innerWidth >= 768 && window.innerWidth <= 1024;
         let margin = isTabletSize ? 40 : 30;
-        let buttonSpacing = isTabletSize ? 140 : 120; // Increased horizontal spacing
+        let buttonSpacing = isTabletSize ? 140 : 120; 
 
         this.buttons.forEach(button => {
             this.updateButtonPosition(button, canvasWidth, canvasHeight, margin, buttonSpacing, isTabletSize);
@@ -381,8 +381,8 @@ class MobileControls {
         let throwJumpX = canvasWidth - margin - (isTabletSize ? 90 : 80);
         let throwButtonY = canvasHeight - (isTabletSize ? 220 : 200);
         let buttonWidth = isTabletSize ? 110 : 100;
-        button.x = throwJumpX - buttonWidth - 20; // 20px Abstand
-        button.y = throwButtonY; // Gleiche Y-Position wie Jump
+        button.x = throwJumpX - buttonWidth - 20; 
+        button.y = throwButtonY; 
         button.key = 'SPACE';
     }
 }

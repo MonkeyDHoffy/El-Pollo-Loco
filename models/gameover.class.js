@@ -45,9 +45,9 @@ class GameOver {
         if (currentScore > this.highscore) {
             this.highscore = currentScore;
             localStorage.setItem('elPolloLocoHighscore', this.highscore.toString());
-            return true; // New highscore achieved
+            return true; 
         }
-        return false; // No new highscore
+        return false; 
     }
 
     /**
@@ -137,7 +137,6 @@ class GameOver {
      * Draw game over image
      */
     drawGameOverImage() {
-        // Draw game over image over entire canvas
         if (this.gameOverImage.complete) {
             this.ctx.drawImage(
                 this.gameOverImage,

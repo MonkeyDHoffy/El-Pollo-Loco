@@ -46,11 +46,11 @@ function handleAlertCycle(endboss) {
 function playAttackAnimationOnce(endboss) {
     endboss.attackAnimationTimer -= 1000 / 10;
     let timeElapsed = 800 - endboss.attackAnimationTimer;
-    let frameIndex = Math.floor(timeElapsed / 100); // Change frame every 100ms
+    let frameIndex = Math.floor(timeElapsed / 100); 
     if (frameIndex >= endboss.IMAGES_ATTACK.length) {
         frameIndex = endboss.IMAGES_ATTACK.length - 1;
         endboss.attackAnimationComplete = true;
-        endboss.isAttacking = false; // End attack animation
+        endboss.isAttacking = false; 
     }
     let path = endboss.IMAGES_ATTACK[frameIndex];
     if (endboss.imageCache[path] && endboss.imageCache[path].complete) {
@@ -68,7 +68,7 @@ function playAttackAnimationOnce(endboss) {
 function playDeathAnimationOnce(endboss) {
     endboss.deathAnimationTimer -= 1000 / 10;
     let timeElapsed = 1000 - endboss.deathAnimationTimer;
-    let frameIndex = Math.floor(timeElapsed / 200); // Change frame every 200ms
+    let frameIndex = Math.floor(timeElapsed / 200);
     if (frameIndex >= endboss.IMAGES_DEAD.length) {
         frameIndex = endboss.IMAGES_DEAD.length - 1;
         endboss.deathAnimationComplete = true;

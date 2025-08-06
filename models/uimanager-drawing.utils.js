@@ -293,7 +293,7 @@ function drawComboIndicatorTextShadow(ctx, x, y, width, comboText, subText, isGr
         ctx.font = 'bold 12px Comic Sans MS';
         ctx.fillText('DAMAGE', x + width / 2 - 10 + 1, y + 8 + 1);
         ctx.fillText(subText, x + width / 2 - 10 + 1, y + 20 + 1);
-        ctx.font = 'bold 18px Comic Sans MS'; // Reset font for main text
+        ctx.font = 'bold 18px Comic Sans MS'; 
     } else {
         ctx.fillText(subText, x + width / 2 - 10 + 1, y - 8 + 1);
         ctx.fillText(comboText, x + width / 2 - 10 + 1, y + 8 + 1);

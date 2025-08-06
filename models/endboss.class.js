@@ -61,7 +61,7 @@ class Endboss extends MovableObject {
         this.initializeHealthScaling();
         this.initializeDetection();
         this.x = 3800 - (index * 600);
-        this.speed = 0.5; // Set initial speed
+        this.speed = 0.5; 
         this.originalSpeed = this.speed;
         this.animate();
     }
@@ -100,7 +100,7 @@ class Endboss extends MovableObject {
         this.maxAlertCycles = 2;
         this.isEnraged = false;
         this.enrageTimer = 0;
-        this.enrageDuration = 1500; // 1.5 seconds
+        this.enrageDuration = 1500; 
         this.speedMultiplier = 1;
         this.originalSpeed = 0;
     }
@@ -156,7 +156,7 @@ class Endboss extends MovableObject {
      */
     updateEnrageState() {
         if (this.isEnraged) {
-            this.enrageTimer -= 1000 / 60; // Subtract frame time (60 FPS)
+            this.enrageTimer -= 1000 / 60; 
             if (this.enrageTimer <= 0) {
                 this.endEnrage();
             }
@@ -279,7 +279,7 @@ class Endboss extends MovableObject {
             if (this.originalSpeed === 0) {
                 this.originalSpeed = this.speed;
             }
-            this.speed = this.originalSpeed * 9; // Changed from 2x to 5x speed
+            this.speed = this.originalSpeed * 9; 
             this.speedMultiplier = 9;
         }
     }
@@ -353,7 +353,7 @@ class Endboss extends MovableObject {
     attack() {
         if (!this.isDead && !this.isDying && !this.isAttacking) {
             this.isAttacking = true;
-            this.attackAnimationTimer = 800; // 800ms for attack animation (8 frames * 100ms each)
+            this.attackAnimationTimer = 800; 
             this.attackFrameIndex = 0;
             this.attackAnimationComplete = false;
         }

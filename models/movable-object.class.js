@@ -3,7 +3,7 @@
  * @extends DrawableObject
  */
 class MovableObject extends DrawableObject {
-    speed = 1.08; // Increased by 20% from 0.9
+    speed = 1.08; 
     otherDirection = false;
     speedY = 0;
     acceleration = 1;

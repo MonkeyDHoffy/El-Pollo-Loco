@@ -100,9 +100,7 @@ class ThrowableObject extends MovableObject {
      * @returns {boolean} True if collision detected
      */
     isColliding(mobject) {
-        // 25px Padding auf allen Seiten für kleinere Kollisionsbox
-        let padding = 33;
-        
+        let padding = 33;   
         return (this.x + padding) + (this.width - padding * 2) > mobject.x &&
                (this.x + padding) < mobject.x + mobject.width &&
                (this.y + padding) + (this.height - padding * 2) > mobject.y &&
